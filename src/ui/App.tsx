@@ -3,7 +3,7 @@ import { Header } from "@codegouvfr/react-dsfr/Header";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Display, headerFooterDisplayItem } from "@codegouvfr/react-dsfr/Display";
 import { Footer } from "@codegouvfr/react-dsfr/Footer";
-import { routes, useRoute, RouteProvider } from "./router";
+import { routes, useRoute } from "./router";
 import { Home } from "./pages/Home";
 import { Mui } from "./pages/Mui";
 

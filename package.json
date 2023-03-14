@@ -4,6 +4,9 @@
   "private": true,
   "dependencies": {
     "@codegouvfr/react-dsfr": "^0.39.0",
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "@mui/material": "^5.11.12",
     "@types/node": "^16.18.16",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
