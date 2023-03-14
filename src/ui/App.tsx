@@ -1,8 +1,15 @@
 
+import { Alert } from "@codegouvfr/react-dsfr/Alert";
 
 export default function App() {
   return (
-    <h1>Hello world</h1>
+    <Alert
+      closable
+      description="Everything went well"
+      onClose={function noRefCheck() { }}
+      severity="info"
+      title="Hello "
+    />
   );
 }
 
