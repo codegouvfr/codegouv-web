@@ -11,6 +11,23 @@
 
   <link rel="stylesheet" href="%PUBLIC_URL%/dsfr/dsfr.min.css" />
   <link rel="stylesheet" href="%PUBLIC_URL%/dsfr/utility/icons/icons.min.css" />
+
+  <%
+    [
+      //"Marianne-Light",
+      //"Marianne-Light_Italic",
+      "Marianne-Regular",
+      //"Marianne-Regular_Italic",
+      "Marianne-Medium",
+      //"Marianne-Medium_Italic",
+      "Marianne-Bold",
+      //"Marianne-Bold_Italic",
+      //"Spectral-Regular",
+      //"Spectral-ExtraBold"
+    ].forEach(function(name){ %>
+      <link rel="preload" href="%PUBLIC_URL%/dsfr/fonts/<%=name%>.woff2" as="font" crossorigin="anonymous" />
+  <% }); %>
+
   <title>CodeGouv</title>
 </head>
 
