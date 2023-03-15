@@ -3,8 +3,15 @@ import { selectors, useCoreState, useCoreFunctions } from "core";
 import CircularProgress from '@mui/material/CircularProgress';
 import { Select } from "@codegouvfr/react-dsfr/Select"
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import type { PageRoute } from "./route";
 
-export default function Catalog() {
+type Props = {
+	className?: string;
+	route: PageRoute;
+};
+
+export default function Catalog(props: Props) {
+	const { route } = props
 
 	const { filteredRepo } = useCoreState(selectors.catalog.filteredRepo)
 	const { filter } = useCoreState(selectors.catalog.filter)

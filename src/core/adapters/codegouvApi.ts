@@ -9,8 +9,6 @@ const zRepository = z.object({
 
 assert<Equals<Repository, ReturnType<(typeof zRepository)["parse"]>>>();
 
-console.log("zut alors!");
-
 export function createCodeGouvApi(
 	params: {
 		url: string;
@@ -22,13 +20,13 @@ export function createCodeGouvApi(
 	const out: CodegouvApi=  {
 		"getRepositories": memoize(async () => {
 
-			const resp = await fetch(`${url}/repositoriesyouyouyou`)
+			/*const resp = await fetch(`${url}/repositoriesyouyouyou`)
 
 			const data = await resp.json();
 
-			const dataConfirmed = z.array(zRepository).parse(data);
+			const dataConfirmed = z.array(zRepository).parse(data);*/
 
-			return dataConfirmed;
+			return [{url}];
 
 		}),
 		"addRepository": async ({ url }) => {

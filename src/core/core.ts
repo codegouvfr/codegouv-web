@@ -2,6 +2,9 @@ import type { Action, ThunkAction as ReduxGenericThunkAction } from "@reduxjs/to
 import { createCoreFromUsecases } from "redux-clean-architecture";
 import type { GenericCreateEvt } from "redux-clean-architecture";
 import { usecases } from "./usecases"
+import { Language } from "../ui/tools/Lang";
+import { assert } from "tsafe/assert";
+import type { Equals } from "tsafe";
 
 type CoreParams = {
 	keycloakParams: {
@@ -10,11 +13,14 @@ type CoreParams = {
 		clientId: string;
 	} | undefined;
 	apiUrl: string | undefined;
+	getCurrentLang: () => Language;
 };
 
 export async function createCore(params: CoreParams) {
 
-	const { apiUrl, keycloakParams } = params;
+	const { apiUrl, keycloakParams, getCurrentLang, ...rest } = params;
+
+	assert<Equals<typeof rest, {}>>();
 
 	const codegouvApi = await (async () => {
 

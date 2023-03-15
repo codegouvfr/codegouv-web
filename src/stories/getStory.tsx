@@ -4,9 +4,36 @@ import type { ArgType } from "@storybook/addons";
 import { symToStr } from "tsafe/symToStr";
 import { id } from "tsafe/id";
 import { useIsDark } from "@codegouvfr/react-dsfr/useIsDark";
+import { setUseLang } from "@codegouvfr/react-dsfr/spa";
+import { useLang } from "ui/i18n";
 import { MuiDsfrThemeProvider } from "@codegouvfr/react-dsfr/mui";
+import { createMockRouteFactory } from "ui/routes";
+import { Evt } from "evt";
+import { useRerenderOnStateChange } from "evt/hooks";
+import { createCoreProvider } from "core";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
+
+const evtTriggerReRender = Evt.create(0);
+
+setUseLang({
+    "useLang": () => {
+        const { lang } = useLang();
+        return lang;
+    }
+});
+
+const { CoreProvider } = createCoreProvider({
+    "apiUrl": "",
+    "keycloakParams": undefined,
+    "getCurrentLang": () => "fr",
+});
+
+export const { createMockRoute } = createMockRouteFactory({
+    "triggerReRender": () => {
+        evtTriggerReRender.state++;
+    }
+});
 
 export function getStoryFactory<Props extends Record<string, unknown>>(params: {
     sectionName: string;
@@ -32,14 +59,15 @@ export function getStoryFactory<Props extends Record<string, unknown>>(params: {
 
     const Template: Story<
         Props & {
-            darkMode: boolean;
-            containerWidth: number;
-            isFirstStory: boolean;
-            lang: "fr" | "en";
-        }
+        darkMode: boolean;
+        containerWidth: number;
+        isFirstStory: boolean;
+        lang: "fr" | "en";
+    }
     > = ({ darkMode, containerWidth, isFirstStory, lang, ...props }) => {
         const { setIsDark } = useIsDark();
 
+        useRerenderOnStateChange(evtTriggerReRender);
 
         useEffect(() => {
             if (disabledProps.includes("darkMode")) {
@@ -51,6 +79,12 @@ export function getStoryFactory<Props extends Record<string, unknown>>(params: {
 
             setIsDark(darkMode);
         }, [darkMode]);
+
+        const { setLang } = useLang();
+
+        useEffect(() => {
+            setLang(lang);
+        }, [lang]);
 
         if (containerWidth !== 0) {
             return (
@@ -69,8 +103,7 @@ export function getStoryFactory<Props extends Record<string, unknown>>(params: {
         props: Props,
         params?: { defaultContainerWidth?: number; description?: string }
     ): typeof Template {
-        const { defaultContainerWidth: defaultContainerWidthStoryLevel, description } =
-            params ?? {};
+        const { defaultContainerWidth: defaultContainerWidthStoryLevel, description } = params ?? {};
 
         const out = Template.bind({});
 
@@ -104,16 +137,19 @@ export function getStoryFactory<Props extends Record<string, unknown>>(params: {
             "component": Component,
             "decorators": [
                 Story => (
-                    <CacheProvider
-                        value={createCache({
-                            "key": "css",
-                            "prepend": false
-                        })}
-                    >
-                        <MuiDsfrThemeProvider>
-                            <Story />
-                        </MuiDsfrThemeProvider>
-                    </CacheProvider>
+                    <CoreProvider>
+                        <CacheProvider
+                            value={createCache({
+                                "key": "css",
+                                "prepend": false
+                            })}
+                        >
+
+                                <MuiDsfrThemeProvider>
+                                    <Story />
+                                </MuiDsfrThemeProvider>
+                        </CacheProvider>
+                    </CoreProvider>
                 )
             ],
             "argTypes": {
