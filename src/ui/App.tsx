@@ -8,6 +8,7 @@ import { pages, page404 } from "ui/pages"
 import { objectKeys } from "tsafe/objectKeys";
 import { evtLang } from "ui/i18n";
 import { Header } from "./shared/Header";
+import { declareComponentKeys } from "i18nifty";
 
 const homeLinkProps =
   { ...routes.home().link, "title": "Accueil - Nom de l’entité (ministère, secrétariat d‘état, gouvernement)" };
@@ -84,5 +85,10 @@ const useStyles = makeStyles({
         "flex": 1
     }
 });
+
+export const { i18n } = declareComponentKeys<
+    "find out more"
+    | "subscribe"
+>()({ App: null });
 
 

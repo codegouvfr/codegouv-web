@@ -55,7 +55,7 @@ export const Header = memo((props: Props) => {
                 navigation={[
                     {
                         text: t("services"),
-                        linkProps: routes.services().link,
+                        linkProps: {},
                         className: fr.cx("fr-label--disabled")
                     },
                     {
@@ -81,14 +81,14 @@ export const Header = memo((props: Props) => {
                             },
                             {
                                 text: t("forum"),
-                                linkProps: routes.forum().link,
+                                linkProps: {},
                                 isActive: currentRoute.name === "forum",
                             }
                         ]
                     },
                     {
                         text: t("blog"),
-                        linkProps: routes.blog().link,
+                        linkProps: {},
                         isActive: currentRoute.name === "blog"
                     },
                     {
