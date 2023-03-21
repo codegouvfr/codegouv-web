@@ -143,21 +143,21 @@ export default function Home(props: Props) {
 		{
 			title: t("contribute reference software"),
 			link:{
-				href: "",
+				href: `mailto:contact@code.gouv.fr?subject=${t("contribute reference software mail subject")}&body=${t("contribute reference software mail body")}`,
 				onClick: () => {}
 			},
 		},
 		{
 			title: t("contribute reference source code"),
 			link:{
-				href: "",
+				href: `mailto:contact@code.gouv.fr?subject=${t("contribute reference source code mail subject")}&body=${t("contribute reference source code mail body")}`,
 				onClick: () => {}
 			},
 		},
 		{
 			title: t("contribute suggest"),
 			link:{
-				href: "",
+				href: `mailto:contact@code.gouv.fr?subject=${t("contribute suggest mail subject")}&body=${t("contribute suggest mail body")}`,
 				onClick: () => {}
 			},
 		}
@@ -225,25 +225,17 @@ export default function Home(props: Props) {
 			<div className={fr.cx("fr-follow")}>
 				<div className={fr.cx("fr-container")}>
 					<div className={cx(fr.cx("fr-grid-row"), classes.row)}>
-						<div className={fr.cx("fr-col-6")}>
-							<div>
-								<div className={classes.inputLine}>
-									<Input
-										label={t("subscribe to gazette", { gazetteName: "BlueHats" })}
-										nativeInputProps={{type: "email"}}
-									/>
-									<Button>{tCommons("subscribe")}</Button>
-								</div>
-								<div className={classes.inputLine}>
-									<Input
-										label={t("subscribe to gazette", { gazetteName: "DSI Libre" })}
-										nativeInputProps={{type: "email"}}
-									/>
-									<Button>{tCommons("subscribe")}</Button>
-								</div>
-							</div>
+						<div className={fr.cx("fr-col-4")}>
+							<h1 className={fr.cx("fr-h5", "fr-follow__title")}>{t("newsletter BlueHats title")}</h1>
+							<p className={fr.cx("fr-text--sm")}>{t("newsletter BlueHats desc")}</p>
+							<a href="https://code.gouv.fr/newsletters/subscribe/bluehats@mail.etalab.studio" className={fr.cx("fr-btn")}>{tCommons("subscribe")}</a>
 						</div>
-						<div className={fr.cx("fr-col-6")}>
+						<div className={fr.cx("fr-col-4")}>
+							<h1 className={fr.cx("fr-h5", "fr-follow__title")}>{t("newsletter DSI libre title")}</h1>
+							<p className={fr.cx("fr-text--sm")}>{t("newsletter DSI libre desc")}</p>
+							<a href="https://code.gouv.fr/newsletters/subscribe/logiciels-libres-dsi@mail.etalab.studio" className={fr.cx("fr-btn")}>{tCommons("subscribe")}</a>
+						</div>
+						<div className={fr.cx("fr-col-4")}>
 							<div className={cx(fr.cx("fr-share", "fr-col-12"))}>
 								<h1 className={fr.cx("fr-h5", "fr-follow__title")}>{t("find us")}</h1>
 								<ul className={cx(fr.cx("fr-share__group"), classes.shareGroup)}>
@@ -285,7 +277,6 @@ export default function Home(props: Props) {
 										</a>
 									</li>
 								</ul>
-
 							</div>
 						</div>
 					</div>
@@ -351,18 +342,6 @@ const useStyles = makeStyles()(theme => ({
 	numberText: {
 		marginBottom: fr.spacing("1v")
 	},
-	inputLine: {
-		display: "flex",
-		alignItems: "flex-end",
-
-		"&:not(last-of-type)": {
-			marginBottom: fr.spacing("6v")
-		},
-
-		"& .fr-input-group": {
-			marginBottom: 0
-		},
-	},
 	shareGroup: {
 		order: "initial",
 		marginBottom: fr.spacing("4v"),
@@ -372,7 +351,7 @@ const useStyles = makeStyles()(theme => ({
 		}
 	},
 	row: {
-		"& .fr-col-6": {
+		"& .fr-col-4": {
 			[fr.breakpoints.down("md")]: {
 				flex: "0 0 100%",
 				width: "100%",
@@ -398,12 +377,21 @@ export const { i18n } = declareComponentKeys<
 	| "help forum"
 	| "contribute title"
 	| "contribute reference software"
+	| "contribute reference software mail subject"
+	| "contribute reference software mail body"
 	| "contribute reference source code"
+	| "contribute reference source code mail subject"
+	| "contribute reference source code mail body"
 	| "contribute suggest"
+	| "contribute suggest mail subject"
+	| "contribute suggest mail body"
 	| "find us"
 	| "contact us"
 	| "contact by mail"
 	| { K: "follow us on"; P: { socialMedia: string } }
 	| { K: "title follow us on"; P: { socialMedia: string } }
-	| { K: "subscribe to gazette"; P: { gazetteName: string } }
+	| "newsletter BlueHats title"
+	| "newsletter BlueHats desc"
+	| "newsletter DSI libre title"
+	| "newsletter DSI libre desc"
 >()({ Home });
