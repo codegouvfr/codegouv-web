@@ -22,21 +22,21 @@ export async function createCore(params: CoreParams) {
 
 	assert<Equals<typeof rest, {}>>();
 
-	const codegouvApi = await (async () => {
+	const codeGouvApi = await (async () => {
 
-		if (apiUrl === undefined) {
+		// if (apiUrl === undefined) {
 
-			const { createCodeGouvApiMock } = await import("core/adapters/codegouvApiMock");
+			const { createCodeGouvApiSemiMock } = await import("core/adapters/CodeGouvApiSemiMock");
 
-			return createCodeGouvApiMock();
+			return createCodeGouvApiSemiMock();
 
-		}
+		// }
 
-		const { createCodeGouvApi } = await import("core/adapters/codegouvApi");
-
-		return createCodeGouvApi({
-			"url": apiUrl
-		});
+		// const { createCodeGouvApi } = await import("core/adapters/codegouvApi");
+		//
+		// return createCodeGouvApi({
+		// 	"url": apiUrl
+		// });
 
 	})();
 
@@ -59,7 +59,7 @@ export async function createCore(params: CoreParams) {
 	const core = createCoreFromUsecases({
 		"thunksExtraArgument": {
 			"coreParams": params,
-			codegouvApi,
+			codeGouvApi: codeGouvApi,
 			oidcClient
 		},
 		usecases
