@@ -10,7 +10,7 @@ type Props = {
 	route: PageRoute;
 };
 
-export default function Catalog(props: Props) {
+export default function Explore(props: Props) {
 	const { route } = props
 
 	const { filteredRepo } = useCoreState(selectors.catalog.filteredRepo)
@@ -51,7 +51,6 @@ export default function Catalog(props: Props) {
 			>
 				Add random repo
 			</Button>
-
 		</div>
 	);
 
