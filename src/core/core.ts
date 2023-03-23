@@ -24,19 +24,9 @@ export async function createCore(params: CoreParams) {
 
 	const codeGouvApi = await (async () => {
 
-		// if (apiUrl === undefined) {
+		const { createCodeGouvApiSemiMock } = await import("core/adapters/CodeGouvApiSemiMock");
 
-			const { createCodeGouvApiSemiMock } = await import("core/adapters/CodeGouvApiSemiMock");
-
-			return createCodeGouvApiSemiMock();
-
-		// }
-
-		// const { createCodeGouvApi } = await import("core/adapters/codegouvApi");
-		//
-		// return createCodeGouvApi({
-		// 	"url": apiUrl
-		// });
+		return createCodeGouvApiSemiMock();
 
 	})();
 

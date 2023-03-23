@@ -88,12 +88,6 @@ export const thunks = {
 
 				dispatch(actions.addRepositoryStarted());
 
-				// await codegouvApi.addRepository({ url });
-
-				// dispatch(actions.addRepositoryCompleted({
-				// 	"newRepository": { url }
-				// }));
-
 			},
 	"changeFilter":
 		(params: { filter: State["filter"]; }): ThunkAction<void> =>
