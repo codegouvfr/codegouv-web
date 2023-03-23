@@ -1,38 +1,17 @@
 export type CodeGouvApi = {
     // Main data
-	getRepositories: {
-        (): Promise<Repository[]>;
-    },
-	getDependencies: {
-		(): Promise<Dependency[]>;
-	},
-	getOrganisations: {
-		(): Promise<Organisation[]>;
-	},
+	getRepositories: () => Promise<Repository[]>,
+	getDependencies: () => Promise<Dependency[]>,
+	getOrganisations: () => Promise<Organisation[]>,
 	// Statistics
-	getRepositoryStatistics: {
-		(): Promise<RepositoryStatistics>;
-	},
+	getRepositoryStatistics: () => Promise<RepositoryStatistics>,
 	// Filter values
-	getAdministrations: {
-		(): Promise<string[]>;
-	},
-	getDependencyNames: {
-		(): Promise<string[]>;
-	}
-	getLanguages: {
-		(): Promise<string[]>;
-	},
-	getLicences: {
-		(): Promise<string[]>;
-	},
-	getOrganisationNames: {
-		(): Promise<string[]>;
-	},
-	getTopics: {
-		(): Promise<string[]>;
-		clear: () => void;
-	},
+	getAdministrations: () => Promise<string[]>,
+	getDependencyNames: () => Promise<string[]>,
+	getLanguages: () => Promise<string[]>,
+	getLicences: () => Promise<string[]>,
+	getOrganisationNames: () => Promise<string[]>,
+	getTopics: () => Promise<string[]>,
 };
 
 export type Dependency = {

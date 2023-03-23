@@ -1,12 +1,11 @@
 import type {CodeGouvApi, Dependency, Organisation, Repository, RepositoryStatistics} from "core/ports/CodeGouvApi";
 import axios from "axios";
-import memoize from "memoizee";
 
 export function createCodeGouvApiSemiMock(): CodeGouvApi {
 
     const url = 'https://code.gouv.fr/data';
 
-    const getRepositories = memoize(async () => {
+    const getRepositories = async () => {
         const response = await axios.get(`${url}/repos.json`);
         return response.data.map((repository: any): Repository => {
             return {
@@ -27,9 +26,9 @@ export function createCodeGouvApiSemiMock(): CodeGouvApi {
                 vitality: 100,
             };
         });
-    });
+    };
 
-    const getDependencies = memoize(async () => {
+    const getDependencies = async () => {
         const response = await axios.get(`${url}/deps.json`);
         return response.data.map((dependency: any): Dependency => {
             return {
@@ -37,9 +36,9 @@ export function createCodeGouvApiSemiMock(): CodeGouvApi {
                 repository_urls: dependency.r,
             }
         });
-    });
+    };
 
-    const getOrganisations = memoize(async () => {
+    const getOrganisations = async () => {
         const response = await axios.get(`${url}/orgas.json`);
         return response.data.map((organisation: any): Organisation => {
             return {
@@ -48,38 +47,38 @@ export function createCodeGouvApiSemiMock(): CodeGouvApi {
                 name: organisation.n,
             }
         });
-    });
+    };
 
     return {
         getRepositories,
-        getAdministrations: memoize(async () => {
+        getAdministrations: async () => {
             const organisations = await getOrganisations();
             const data = organisations
                 .map((organisation: Organisation) => organisation.administrations)
                 .reduce((accumulator: Organisation[], value: Organisation) => accumulator.concat(value), []);
             return [...new Set<string>(data)].sort();
-        }),
+        },
         getDependencies,
-        getDependencyNames: memoize(async () => {
+        getDependencyNames: async () => {
             const dependencies = await getDependencies();
             return dependencies.map((dependency: Dependency) => dependency.name);
-        }),
-        getLanguages: memoize(async () => {
+        },
+        getLanguages: async () => {
             const repositories = await getRepositories();
             const data = repositories.map((repository: Repository) => repository.language);
             return [...new Set<string>(data)].sort();
-        }),
-        getLicences: memoize(async () => {
+        },
+        getLicences: async () => {
             const repositories = await getRepositories();
             const data = repositories.map((repository: Repository) => repository.license);
             return [...new Set<string>(data)].sort();
-        }),
+        },
         getOrganisations,
-        getOrganisationNames: memoize(async () => {
+        getOrganisationNames: async () => {
             const organisations = await getOrganisations();
             return organisations.map((organisation: Organisation) => organisation.name);
-        }),
-        getRepositoryStatistics: memoize(async () => {
+        },
+        getRepositoryStatistics: async () => {
             const response = await axios.get(`${url}/stats.json`);
             const statistics = response.data;
             return {
@@ -88,10 +87,8 @@ export function createCodeGouvApiSemiMock(): CodeGouvApi {
                 forge_count: 0,
                 administration_count: 0,
             } as RepositoryStatistics;
-        }),
-        getTopics: memoize(async () => ['']),
-        //clear: function () {
-        //}
+        },
+        getTopics: async () => [''],
     };
 
 }

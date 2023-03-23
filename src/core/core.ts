@@ -59,7 +59,7 @@ export async function createCore(params: CoreParams) {
 	const core = createCoreFromUsecases({
 		"thunksExtraArgument": {
 			"coreParams": params,
-			codeGouvApi: codeGouvApi,
+			codeGouvApi,
 			oidcClient
 		},
 		usecases
