@@ -6,6 +6,7 @@ import * as forum from "./Forum";
 import * as blog from "./Blog";
 import * as about from "./About";
 import * as explore from "./Explore";
+import * as exploreCatalog from "./ExploreCatalog";
 import * as page404 from "./page404";
 
 import { objectKeys } from "tsafe/objectKeys";
@@ -20,6 +21,7 @@ export const pages = {
     blog,
     about,
     explore,
+    exploreCatalog,
 };
 
 export const routeDefs = {} as UnionToIntersection<
