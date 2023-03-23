@@ -17,6 +17,9 @@ export default function Explore(props: Props) {
 	const { filter } = useCoreState(selectors.catalog.filter)
 	const { isLoading } = useCoreState(selectors.catalog.isLoading)
 	const { repositoryCount } = useCoreState(selectors.catalog.repositoryCount)
+	const { repositoryStatistics } = useCoreState(selectors.catalog.repositoryStatistics)
+	const { languages } = useCoreState(selectors.catalog.languages)
+	const { administrations } = useCoreState(selectors.catalog.administrations)
 
 	const { catalog } = useCoreFunctions();
 
@@ -26,6 +29,9 @@ export default function Explore(props: Props) {
 
 	return (
 		<div>
+			<p>{repositoryStatistics.repository_count} repositories total</p>
+			<p>Languages are {languages.join(',')}</p>
+			<p>Administrations are {administrations.join(',')}</p>
 			<Select
 				label="Label"
 				nativeSelectProps={{
@@ -44,13 +50,13 @@ export default function Explore(props: Props) {
 			<ul>
 				{filteredRepo.map(repo => <li key={repo.url}>{repo.url}</li>)}
 			</ul>
-			<Button
+			{/*<Button
 				onClick={() => catalog.addRepository({
 					"url": "https://github.com/xxxx/yyyy" + Date.now()
 				})}
 			>
 				Add random repo
-			</Button>
+			</Button>*/}
 		</div>
 	);
 

@@ -2,13 +2,16 @@ import type { ThunkAction, State as RootState } from "core/core";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSelector } from "@reduxjs/toolkit";
-import type { Repository } from "core/ports/CodegouvApi";
+import type {Repository, RepositoryStatistics} from "core/ports/CodeGouvApi";
 import { createObjectThatThrowsIfAccessed } from "redux-clean-architecture";
 
 export type State = {
 	repositories: Repository[];
 	filter: undefined | "github" | "gitlab";
 	isLoading: boolean;
+	repositoryStatistics: RepositoryStatistics;
+	languages: string[];
+	administrations: string[];
 };
 
 export const name = "catalog" as const;
@@ -19,14 +22,17 @@ export const { reducer, actions } = createSlice({
 		"debugMessage": "State not initialized yet"
 	}),
 	"reducers": {
-		"initialized": (_state, { payload }: PayloadAction<{ repositories: Repository[]; }>) => {
+		"initialized": (_state, { payload }: PayloadAction<{ repositories: Repository[]; repositoryStatistics: RepositoryStatistics, languages: string[], administrations: string[] }>) => {
 
-			const { repositories } = payload;
+			const { repositories, repositoryStatistics, languages, administrations } = payload;
 
 			return {
 				repositories,
 				"filter": undefined,
-				"isLoading": false
+				"isLoading": false,
+				repositoryStatistics,
+				languages,
+				administrations
 			};
 
 		},
@@ -54,12 +60,18 @@ export const privateThunks = {
 		(): ThunkAction =>
 			async (...args) => {
 
-				const [dispatch, , { codegouvApi }] = args;
+				const [dispatch, , { codeGouvApi }] = args;
 
-				const repositories = await codegouvApi.getRepositories();
+				const repositories = await codeGouvApi.getRepositories();
+				const repositoryStatistics = await codeGouvApi.getRepositoryStatistics();
+				const languages = await codeGouvApi.getLanguages();
+				const administrations = await codeGouvApi.getAdministrations();
 
 				dispatch(actions.initialized({
-					repositories
+					repositories,
+					repositoryStatistics,
+					languages,
+					administrations
 				}));
 
 			},
@@ -72,15 +84,9 @@ export const thunks = {
 
 				const { url } = params;
 
-				const [dispatch, , { codegouvApi }] = args;
+				const [dispatch, , { codeGouvApi }] = args;
 
 				dispatch(actions.addRepositoryStarted());
-
-				await codegouvApi.addRepository({ url });
-
-				dispatch(actions.addRepositoryCompleted({
-					"newRepository": { url }
-				}));
 
 			},
 	"changeFilter":
@@ -129,11 +135,26 @@ export const selectors = (() => {
 		return state.filter;
 	});
 
+	const repositoryStatistics = createSelector(sliceState, state => {
+		return state.repositoryStatistics;
+	});
+
+	const languages = createSelector(sliceState, state => {
+		return state.languages;
+	});
+
+	const administrations = createSelector(sliceState, state => {
+		return state.administrations;
+	});
+
 	return {
 		isLoading,
 		filteredRepo,
 		repositoryCount,
-		filter
+		filter,
+		repositoryStatistics,
+		languages,
+		administrations
 	};
 })();
 
