@@ -26,6 +26,8 @@ const {
     typeof import("ui/App").i18n
     | typeof import("ui/pages/Home/Home").i18n
     | typeof import("ui/shared/Header").i18n
+    | typeof import("ui/shared/Contribute").i18n
+    | typeof import("ui/pages/Explore/Explore").i18n
 >()(
     { languages, fallbackLanguage },
     {
@@ -47,16 +49,6 @@ const {
                 "help guides": "Guides, outils et template",
                 "help faq": "FAQ",
                 "help forum": "Forum",
-                "contribute title": "Contribute!",
-                "contribute reference software": "Reference free software",
-                "contribute reference software mail subject": "Reference free software",
-                "contribute reference software mail body": "Reference free software email body to change",
-                "contribute reference source code": "Reference source code",
-                "contribute reference source code mail subject": "Reference source code",
-                "contribute reference source code mail body": "Reference source code email body to change",
-                "contribute suggest": "Propose a workshop or an article",
-                "contribute suggest mail subject": "Propose a workshop or an article",
-                "contribute suggest mail body": "Propose a workshop or an article email body to change",
                 "find us": "Find us",
                 "contact us": "Contact us",
                 "contact by mail": "Contact by email",
@@ -79,6 +71,29 @@ const {
                 "blog": "Blog",
                 "about": "About",
                 "explore": "Explore !"
+            },
+            "Contribute": {
+                "contribute title": "Contribute!",
+                "contribute reference software": "Reference free software",
+                "contribute reference software mail subject": "Reference free software",
+                "contribute reference software mail body": "Reference free software email body to change",
+                "contribute reference source code": "Reference source code",
+                "contribute reference source code mail subject": "Reference source code",
+                "contribute reference source code mail body": "Reference source code email body to change",
+                "contribute suggest": "Propose a workshop or an article",
+                "contribute suggest mail subject": "Propose a workshop or an article",
+                "contribute suggest mail body": "Propose a workshop or an article email body to change",
+            },
+            "Explore": {
+                "software selection title": "Some source code selections",
+                "software selection by adm": "By adm.",
+                "software selection most recent": "The most recent",
+                "software selection most active": "The most active",
+                "stats title": "Some numbers",
+                "stats forges": "Referenced forges",
+                "stats authorities": "Authorities",
+                "stats organisations": "Organizations",
+                "stats deposit": "Analyzed deposits",
             }
         },
         "fr": {
@@ -100,16 +115,6 @@ const {
                 "help guides": "Guides, outils et template",
                 "help faq": "FAQ",
                 "help forum": "Forum",
-                "contribute title": "Contribuez !",
-                "contribute reference software": "Référencer un logiciel libre",
-                "contribute reference software mail subject": "Référencer un logiciel libre",
-                "contribute reference software mail body": "Référencer un logiciel libre email body à modifier",
-                "contribute reference source code": "Référencer un code source",
-                "contribute reference source code mail subject": "Référencer un code source",
-                "contribute reference source code mail body": "Référencer un code source email body à modifier",
-                "contribute suggest": "Proposer un atelier ou un article",
-                "contribute suggest mail subject": "Proposer un atelier ou un article",
-                "contribute suggest mail body": "Proposer un atelier ou un article email body à modifier",
                 "find us": "Retrouvez-nous",
                 "contact us": "Contactez nous",
                 "contact by mail": "Contacter par email",
@@ -132,6 +137,29 @@ const {
                 "blog": "Blog",
                 "about": "À propos",
                 "explore": "Explorer !"
+            },
+            "Contribute": {
+                "contribute title": "Contribuez !",
+                "contribute reference software": "Référencer un logiciel libre",
+                "contribute reference software mail subject": "Référencer un logiciel libre",
+                "contribute reference software mail body": "Référencer un logiciel libre email body à modifier",
+                "contribute reference source code": "Référencer un code source",
+                "contribute reference source code mail subject": "Référencer un code source",
+                "contribute reference source code mail body": "Référencer un code source email body à modifier",
+                "contribute suggest": "Proposer un atelier ou un article",
+                "contribute suggest mail subject": "Proposer un atelier ou un article",
+                "contribute suggest mail body": "Proposer un atelier ou un article email body à modifier",
+            },
+            "Explore": {
+                "software selection title": "Quelques sélections de codes sources",
+                "software selection by adm": "Par adm.",
+                "software selection most recent": "Les plus récents",
+                "software selection most active": "Les plus actifs",
+                "stats title": "Quelques chiffres",
+                "stats forges": "Forges référencées",
+                "stats authorities": "Administrations",
+                "stats organisations": "Organisations",
+                "stats deposit": "Dépôts analysés",
             }
             /* spell-checker: enable */
         }
