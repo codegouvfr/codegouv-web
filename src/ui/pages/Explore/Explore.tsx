@@ -6,10 +6,10 @@ import { declareComponentKeys } from "i18nifty";
 import { fr } from "@codegouvfr/react-dsfr";
 import { useTranslation } from "ui/i18n";
 import { routes } from "ui/routes";
-import { TileColumns } from "../../shared/TileColumns";
+import { TileColumns } from "ui/shared/TileColumns";
 import { TileProps } from "@codegouvfr/react-dsfr/Tile";
-import { Contribute } from "../../shared/Contribute";
-import { SiteStats } from "../../shared/SiteStats";
+import { Contribute } from "ui/shared/Contribute";
+import { SiteStats } from "ui/shared/SiteStats";
 import SearchBar from "@codegouvfr/react-dsfr/SearchBar";
 
 type Props = {
@@ -17,14 +17,6 @@ type Props = {
 }
 
 export default function Explore (props: Props) {
-
-	const { filteredRepo } = useCoreState(selectors.catalog.filteredRepo)
-	const { filter } = useCoreState(selectors.catalog.filter)
-	const { isLoading } = useCoreState(selectors.catalog.isLoading)
-	const { repositoryCount } = useCoreState(selectors.catalog.repositoryCount)
-	const { repositoryStatistics } = useCoreState(selectors.catalog.repositoryStatistics)
-	const { languages } = useCoreState(selectors.catalog.languages)
-	const { administrations } = useCoreState(selectors.catalog.administrations)
     const {className, ...rest} = props
     assert<Equals<typeof rest, {}>>()
 
