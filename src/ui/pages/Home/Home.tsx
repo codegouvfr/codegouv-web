@@ -9,6 +9,7 @@ import Card from "@codegouvfr/react-dsfr/Card";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { SoftwareCard } from "./SoftwareCard";
 import Input from "@codegouvfr/react-dsfr/Input";
+import { SiteStats } from "ui/shared/SiteStats"
 
 type Props = {
 	className?: string;
@@ -182,27 +183,7 @@ export default function Home(props: Props) {
 				}
 			</section>
 			<section className={cx(classes.backgroundFullWidth, classes.section)}>
-				<div className={cx(fr.cx("fr-container"), classes.numbersListContainer)}>
-					<h1 className={cx(classes.whiteText, classes.numberTitle)}>
-						{t("codegouv numbers")}
-					</h1>
-					<div className={classes.grid3items}>
-						{codeGouvNumbers.map(item => (
-							<div key={item.label}>
-								<p
-									className={cx(
-										fr.cx("fr-display--sm"),
-										classes.whiteText,
-										classes.numberText
-									)}
-								>
-									{item.number}
-								</p>
-								<h4 className={classes.whiteText}>{item.label}</h4>
-							</div>
-						))}
-					</div>
-				</div>
+				<SiteStats stats={codeGouvNumbers} title={t("codegouv numbers")}  invertedColors />
 			</section>
 			<section className={cx(classes.section, fr.cx("fr-container"))}>
 				<h1>{t("help title")}</h1>
