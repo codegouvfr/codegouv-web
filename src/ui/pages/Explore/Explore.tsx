@@ -10,6 +10,7 @@ import { TileColumns } from "../../shared/TileColumns";
 import { TileProps } from "@codegouvfr/react-dsfr/Tile";
 import { Contribute } from "../../shared/Contribute";
 import { SiteStats } from "../../shared/SiteStats";
+import SearchBar from "@codegouvfr/react-dsfr/SearchBar";
 
 type Props = {
     className?: string
@@ -29,26 +30,19 @@ export default function Explore (props: Props) {
 
     const {t} = useTranslation({ Explore });
     const {cx, classes} = useStyles();
-    const { classes: classesCommon } = useStyles()
 
     const reposSelection: TileProps[] = [
         {
             title: t("software selection by adm"),
-            linkProps: {
-                href: "",
-            }
+            linkProps: {}
         },
         {
             title: t("software selection most recent"),
-            linkProps: {
-                href: "",
-            }
+            linkProps: {}
         },
         {
             title: t("software selection most active"),
-            linkProps: {
-                href: "",
-            }
+            linkProps: {}
         },
     ]
 
@@ -74,7 +68,14 @@ export default function Explore (props: Props) {
     return (
         <div className={className}>
             <section className={cx(fr.cx("fr-container"))}>
-                <TileColumns title={ t("software selection title") } tileList={reposSelection} />
+                <h2 className={classes.title}>{t("title", { repoCount: 15415, forgeCount: 42 })}</h2>
+                <div className={classes.searchBarContainer}>
+                    <SearchBar className={classes.searchBar}/>
+                    <a className={fr.cx("fr-btn")} {...routes.exploreCatalog().link}>{t("advanced mode")}</a>
+                </div>
+            </section>
+            <section className={classes.lightBlueBackground}>
+                <TileColumns className={fr.cx("fr-container")} title={ t("software selection title") } tileList={reposSelection} />
             </section>
             <section className={fr.cx("fr-container")}>
                 <Contribute />
@@ -87,12 +88,34 @@ export default function Explore (props: Props) {
 }
 
 const useStyles = makeStyles({name: {Explore}})(theme => ({
+    title: {
+        "&>span": {
+            color: theme.decisions.text.title.blueFrance.default
+        }
+    },
     backgroundFullWidth: {
         backgroundColor: theme.decisions.background.actionHigh.blueFrance.default
     },
+    searchBarContainer: {
+        display: "flex",
+        gap: fr.spacing("6v"),
+        alignItems: "flex-start"
+    },
+    searchBar: {
+        flex: 1
+    },
+    lightBlueBackground: {
+        backgroundColor: theme.decisions.background.alt.blueFrance.default
+    }
 }));
 
 export const {i18n} = declareComponentKeys<
+    | {
+        K: "title";
+        P: { repoCount: number, forgeCount: number }
+        R: JSX.Element;
+    }
+    | "advanced mode"
     | "software selection title"
     | "software selection by adm"
     | "software selection most recent"

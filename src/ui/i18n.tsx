@@ -85,6 +85,12 @@ const {
                 "contribute suggest mail body": "Propose a workshop or an article email body to change",
             },
             "Explore": {
+                "title": ({ repoCount, forgeCount }) => (
+                    <>
+                        <span>Search among </span>the { repoCount } source code repositories and the { forgeCount } administration forges.
+                    </>
+                ),
+                "advanced mode": "Advanced mode",
                 "software selection title": "Some source code selections",
                 "software selection by adm": "By adm.",
                 "software selection most recent": "The most recent",
@@ -151,6 +157,12 @@ const {
                 "contribute suggest mail body": "Proposer un atelier ou un article email body à modifier",
             },
             "Explore": {
+                "title": ({ repoCount, forgeCount }) => (
+                    <>
+                        <span>Effectuez une recherche </span>parmis les { repoCount } dépôts de code source et les { forgeCount } forges de l'administration.
+                    </>
+                ),
+                "advanced mode": "Mode avancé",
                 "software selection title": "Quelques sélections de codes sources",
                 "software selection by adm": "Par adm.",
                 "software selection most recent": "Les plus récents",

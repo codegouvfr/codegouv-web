@@ -144,15 +144,17 @@ export default function Home(props: Props) {
 
 	return (
 		<>
-			<section className={cx(classes.intro, fr.cx("fr-container"))}>
-				<div>
-					<h2>{t("title")}</h2>
-					<Button>{tCommons("find out more")}</Button>
-				</div>
-				<div className={classes.primaryEvents}>
-					{
-						events.map(event => <Card title={event.title} linkProps={event.link} imageUrl={event.imageUrl} horizontal /> )
-					}
+			<section className={classes.lightBlueBackground}>
+				<div className={cx(classes.intro, fr.cx("fr-container"))}>
+					<div>
+						<h2>{t("title")}</h2>
+						<Button>{tCommons("find out more")}</Button>
+					</div>
+					<div className={classes.primaryEvents}>
+						{
+							events.map(event => <Card title={event.title} linkProps={event.link} imageUrl={event.imageUrl} horizontal /> )
+						}
+					</div>
 				</div>
 			</section>
 			<section className={cx(classes.grid3items, fr.cx("fr-container"))}>
@@ -247,6 +249,9 @@ const useStyles = makeStyles()(theme => ({
 	titleContainer: {
 		marginBottom: fr.spacing("10v"),
 		display: "flex"
+	},
+	lightBlueBackground: {
+		backgroundColor: theme.decisions.background.alt.blueFrance.default
 	},
 	intro: {
 		display: "flex",

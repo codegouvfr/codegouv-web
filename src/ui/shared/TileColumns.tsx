@@ -18,12 +18,12 @@ export const TileColumns = (props: Props) => {
     const {classes} = useStyles({ tileCount: tileList.length });
 
     return (
-        <>
+        <div className={className}>
             {title && <h1>{ title }</h1>}
             <div className={classes.grid}>
                 { tileList.map(tile => <Tile {...tile} /> ) }
             </div>
-        </>
+        </div>
     )
 }
 
