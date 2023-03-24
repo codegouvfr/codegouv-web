@@ -28,6 +28,8 @@ const {
     | typeof import("ui/shared/Header").i18n
     | typeof import("ui/shared/Contribute").i18n
     | typeof import("ui/pages/Explore/Explore").i18n
+    | typeof import("ui/shared/MainSearch").i18n
+    | typeof import("ui/pages/ExploreCatalog/ExploreCatalog").i18n
 >()(
     { languages, fallbackLanguage },
     {
@@ -85,11 +87,6 @@ const {
                 "contribute suggest mail body": "Propose a workshop or an article email body to change",
             },
             "Explore": {
-                "title": ({ repoCount, forgeCount }) => (
-                    <>
-                        <span>Search among </span>the { repoCount } source code repositories and the { forgeCount } administration forges.
-                    </>
-                ),
                 "advanced mode": "Advanced mode",
                 "software selection title": "Some source code selections",
                 "software selection by adm": "By adm.",
@@ -100,6 +97,17 @@ const {
                 "stats authorities": "Authorities",
                 "stats organisations": "Organizations",
                 "stats deposit": "Analyzed deposits",
+            },
+            "MainSearch": {
+                "title": ({ repoCount, forgeCount }) => (
+                    <>
+                        <span>Search among </span>the { repoCount } source code repositories and the { forgeCount } administration forges.
+                    </>
+                ),
+            },
+            "ExploreCatalog": {
+                "breadcrumb explore": "Explore!",
+                "breadcrumb current page": "All source codes"
             }
         },
         "fr": {
@@ -157,11 +165,6 @@ const {
                 "contribute suggest mail body": "Proposer un atelier ou un article email body à modifier",
             },
             "Explore": {
-                "title": ({ repoCount, forgeCount }) => (
-                    <>
-                        <span>Effectuez une recherche </span>parmis les { repoCount } dépôts de code source et les { forgeCount } forges de l'administration.
-                    </>
-                ),
                 "advanced mode": "Mode avancé",
                 "software selection title": "Quelques sélections de codes sources",
                 "software selection by adm": "Par adm.",
@@ -172,6 +175,17 @@ const {
                 "stats authorities": "Administrations",
                 "stats organisations": "Organisations",
                 "stats deposit": "Dépôts analysés",
+            },
+            "MainSearch": {
+                "title": ({ repoCount, forgeCount }) => (
+                    <>
+                        <span>Effectuez une recherche </span>parmis les { repoCount } dépôts de code source et les { forgeCount } forges de l'administration.
+                    </>
+                ),
+            },
+            "ExploreCatalog": {
+                "breadcrumb explore": "Explorer !",
+                "breadcrumb current page": "Tous les codes sources"
             }
             /* spell-checker: enable */
         }

@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React from "react";
 import { assert } from "tsafe/assert";
 import type { Equals } from "tsafe";
 import { makeStyles } from "tss-react/dsfr";
@@ -10,7 +10,7 @@ import { TileColumns } from "ui/shared/TileColumns";
 import { TileProps } from "@codegouvfr/react-dsfr/Tile";
 import { Contribute } from "ui/shared/Contribute";
 import { SiteStats } from "ui/shared/SiteStats";
-import SearchBar from "@codegouvfr/react-dsfr/SearchBar";
+import { MainSearch } from "../../shared/MainSearch";
 
 type Props = {
     className?: string
@@ -21,7 +21,7 @@ export default function Explore (props: Props) {
     assert<Equals<typeof rest, {}>>()
 
     const {t} = useTranslation({ Explore });
-    const {cx, classes} = useStyles();
+    const {classes} = useStyles();
 
     const reposSelection: TileProps[] = [
         {
@@ -59,12 +59,10 @@ export default function Explore (props: Props) {
 
     return (
         <div className={className}>
-            <section className={cx(fr.cx("fr-container"))}>
-                <h2 className={classes.title}>{t("title", { repoCount: 15415, forgeCount: 42 })}</h2>
-                <div className={classes.searchBarContainer}>
-                    <SearchBar className={classes.searchBar}/>
-                    <a className={fr.cx("fr-btn")} {...routes.exploreCatalog().link}>{t("advanced mode")}</a>
-                </div>
+            <section className={fr.cx("fr-container")}>
+                <MainSearch
+                   altButton={<a className={fr.cx("fr-btn")} {...routes.exploreCatalog().link}>{t("advanced mode")}</a>}
+                />
             </section>
             <section className={classes.lightBlueBackground}>
                 <TileColumns className={fr.cx("fr-container")} title={ t("software selection title") } tileList={reposSelection} />
@@ -102,11 +100,6 @@ const useStyles = makeStyles({name: {Explore}})(theme => ({
 }));
 
 export const {i18n} = declareComponentKeys<
-    | {
-        K: "title";
-        P: { repoCount: number, forgeCount: number }
-        R: JSX.Element;
-    }
     | "advanced mode"
     | "software selection title"
     | "software selection by adm"
