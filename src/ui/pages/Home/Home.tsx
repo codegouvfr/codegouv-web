@@ -9,6 +9,9 @@ import Card from "@codegouvfr/react-dsfr/Card";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { SoftwareCard } from "./SoftwareCard";
 import Input from "@codegouvfr/react-dsfr/Input";
+import { SiteStats } from "ui/shared/SiteStats"
+import { TileColumns } from "../../shared/TileColumns";
+import { Contribute } from "../../shared/Contribute";
 
 type Props = {
 	className?: string;
@@ -100,7 +103,7 @@ export default function Home(props: Props) {
 		},
 	]
 
-	const codeGouvNumbers = [
+	const codeGouvStats = [
 		{
 			label: t("numbers services"),
 			number: 7
@@ -118,46 +121,22 @@ export default function Home(props: Props) {
 	const helpList = [
 		{
 			title: t("help guides"),
-			link:{
+			linkProps:{
 				href: "",
 				onClick: () => {}
 			},
 		},
 		{
 			title: t("help faq"),
-			link:{
+			linkProps:{
 				href: "",
 				onClick: () => {}
 			},
 		},
 		{
 			title: t("help forum"),
-			link:{
+			linkProps:{
 				href: "",
-				onClick: () => {}
-			},
-		}
-	]
-
-	const contributeList = [
-		{
-			title: t("contribute reference software"),
-			link:{
-				href: `mailto:contact@code.gouv.fr?subject=${t("contribute reference software mail subject")}&body=${t("contribute reference software mail body")}`,
-				onClick: () => {}
-			},
-		},
-		{
-			title: t("contribute reference source code"),
-			link:{
-				href: `mailto:contact@code.gouv.fr?subject=${t("contribute reference source code mail subject")}&body=${t("contribute reference source code mail body")}`,
-				onClick: () => {}
-			},
-		},
-		{
-			title: t("contribute suggest"),
-			link:{
-				href: `mailto:contact@code.gouv.fr?subject=${t("contribute suggest mail subject")}&body=${t("contribute suggest mail body")}`,
 				onClick: () => {}
 			},
 		}
@@ -165,60 +144,32 @@ export default function Home(props: Props) {
 
 	return (
 		<>
-			<section className={cx(classes.section, classes.intro, fr.cx("fr-container"))}>
-				<div>
-					<h2>{t("title")}</h2>
-					<Button>{tCommons("find out more")}</Button>
-				</div>
-				<div className={classes.primaryEvents}>
-					{
-						events.map(event => <Card title={event.title} linkProps={event.link} imageUrl={event.imageUrl} horizontal /> )
-					}
+			<section className={classes.lightBlueBackground}>
+				<div className={cx(classes.intro, fr.cx("fr-container"))}>
+					<div>
+						<h2>{t("title")}</h2>
+						<Button>{tCommons("find out more")}</Button>
+					</div>
+					<div className={classes.primaryEvents}>
+						{
+							events.map(event => <Card title={event.title} linkProps={event.link} imageUrl={event.imageUrl} horizontal /> )
+						}
+					</div>
 				</div>
 			</section>
-			<section className={cx(classes.section, classes.grid3items, fr.cx("fr-container"))}>
+			<section className={cx(classes.grid3items, fr.cx("fr-container"))}>
 				{
 					softwareSelection.map(software => <SoftwareCard softwareName={software.name} softwareDescription={software.description} logoUrl={software.logo} softwareLinks={software.links} /> )
 				}
 			</section>
-			<section className={cx(classes.backgroundFullWidth, classes.section)}>
-				<div className={cx(fr.cx("fr-container"), classes.numbersListContainer)}>
-					<h1 className={cx(classes.whiteText, classes.numberTitle)}>
-						{t("codegouv numbers")}
-					</h1>
-					<div className={classes.grid3items}>
-						{codeGouvNumbers.map(item => (
-							<div key={item.label}>
-								<p
-									className={cx(
-										fr.cx("fr-display--sm"),
-										classes.whiteText,
-										classes.numberText
-									)}
-								>
-									{item.number}
-								</p>
-								<h4 className={classes.whiteText}>{item.label}</h4>
-							</div>
-						))}
-					</div>
-				</div>
+			<section className={classes.backgroundFullWidth}>
+				<SiteStats stats={codeGouvStats} title={t("codegouv numbers")}  invertedColors />
 			</section>
-			<section className={cx(classes.section, fr.cx("fr-container"))}>
-				<h1>{t("help title")}</h1>
-				<div className={classes.grid3items}>
-					{
-						helpList.map(item => <Tile title={item.title} linkProps={item.link} />)
-					}
-				</div>
+			<section className={fr.cx("fr-container")}>
+				<TileColumns tileList={helpList} title={t("help title")}/>
 			</section>
-			<section className={cx(classes.section, fr.cx("fr-container"))}>
-				<h1>{t("contribute title")}</h1>
-				<div className={classes.grid3items}>
-					{
-						contributeList.map(item => <Tile title={item.title} linkProps={item.link} />)
-					}
-				</div>
+			<section className={fr.cx("fr-container")}>
+				<Contribute />
 			</section>
 
 
@@ -286,16 +237,6 @@ export default function Home(props: Props) {
 	);
 }
 const useStyles = makeStyles()(theme => ({
-	section: {
-		...fr.spacing("padding", {
-			topBottom: "30v"
-		}),
-		[fr.breakpoints.down("md")]: {
-			...fr.spacing("padding", {
-				topBottom: "20v"
-			})
-		}
-	},
 	backgroundFullWidth: {
 		backgroundColor: theme.decisions.background.actionHigh.blueFrance.default
 	},
@@ -309,6 +250,9 @@ const useStyles = makeStyles()(theme => ({
 		marginBottom: fr.spacing("10v"),
 		display: "flex"
 	},
+	lightBlueBackground: {
+		backgroundColor: theme.decisions.background.alt.blueFrance.default
+	},
 	intro: {
 		display: "flex",
 		gap: fr.spacing("6v"),
@@ -321,9 +265,6 @@ const useStyles = makeStyles()(theme => ({
 		flexDirection: "column",
 		gap: fr.spacing("8v")
 	},
-	numbersListContainer: {
-		textAlign: "center"
-	},
 	grid3items: {
 		display: "grid",
 		gridTemplateColumns: "repeat(3, 1fr)",
@@ -332,15 +273,6 @@ const useStyles = makeStyles()(theme => ({
 			gridTemplateColumns: `repeat(1, 1fr)`,
 			rowGap: fr.spacing("4v")
 		},
-	},
-	whiteText: {
-		color: theme.decisions.text.inverted.grey.default
-	},
-	numberTitle: {
-		marginBottom: fr.spacing("20v")
-	},
-	numberText: {
-		marginBottom: fr.spacing("1v")
 	},
 	shareGroup: {
 		order: "initial",
@@ -375,16 +307,6 @@ export const { i18n } = declareComponentKeys<
 	| "help guides"
 	| "help faq"
 	| "help forum"
-	| "contribute title"
-	| "contribute reference software"
-	| "contribute reference software mail subject"
-	| "contribute reference software mail body"
-	| "contribute reference source code"
-	| "contribute reference source code mail subject"
-	| "contribute reference source code mail body"
-	| "contribute suggest"
-	| "contribute suggest mail subject"
-	| "contribute suggest mail body"
 	| "find us"
 	| "contact us"
 	| "contact by mail"

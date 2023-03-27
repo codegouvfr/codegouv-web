@@ -9,6 +9,7 @@ import { objectKeys } from "tsafe/objectKeys";
 import { evtLang } from "ui/i18n";
 import { Header } from "./shared/Header";
 import { declareComponentKeys } from "i18nifty";
+import { GlobalStylesCodeGouv } from "./shared/GlobalStyles";
 
 const homeLinkProps =
   { ...routes.home().link, "title": "Accueil - Nom de l’entité (ministère, secrétariat d‘état, gouvernement)" };
@@ -38,6 +39,7 @@ function ContextualizedApp() {
     return (
         <div className={cx(classes.root)}>
             <Suspense>
+                <GlobalStylesCodeGouv />
                 <Header />
                 <main className={classes.main}>
 
@@ -76,14 +78,14 @@ function ContextualizedApp() {
 const useStyles = makeStyles({
     "name": { App }
 })({
-    "root": {
-        "display": "flex",
-        "flexDirection": "column",
-        "height": "100vh"
+    root: {
+        display: "flex",
+        flexDirection: "column",
+        height: "100vh"
     },
-    "main": {
-        "flex": 1
-    }
+    main: {
+        flex: 1
+    },
 });
 
 export const { i18n } = declareComponentKeys<
