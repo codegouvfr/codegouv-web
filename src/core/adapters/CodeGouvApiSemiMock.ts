@@ -12,7 +12,7 @@ export function createCodeGouvApiSemiMock(): CodeGouvApi {
                 description: repository.d || '',
                 is_experimental: repository.a || false,
                 language: repository.l || '',
-                last_updated: repository.u || 0,
+                last_updated: new Date(repository.u).getTime() || 0,
                 latest_tag: '',
                 license: repository.li || '',
                 name: repository.n || '',
