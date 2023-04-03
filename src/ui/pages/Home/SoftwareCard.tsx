@@ -53,6 +53,7 @@ export const SoftwareCard = memo((props: Props) => {
                 {
                     softwareLinks.map(link => (
                         <a
+                            key={link.label}
                             {...link.link}
                             className={fr.cx(
                                 "fr-link",

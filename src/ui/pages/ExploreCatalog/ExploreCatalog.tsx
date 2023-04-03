@@ -1,21 +1,19 @@
 
 import { selectors, useCoreFunctions, useCoreState } from "core";
 import CircularProgress from '@mui/material/CircularProgress';
-import { Select } from "@codegouvfr/react-dsfr/Select"
-import { Button } from "@codegouvfr/react-dsfr/Button";
 import type { PageRoute } from "./route";
 import { fr } from "@codegouvfr/react-dsfr";
-import { MainSearch } from "../../shared/MainSearch";
-import { routes } from "../../routes";
-import React from "react";
+import React, {useEffect, useTransition} from "react";
 import { assert } from "tsafe/assert";
 import { Equals } from "tsafe";
 import { useTranslation } from "../../i18n";
 import { makeStyles } from "tss-react/dsfr";
 import Explore from "../Explore/Explore";
-import Breadcrumb from "@codegouvfr/react-dsfr/Breadcrumb";
 import { declareComponentKeys } from "i18nifty";
-import { Header } from "../../shared/Header";
+import {Search} from "./Search";
+import { useConstCallback } from "powerhooks/useConstCallback";
+import { Props as SearchProps } from "ui/pages/ExploreCatalog/Search"
+import { routes } from "ui/routes"
 
 type Props = {
 	className?: string;
@@ -28,66 +26,93 @@ export default function ExploreCatalog(props: Props) {
 	assert<Equals<typeof rest, {}>>()
 
 	const {t} = useTranslation({ ExploreCatalog });
-	
-	const { filteredRepo } = useCoreState(selectors.catalog.filteredRepo)
-	const { filter } = useCoreState(selectors.catalog.filter)
-	const { isLoading } = useCoreState(selectors.catalog.isLoading)
-	const { repositoryCount } = useCoreState(selectors.catalog.repositoryCount)
-	const { repositoryStatistics } = useCoreState(selectors.catalog.repositoryStatistics)
-	const { languages } = useCoreState(selectors.catalog.languages)
-	const { administrations } = useCoreState(selectors.catalog.administrations)
+	const {cx, classes} = useStyles();
+
+	const [, startTransition] = useTransition();
 
 	const { catalog } = useCoreFunctions()
+	const { filteredRepositories } = useCoreState(selectors.catalog.filteredRepositories)
+	const { isLoading } = useCoreState(selectors.catalog.isLoading)
+
+	const { functionFilterOptions } = useCoreState(selectors.catalog.functionFilterOptions)
+	const { languagesFilterOptions } = useCoreState(selectors.catalog.languagesFilterOptions)
+
+	const onFunctionsChange = useConstCallback<
+		SearchProps["onFunctionsChange"]
+	>(functions => {
+			return startTransition(() =>
+				routes
+					.exploreCatalog({
+						...route.params,
+						functions
+					})
+					.replace()
+			)
+		}
+	);
+
+	useEffect(() => {
+		catalog.updateFilter({
+			key: "selectedFunctions",
+			value: route.params.functions
+		});
+	}, [route.params.functions]);
+
+	const onLanguagesChange = useConstCallback<
+		SearchProps["onLanguagesChange"]
+	>(languages => {
+			return startTransition(() =>
+				routes
+					.exploreCatalog({
+						...route.params,
+						languages
+					})
+					.replace()
+			)
+		}
+	);
+
+	useEffect(() => {
+		catalog.updateFilter({
+			key: "selectedLanguages",
+			value: route.params.languages
+		});
+	}, [route.params.languages]);
 
 	if (isLoading) {
 		return <CircularProgress />
 	}
 
-	const breadcrumbSegments = [
-		{
-			label: t("breadcrumb explore"),
-			linkProps: routes.explore().link
-		},
-	]
-
 	return (
 		<div>
 			<section className={fr.cx("fr-container")}>
-				<MainSearch
-					header={
-						<Breadcrumb segments={breadcrumbSegments} currentPageLabel={t("breadcrumb current page")} />
-					}
+				<Search
+					selectedFunctions={route.params.functions}
+					functionsOptions={functionFilterOptions}
+					onFunctionsChange={onFunctionsChange}
+					selectedLanguages={route.params.languages}
+					languagesOptions={languagesFilterOptions}
+					onLanguagesChange={onLanguagesChange}
 				/>
 			</section>
-{/*			<p>{repositoryStatistics.repository_count} repositories total</p>
-			<p>Languages are {languages.join(',')}</p>
-			<p>Administrations are {administrations.join(',')}</p>
-			<Select
-				label="Label"
-				nativeSelectProps={{
-					"onChange": event => catalog.changeFilter({
-						"filter": event.target.value || undefined as any
-					}),
-					"value": filter
-				}}
-			>
-				<option value="">Aucun filtre</option>
-				<option value="github">GitHub</option>
-				<option value="gitlab">GitLab</option>
-			</Select>
-
-			<p>Repo count in current filter {repositoryCount.countInCurrentFilter}</p>
-			<ul>
-				{filteredRepo.map(repo => <li key={repo.url}>{repo.url}</li>)}
-			</ul>*/}
+			<section className={fr.cx("fr-container")}>
+				<div className={classes.filteredList}>
+					<p>Number of result : {filteredRepositories.length}</p>
+					<ul>
+						{filteredRepositories.map(repo => <li key={repo.name}>{repo.url}</li>)}
+					</ul>
+				</div>
+			</section>
 		</div>
 	);
 }
 
 const useStyles = makeStyles({name: {Explore}})(theme => ({
+	filteredList: {
+		backgroundColor: "aqua",
+	},
 }));
 
 export const { i18n } = declareComponentKeys<
-	| "breadcrumb explore"
-	| "breadcrumb current page"
+	| "test"
 >()({ ExploreCatalog });

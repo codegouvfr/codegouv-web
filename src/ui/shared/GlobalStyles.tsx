@@ -10,7 +10,7 @@ export function GlobalStylesCodeGouv() {
         <>
             <GlobalStyles
                 styles={{
-                    section: {
+                    "section:not(.fr-accordion)": {
                         ...fr.spacing("padding", {
                             topBottom: "30v"
                         }),

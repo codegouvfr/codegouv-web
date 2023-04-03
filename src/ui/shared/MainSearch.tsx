@@ -6,6 +6,7 @@ import { declareComponentKeys } from "i18nifty";
 import { fr } from "@codegouvfr/react-dsfr";
 import { useTranslation } from "ui/i18n";
 import SearchBar from "@codegouvfr/react-dsfr/SearchBar";
+import { selectors, useCoreState } from "../../core";
 
 type Props = {
     className?: string
@@ -21,10 +22,12 @@ export const MainSearch = (props: Props) => {
     const {t} = useTranslation({ MainSearch });
     const {classes} = useStyles();
 
+    const { repositoryStatistics } = useCoreState(selectors.catalog.repositoryStatistics)
+
     return (
         <div className={className}>
             { header }
-            <h2 className={classes.title}>{t("title", { repoCount: 15415, forgeCount: 42 })}</h2>
+            <h2 className={classes.title}>{t("title", { repoCount: repositoryStatistics.repository_count, forgeCount: repositoryStatistics.forge_count })}</h2>
             <div className={classes.searchBarContainer}>
                 <SearchBar className={classes.searchBar}/>
                 { altButton }

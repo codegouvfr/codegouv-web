@@ -152,14 +152,14 @@ export default function Home(props: Props) {
 					</div>
 					<div className={classes.primaryEvents}>
 						{
-							events.map(event => <Card title={event.title} linkProps={event.link} imageUrl={event.imageUrl} horizontal /> )
+							events.map(event => <Card key={event.title} title={event.title} linkProps={event.link} imageUrl={event.imageUrl} horizontal /> )
 						}
 					</div>
 				</div>
 			</section>
 			<section className={cx(classes.grid3items, fr.cx("fr-container"))}>
 				{
-					softwareSelection.map(software => <SoftwareCard softwareName={software.name} softwareDescription={software.description} logoUrl={software.logo} softwareLinks={software.links} /> )
+					softwareSelection.map(software => <SoftwareCard key={software.name} softwareName={software.name} softwareDescription={software.description} logoUrl={software.logo} softwareLinks={software.links} /> )
 				}
 			</section>
 			<section className={classes.backgroundFullWidth}>

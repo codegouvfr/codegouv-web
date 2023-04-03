@@ -30,6 +30,7 @@ const {
     | typeof import("ui/pages/Explore/Explore").i18n
     | typeof import("ui/shared/MainSearch").i18n
     | typeof import("ui/pages/ExploreCatalog/ExploreCatalog").i18n
+    | typeof import("ui/pages/ExploreCatalog/Search").i18n
 >()(
     { languages, fallbackLanguage },
     {
@@ -106,8 +107,12 @@ const {
                 ),
             },
             "ExploreCatalog": {
+                "test": "test"
+            },
+            "Search": {
                 "breadcrumb explore": "Explore!",
-                "breadcrumb current page": "All source codes"
+                "breadcrumb current page": "All source codes",
+                "filters": "Filters"
             }
         },
         "fr": {
@@ -184,8 +189,12 @@ const {
                 ),
             },
             "ExploreCatalog": {
+                "test": "test"
+            },
+            "Search": {
                 "breadcrumb explore": "Explorer !",
-                "breadcrumb current page": "Tous les codes sources"
+                "breadcrumb current page": "Tous les codes sources",
+                "filters": "Filtres"
             }
             /* spell-checker: enable */
         }

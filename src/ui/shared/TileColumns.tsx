@@ -21,7 +21,7 @@ export const TileColumns = (props: Props) => {
         <div className={className}>
             {title && <h1>{ title }</h1>}
             <div className={classes.grid}>
-                { tileList.map(tile => <Tile {...tile} /> ) }
+                { tileList.map(tile => <Tile key={tile.title as string} {...tile} /> ) }
             </div>
         </div>
     )

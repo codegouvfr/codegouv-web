@@ -47,7 +47,7 @@ export const Contribute = (props: Props) => {
             <h1>{t("contribute title")}</h1>
             <div className={classes.grid}>
                 {
-                    contributeList.map(item => <Tile title={item.title} linkProps={item.link} />)
+                    contributeList.map(item => <Tile key={item.title} title={item.title} linkProps={item.link} />)
                 }
             </div>
         </div>
