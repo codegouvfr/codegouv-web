@@ -4,8 +4,16 @@ export const routeDefs = {
     "exploreCatalog": defineRoute(
         {
             "search": param.query.optional.string.default(""),
+            "administrations": param.query.optional.array.string.default([]),
+            "categories": param.query.optional.array.string.default([]),
+            "dependencies": param.query.optional.array.string.default([]),
             "functions": param.query.optional.array.string.default([]),
+            "vitality": param.query.optional.array.number.default([]),
             "languages": param.query.optional.array.string.default([]),
+            "licences": param.query.optional.array.string.default([]),
+            "devStatus": param.query.optional.array.string.default([]),
+            "organisations": param.query.optional.array.string.default([]),
+            "isExperimentalReposHidden": param.query.optional.boolean.default(false),
         },
         () => "/public/repos"
     )

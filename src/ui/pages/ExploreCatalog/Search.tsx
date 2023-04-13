@@ -19,30 +19,34 @@ export type Props = {
     className?: string
     search?: string
     onSearchChange?: (search: string) => void
-    administrations?: string[]
-    onAdministrationsChange?: (administrations: string[]) => void
-    selectedAdministrations?: string[]
-    categories?: string[]
-    onCategoriesChange?: (categories: string[]) => void
-    selectedCategories?: string[]
-    dependencies?: string[]
-    onDependenciesChange?: (dependencies: string[]) => void
-    selectedDependencies?: string[]
+    administrationsOptions: string[]
+    selectedAdministrations: string[]
+    onAdministrationsChange: (administrations: string[]) => void
+    categoriesOptions: string[]
+    selectedCategories: string[]
+    onCategoriesChange: (categories: string[]) => void
+    dependenciesOptions: string[]
+    onDependenciesChange: (dependencies: string[]) => void
+    selectedDependencies: string[]
     functionsOptions: string[]
     selectedFunctions: string[]
     onFunctionsChange: (functions: string[]) => void
+    selectedVitality: number[]
+    onVitalityChange: (range: number[]) => void
     languagesOptions: string[]
     selectedLanguages: string[]
     onLanguagesChange: (languages: string[]) => void
-    licences?: string[]
-    onLicencesChange?: (licences: string[]) => void
-    selectedLicences?: string[]
-    devStatus?: string[]
-    onDevStatusChange?: (devStatus: string[]) => void
-    selectedDevStatus?: string[]
-    organisationsOptions?: string[]
-    organisations?: string[]
-    onOrganisationsChange?: (organisation: string[]) => void
+    licencesOptions: string[]
+    onLicencesChange: (licences: string[]) => void
+    selectedLicences: string[]
+    devStatusOptions: string[]
+    onDevStatusChange: (licences: string[]) => void
+    selectedDevStatus: string[]
+    organisationsOptions: string[]
+    onOrganisationsChange: (organisation: string[]) => void
+    selectedOrganisations: string[]
+    isExperimentalReposHidden: boolean,
+    onIsExperimentalReposHidden: (checked: boolean) => void
 }
 
 export const Search = (props: Props) => {
@@ -51,30 +55,34 @@ export const Search = (props: Props) => {
         className,
         search,
         onSearchChange,
-        administrations,
-        onAdministrationsChange,
+        administrationsOptions,
         selectedAdministrations,
-        categories,
-        onCategoriesChange,
+        onAdministrationsChange,
+        categoriesOptions,
         selectedCategories,
-        dependencies,
+        onCategoriesChange,
+        dependenciesOptions,
         onDependenciesChange,
         selectedDependencies,
         selectedFunctions,
         functionsOptions,
         onFunctionsChange,
+        selectedVitality,
+        onVitalityChange,
         languagesOptions,
         selectedLanguages,
         onLanguagesChange,
-        licences,
+        licencesOptions,
         onLicencesChange,
         selectedLicences,
-        devStatus,
+        devStatusOptions,
         onDevStatusChange,
         selectedDevStatus,
-        organisations,
         organisationsOptions,
         onOrganisationsChange,
+        selectedOrganisations,
+        isExperimentalReposHidden,
+        onIsExperimentalReposHidden,
         ...rest} = props
     assert<Equals<typeof rest, {}>>()
 
@@ -90,10 +98,6 @@ export const Search = (props: Props) => {
             linkProps: routes.explore().link
         },
     ]
-
-
-    /*TODO : must be passed in props and handled in core*/
-    const [vitality, setVitality] = useState<number[]>([0, 100])
 
     {/*Todo : className={cx(fr.cx("fr-select"), classes.multiSelect)} */}
 
@@ -120,79 +124,73 @@ export const Search = (props: Props) => {
             </div>
             <div className={cx("fr-collapse", classes.filters)} id="accordion-filters">
                 <div className={cx(classes.filtersWrapper)}>
-{/*                    <MultiSelect
+                    <MultiSelect
                         id="administrations"
                         label="administrations"
-                        options={administrations}
+                        options={administrationsOptions}
                         selectedValues={selectedAdministrations}
-                        onChange={selectedOptions => onAdministrationsChange(selectedOptions)}
-                    />*/}
-                   {/* <MultiSelect
+                        onChange={onAdministrationsChange}
+                    />
+                    <MultiSelect
                         id="Catégories"
                         label="Catégories"
-                        options={categories}
+                        options={categoriesOptions}
                         selectedValues={selectedCategories}
-                        onChange={selectedOptions => setSelectedCategories(selectedOptions)}
+                        onChange={onCategoriesChange}
                     />
                     <div className={classes.filterSelectGroup}>
-
                         <label>Dépendances</label>
                         <AutocompleteInputMultiple
-                            id={"dependencies"}
-                            options={dependencies}
+                            id={"Dépendances"}
+                            options={dependenciesOptions}
+                            onChange={onDependenciesChange}
                         />
-                    </div>*/}
+                    </div>
                     <MultiSelect
                         id="Fonctions"
                         label="Fonctions"
                         options={functionsOptions}
                         selectedValues={selectedFunctions}
-                        onChange={selectedOptions => onFunctionsChange(selectedOptions)}
+                        onChange={onFunctionsChange}
                     />
+                    <div className={classes.filterSelectGroup}>
+                        <label>Indice de vitalité</label>
+                        <Slider
+                            value={selectedVitality}
+                            onChange={(_event, newValue) => onVitalityChange(newValue as number[])}
+                            valueLabelDisplay="auto"
+                        />
+                    </div>
                     <MultiSelect
                         id="Languages"
                         label="Languages"
                         options={languagesOptions}
                         selectedValues={selectedLanguages}
-                        onChange={selectedOptions => onLanguagesChange(selectedOptions)}
-                    />
-                   {/* <MultiSelect
-                        id="Languages"
-                        label="Languages"
-                        options={languages}
-                        selectedValues={selectedLanguages}
-                        onChange={selectedOptions => setSelectedLanguages(selectedOptions)}
+                        onChange={onLanguagesChange}
                     />
                     <MultiSelect
                         id="Licences"
                         label="Licences"
-                        options={licences}
+                        options={licencesOptions}
                         selectedValues={selectedLicences}
-                        onChange={selectedOptions => setSelectedLicences(selectedOptions)}
+                        onChange={onLicencesChange}
                     />
                     <MultiSelect
                         id="Status du développement"
                         label="Status du développement"
-                        options={devStatus}
+                        options={devStatusOptions}
                         selectedValues={selectedDevStatus}
-                        onChange={selectedOptions => setSelectedDevStatus(selectedOptions)}
-                    />*/}
-{/*                    <div className={classes.filterSelectGroup}>
+                        onChange={onDevStatusChange}
+                    />
+                    <div className={classes.filterSelectGroup}>
                         <label>Organisation</label>
                         <AutocompleteInputMultiple
                             id={"Organisation"}
-                            options={organisations}
-                        />
-                    </div>*/}
-{/*                    <div className={classes.filterSelectGroup}>
-                        <label>Indice de vitalité</label>
-                        <Slider
-                            value={vitality}
-                            onChange={(_event, newValue) => setVitality(newValue as number[])}
-                            valueLabelDisplay="auto"
+                            options={organisationsOptions}
+                            onChange={onOrganisationsChange}
                         />
                     </div>
-                    <ToggleSwitch label="Masquer les dépots expérimentaux" inputTitle="Masquer les dépots expérimentaux" />*/}
+                    <ToggleSwitch checked={isExperimentalReposHidden} onChange={onIsExperimentalReposHidden} label="Masquer les dépots expérimentaux" inputTitle="Masquer les dépots expérimentaux" />
                 </div>
             </div>
         </div>

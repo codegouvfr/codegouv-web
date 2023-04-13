@@ -13,6 +13,7 @@ const LISTBOX_PADDING = 8; // px
 type Props = {
     id: string
     options: string[]
+    onChange: (options: string[]) => void;
 }
 
 function renderRow(props: ListChildComponentProps) {
@@ -126,7 +127,7 @@ const StyledPopper = styled(Popper)({
 
 export function AutocompleteInputMultiple(props: Props) {
 
-    const { options, } = props
+    const { options, onChange} = props
     return (
         <Autocomplete
             id="virtualize-demo"
@@ -142,6 +143,9 @@ export function AutocompleteInputMultiple(props: Props) {
             renderOption={(props, option, state) =>
                 [props, option, state.index] as React.ReactNode
             }
+            onChange={(_event, values) => {
+                onChange(values)
+            }}
         />
     );
 }
