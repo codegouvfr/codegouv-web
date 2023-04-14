@@ -147,9 +147,9 @@ export const privateThunks = {
 				const [dispatch, , { codeGouvApi }] = args;
 
 				const repositories = await mockRepositories;
-				//const repositories = await codeGouvApi.getRepositories();
+				/*const repositories = await codeGouvApi.getRepositories();*/
 				const repositoryStatistics = await codeGouvApi.getRepositoryStatistics();
-				//const languages = await codeGouvApi.getLanguages();
+				/*const languages = await codeGouvApi.getLanguages();*/
 				const languages = await mockLanguages;
 				const administrations = await codeGouvApi.getAdministrations();
 				const licences = await codeGouvApi.getLicences()
@@ -265,17 +265,9 @@ export const selectors = (() => {
 		return state.selectedOrganisations
 	})
 
-	const organisationNames = createSelector(sliceState, state => {
-		return state.organisationNames
-	})
-
 	const organisations = createSelector(sliceState, state => {
 		return state.organisations
 	})
-
-	const dependenciesNames = createSelector(sliceState, state => {
-		return uniqBy(state.dependencies, "name").map(dependency => dependency.name)
-	});
 
 	const dependencies = createSelector(sliceState, state => {
 		return state.dependencies
@@ -344,9 +336,6 @@ export const selectors = (() => {
 			organisations,
 			dependencies,
 		) => {
-
-			console.log(isExperimentalReposHidden)
-
 			// TODO: return pipe
 			// TODO: change pipe by chain ?
 			const repositories: Repository[] = pipe(
@@ -361,8 +350,6 @@ export const selectors = (() => {
 				(repos: Repository[]) => selectedDevStatus.length ? repos.filter(repo => selectedDevStatus.some(selectedStatus => repo.status.includes(selectedStatus))) : repos,
 				(repos: Repository[]) => selectedOrganisations.length ? repos.filter(repo => selectedOrganisations.some(selectedOrganisation => repo.organisation_name.includes(selectedOrganisation))) : repos,
 			)(internalRepositories)
-
-			console.log(repositories)
 
 			return repositories
 		}
@@ -397,7 +384,7 @@ export const selectors = (() => {
 		return state.licences;
 	});
 
-	const devStatusFilterOptions = createSelector(sliceState, state => {
+	const devStatusFilterOptions = createSelector(sliceState, _state => {
 		const options: State.DevStatus[] = ["Beta", "RC", "Concept", "Alpha", "Stable"]
 
 		return options;

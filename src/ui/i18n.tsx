@@ -31,6 +31,7 @@ const {
     | typeof import("ui/shared/MainSearch").i18n
     | typeof import("ui/pages/ExploreCatalog/ExploreCatalog").i18n
     | typeof import("ui/pages/ExploreCatalog/Search").i18n
+    | typeof import("ui/pages/ExploreCatalog/RepoCard").i18n
 >()(
     { languages, fallbackLanguage },
     {
@@ -107,12 +108,17 @@ const {
                 ),
             },
             "ExploreCatalog": {
-                "test": "test"
+                "search results": ({ count }) =>
+                    `${count} repositor${count > 1 ? "ies" : "y"}`,
+                "sort by": "Sort by",
             },
             "Search": {
                 "breadcrumb explore": "Explore!",
                 "breadcrumb current page": "All source codes",
                 "filters": "Filters"
+            },
+            "RepoCard": {
+                "latest update": ({ fromNowText }) => `Latest update:${fromNowText}`,
             }
         },
         "fr": {
@@ -189,12 +195,17 @@ const {
                 ),
             },
             "ExploreCatalog": {
-                "test": "test"
+                "search results": ({ count }) =>
+                    `${count} dépot${count > 1 ? "s" : ""} de code source`,
+                "sort by": "Trier par",
             },
             "Search": {
                 "breadcrumb explore": "Explorer !",
                 "breadcrumb current page": "Tous les codes sources",
                 "filters": "Filtres"
+            },
+            "RepoCard": {
+                "latest update": ({ fromNowText }) => `Dernière mise à jour : ${fromNowText}`,
             }
             /* spell-checker: enable */
         }

@@ -14,6 +14,7 @@ import {Search} from "./Search";
 import { useConstCallback } from "powerhooks/useConstCallback";
 import { Props as SearchProps } from "ui/pages/ExploreCatalog/Search"
 import { routes } from "ui/routes"
+import { RepoCard } from "./RepoCard";
 
 type Props = {
 	className?: string;
@@ -26,7 +27,7 @@ export default function ExploreCatalog(props: Props) {
 	assert<Equals<typeof rest, {}>>()
 
 	const {t} = useTranslation({ ExploreCatalog });
-	const {cx, classes} = useStyles();
+	const {classes} = useStyles();
 
 	const [, startTransition] = useTransition();
 
@@ -259,7 +260,7 @@ export default function ExploreCatalog(props: Props) {
 
 	return (
 		<div>
-			<section className={fr.cx("fr-container")}>
+			<div className={fr.cx("fr-container")}>
 				<Search
 					selectedAdministrations={route.params.administrations}
 					administrationsOptions={administrationsFilterOptions}
@@ -290,25 +291,83 @@ export default function ExploreCatalog(props: Props) {
 					isExperimentalReposHidden={route.params.isExperimentalReposHidden}
 					onIsExperimentalReposHidden={onIsExperimentalReposChange}
 				/>
-			</section>
+			</div>
 			<section className={fr.cx("fr-container")}>
-				<div className={classes.filteredList}>
-					<p>Number of result : {filteredRepositories.length}</p>
-					<ul>
-						{filteredRepositories.map(repo => <li key={repo.name}>{repo.url}</li>)}
-					</ul>
+				<div>
+					<div className={classes.header}>
+						<h6 className={classes.filteredRepositoriesCount}>
+							{t("search results", {
+								"count": filteredRepositories.length
+							})}
+						</h6>
+{/*						<SelectNext
+							label={t("sort by")}
+							className={classes.sort}
+							nativeSelectProps={{
+								"value": undefined,
+								"onChange": event => {}
+							}}
+							options={[]}
+						/>*/}
+					</div>
+					<div className={classes.repoList}>
+						{filteredRepositories.map(repo => (
+							<RepoCard
+								key={repo.sill_id}
+								repositoryName={repo.name}
+								devStatus={repo.status}
+								description={repo.description}
+								language={repo.language}
+								lastUpdate={repo.last_updated}
+								starCount={repo.star_count}
+							/>
+						))}
+					</div>
 				</div>
 			</section>
 		</div>
 	);
 }
 
-const useStyles = makeStyles({name: {Explore}})(theme => ({
-	filteredList: {
-		backgroundColor: "aqua",
+const useStyles = makeStyles({name: {Explore}})(() => ({
+	header: {
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "space-between",
+		...fr.spacing("margin", {
+			topBottom: "4v"
+		}),
+		[fr.breakpoints.down("md")]: {
+			flexWrap: "wrap"
+		}
+	},
+	filteredRepositoriesCount: {
+		marginBottom: 0
+	},
+	sort: {
+		display: "flex",
+		alignItems: "center",
+		gap: fr.spacing("2v"),
+
+		"&&>select": {
+			width: "auto",
+			marginTop: 0
+		},
+		[fr.breakpoints.down("md")]: {
+			marginTop: fr.spacing("4v")
+		}
+	},
+	repoList: {
+		display: "grid",
+		gridTemplateColumns: "repeat(2, 1fr)",
+		gap: fr.spacing("4v")
 	},
 }));
 
 export const { i18n } = declareComponentKeys<
-	| "test"
+	| {
+	K: "search results";
+	P: { count: number };
+}
+	| "sort by"
 >()({ ExploreCatalog });

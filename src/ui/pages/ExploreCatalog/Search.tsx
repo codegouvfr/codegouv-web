@@ -10,7 +10,6 @@ import Breadcrumb from "@codegouvfr/react-dsfr/Breadcrumb";
 import {MainSearch} from "ui/shared/MainSearch";
 import { Button } from "@codegouvfr/react-dsfr/Button"
 import {AutocompleteInputMultiple} from "../../shared/AutocompleteInputMultiple";
-import {selectors, useCoreFunctions, useCoreState} from "../../../core";
 import { ToggleSwitch } from "@codegouvfr/react-dsfr/ToggleSwitch"
 import { Slider } from "@mui/material";
 import {MultiSelect} from "../../shared/MultiSelect";
@@ -87,7 +86,6 @@ export const Search = (props: Props) => {
     assert<Equals<typeof rest, {}>>()
 
     const {t} = useTranslation({Search});
-    const {t: tCommons} = useTranslation({App: null});
     const {cx, classes} = useStyles();
 
     const [isFilterOpen, setIsFilterOpen] = useState(false);
