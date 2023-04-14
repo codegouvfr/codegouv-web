@@ -1,4 +1,4 @@
-import React from "react";
+import {useEffect, useTransition} from "react";
 import { assert } from "tsafe/assert";
 import type { Equals } from "tsafe";
 import { makeStyles } from "tss-react/dsfr";
@@ -11,17 +11,52 @@ import { TileProps } from "@codegouvfr/react-dsfr/Tile";
 import { Contribute } from "ui/shared/Contribute";
 import { SiteStats } from "ui/shared/SiteStats";
 import { MainSearch } from "../../shared/MainSearch";
+import { useConstCallback } from "powerhooks/useConstCallback";
+import { Props as SearchProps } from "ui/pages/ExploreCatalog/Search";
+import type { PageRoute } from "./route";
+import { createUseDebounce } from "powerhooks/useDebounce";
+import { useCoreFunctions } from "../../../core";
 
 type Props = {
     className?: string
+    route: PageRoute;
 }
 
+const { useDebounce } = createUseDebounce({ "delay": 400 });
+
 export default function Explore (props: Props) {
-    const {className, ...rest} = props
+    const {className, route, ...rest} = props
     assert<Equals<typeof rest, {}>>()
 
     const {t} = useTranslation({ Explore });
     const {classes} = useStyles();
+
+    const [, startTransition] = useTransition();
+
+    const { catalog } = useCoreFunctions()
+
+    const onSearchChange = useConstCallback<
+        SearchProps["onSearchChange"]
+    >(search => {
+            return startTransition(() =>
+                routes
+                    .exploreCatalog({
+                        ...route.params,
+                        search
+                    })
+                    .replace()
+            )
+        }
+    );
+
+    useDebounce(
+        () =>
+            catalog.updateFilter({
+                "key": "search",
+                "value": route.params.search
+            }),
+        [route.params.search]
+    );
 
     const reposSelection: TileProps[] = [
         {
@@ -60,9 +95,9 @@ export default function Explore (props: Props) {
     return (
         <div className={className}>
             <section className={fr.cx("fr-container")}>
-                <MainSearch
-                   altButton={<a className={fr.cx("fr-btn")} {...routes.exploreCatalog().link}>{t("advanced mode")}</a>}
-                />
+                {/*<MainSearch
+                   altButton={<a className={fr.cx("fr-btn")}{...routes.exploreCatalog().link} >{t("advanced mode")}</a>}
+                />*/}
             </section>
             <section className={classes.lightBlueBackground}>
                 <TileColumns className={fr.cx("fr-container")} title={ t("software selection title") } tileList={reposSelection} />

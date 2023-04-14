@@ -54,7 +54,7 @@ export function useValidUntil(params: { millisecondsLeft: number }): string {
 
     const { lang } = useLang();
 
-    const validUntil = useMemo(
+    return useMemo(
         () =>
             moment()
                 .locale(lang)
@@ -64,8 +64,6 @@ export function useValidUntil(params: { millisecondsLeft: number }): string {
 
         [lang, millisecondsLeft]
     );
-
-    return validUntil;
 }
 
 export const { fromNow } = (() => {

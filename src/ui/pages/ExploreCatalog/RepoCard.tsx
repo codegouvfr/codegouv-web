@@ -1,11 +1,10 @@
-import React, { memo } from "react";
+import React from "react";
 import { assert } from "tsafe/assert";
 import type { Equals } from "tsafe";
 import { makeStyles } from "tss-react/dsfr";
 import { declareComponentKeys } from "i18nifty";
 import { fr } from "@codegouvfr/react-dsfr";
 import { useTranslation } from "ui/i18n";
-import { routes } from "ui/routes";
 import { useFromNow } from "ui/useMoment";
 
 type Props = {
@@ -24,7 +23,6 @@ export const RepoCard = (props: Props) => {
     assert<Equals<typeof rest, {}>>()
 
     const {t} = useTranslation({RepoCard});
-    const {t: tCommons} = useTranslation({App: null});
     const {cx, classes} = useStyles();
 
     const { fromNowText } = useFromNow({ "dateTime": lastUpdate });

@@ -16,8 +16,8 @@ import {MultiSelect} from "../../shared/MultiSelect";
 
 export type Props = {
     className?: string
-    search?: string
-    onSearchChange?: (search: string) => void
+    search: string
+    onSearchChange: (search: string) => void
     administrationsOptions: string[]
     selectedAdministrations: string[]
     onAdministrationsChange: (administrations: string[]) => void
@@ -106,6 +106,8 @@ export const Search = (props: Props) => {
                     header={
                         <Breadcrumb segments={breadcrumbSegments} currentPageLabel={t("breadcrumb current page")} />
                     }
+                    onSearchChange={onSearchChange}
+                    search={search}
                 />
                 <Button
                     className={classes.filterButton}

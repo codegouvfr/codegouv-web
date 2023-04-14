@@ -3,15 +3,16 @@ import { selectors, useCoreFunctions, useCoreState } from "core";
 import CircularProgress from '@mui/material/CircularProgress';
 import type { PageRoute } from "./route";
 import { fr } from "@codegouvfr/react-dsfr";
-import React, {useEffect, useTransition} from "react";
+import {useEffect, useTransition} from "react";
 import { assert } from "tsafe/assert";
 import { Equals } from "tsafe";
-import { useTranslation } from "../../i18n";
+import { useTranslation } from "ui/i18n";
 import { makeStyles } from "tss-react/dsfr";
-import Explore from "../Explore/Explore";
+import Explore from "ui/pages/Explore/Explore";
 import { declareComponentKeys } from "i18nifty";
 import {Search} from "./Search";
 import { useConstCallback } from "powerhooks/useConstCallback";
+import { createUseDebounce } from "powerhooks/useDebounce";
 import { Props as SearchProps } from "ui/pages/ExploreCatalog/Search"
 import { routes } from "ui/routes"
 import { RepoCard } from "./RepoCard";
@@ -20,6 +21,8 @@ type Props = {
 	className?: string;
 	route: PageRoute;
 };
+
+const { useDebounce } = createUseDebounce({ "delay": 400 });
 
 export default function ExploreCatalog(props: Props) {
 
@@ -43,6 +46,29 @@ export default function ExploreCatalog(props: Props) {
 	const { licencesFilterOptions } = useCoreState(selectors.catalog.licencesFilterOptions)
 	const { devStatusFilterOptions } = useCoreState(selectors.catalog.devStatusFilterOptions)
 	const { organisationsFilterOptions } = useCoreState(selectors.catalog.organisationsFilterOptions)
+
+	const onSearchChange = useConstCallback<
+		SearchProps["onSearchChange"]
+	>(search => {
+			return startTransition(() =>
+				routes
+					.exploreCatalog({
+						...route.params,
+						search
+					})
+					.replace()
+			)
+		}
+	);
+
+	useDebounce(
+		() =>
+			catalog.updateFilter({
+				"key": "search",
+				"value": route.params.search
+			}),
+		[route.params.search]
+	);
 
 	const onAdministrationsChange = useConstCallback<
 		SearchProps["onAdministrationsChange"]
@@ -262,6 +288,8 @@ export default function ExploreCatalog(props: Props) {
 		<div>
 			<div className={fr.cx("fr-container")}>
 				<Search
+					search={route.params.search}
+					onSearchChange={onSearchChange}
 					selectedAdministrations={route.params.administrations}
 					administrationsOptions={administrationsFilterOptions}
 					onAdministrationsChange={onAdministrationsChange}
@@ -313,7 +341,7 @@ export default function ExploreCatalog(props: Props) {
 					<div className={classes.repoList}>
 						{filteredRepositories.map(repo => (
 							<RepoCard
-								key={repo.sill_id}
+								key={repo.url}
 								repositoryName={repo.name}
 								devStatus={repo.status}
 								description={repo.description}

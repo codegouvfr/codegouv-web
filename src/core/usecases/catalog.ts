@@ -6,8 +6,11 @@ import type { Dependency, Organisation, Repository, RepositoryStatistics } from 
 import { createObjectThatThrowsIfAccessed } from "redux-clean-architecture";
 import { uniqBy } from "lodash"
 import { pipe } from "lodash/fp"
+import memoize from "memoizee";
+import { Fzf } from "fzf"
 
 import {categories as mockCategories, repositories as mockRepositories, languages as mockLanguages} from "core/usecases/mock/catalog"
+import { between } from "../../ui/tools/num";
 
 export type State = {
 	repositories: State.RepositoryInternal[];
@@ -20,6 +23,7 @@ export type State = {
 	dependencies: Dependency[]
 	organisations: Organisation[]
 	organisationNames: State.OrganisationName[]
+	search: string
 	selectedAdministrations: State.Administration[]
 	selectedCategories: State.Category[]
 	selectedDependencies : State.Dependency[]
@@ -108,6 +112,7 @@ export const { reducer, actions } = createSlice({
 				categories,
 				organisations,
 				organisationNames,
+				search: "",
 				selectedAdministrations: [],
 				selectedCategories: [],
 				selectedDependencies: [],
@@ -201,81 +206,57 @@ export const selectors = (() => {
 	const internalRepositories = (rootState: RootState) =>
 		rootState.catalog.repositories;
 
-	const isLoading = createSelector(sliceState, state => {
-		return state.isLoading;
-	});
+	const isLoading = createSelector(sliceState, state => state.isLoading);
+	const repositoryStatistics = createSelector(sliceState, state => state.repositoryStatistics);
+	const administrations = createSelector(sliceState, state => state.administrations);
+	const categories = createSelector(sliceState, state => state.categories);
+	const languages = createSelector(sliceState, state => state.languages);
+	const licences = createSelector(sliceState, state => state.licences);
+	const devStatus = createSelector(sliceState, state => uniqBy(state.repositories, "status").map(repo => repo.status))
+	const search = createSelector(sliceState, state => state.search)
+	const selectedAdministrations = createSelector(sliceState, state => state.selectedAdministrations)
+	const selectedCategories = createSelector(sliceState, state => state.selectedCategories)
+	const selectedDependencies = createSelector(sliceState, state => state.selectedDependencies)
+	const selectedFunctions = createSelector(sliceState, state => state.selectedFunctions)
+	const selectedVitality = createSelector(sliceState, state => state.selectedVitality)
+	const selectedLanguages = createSelector(sliceState, state => state.selectedLanguages)
+	const selectedLicences = createSelector(sliceState, state => state.selectedLicences)
+	const selectedDevStatus = createSelector(sliceState, state => state.selectedDevStatus)
+	const selectedOrganisations = createSelector(sliceState, state => state.selectedOrganisations)
+	const organisations = createSelector(sliceState, state => state.organisations)
+	const dependencies = createSelector(sliceState, state => state.dependencies);
+	const isExperimentalReposHidden = createSelector(sliceState, state => state.isExperimentalReposHidden);
 
-	const repositoryStatistics = createSelector(sliceState, state => {
-		return state.repositoryStatistics;
-	});
+	const { filterBySearch } = (() => {
+		const getFzf = memoize(
+			(repos: State.RepositoryInternal[]) =>
+				new Fzf(repos, { "selector": ({ name }) => name }),
+			{ "max": 1 }
+		);
 
-	const administrations = createSelector(sliceState, state => {
-		return state.administrations;
-	});
+		const filterBySearchMemoized = memoize(
+			(repos: State.RepositoryInternal[], search: string) =>
+				new Set(
+					getFzf(repos)
+						.find(search)
+						.map(({ item: { name } }) => name)
+				),
+			{ "max": 1 }
+		);
 
-	const categories = createSelector(sliceState, state => {
-		return state.categories;
-	});
+		function filterBySearch(params: {
+			repos: State.RepositoryInternal[];
+			search: string;
+		}) {
+			const { repos, search } = params;
 
-	const languages = createSelector(sliceState, state => {
-		return state.languages;
-	});
+			const reposIds = filterBySearchMemoized(repos, search);
 
-	const licences = createSelector(sliceState, state => {
-		return state.licences;
-	});
+			return repos.filter(({ name }) => reposIds.has(name));
+		}
 
-	const devStatus = createSelector(sliceState, state => {
-		return uniqBy(state.repositories, "status").map(repo => repo.status)
-	})
-
-	const selectedAdministrations = createSelector(sliceState, state => {
-		return state.selectedAdministrations
-	})
-
-	const selectedCategories = createSelector(sliceState, state => {
-		return state.selectedCategories
-	})
-
-	const selectedDependencies = createSelector(sliceState, state => {
-		return state.selectedDependencies
-	})
-
-	const selectedFunctions = createSelector(sliceState, state => {
-		return state.selectedFunctions
-	})
-
-	const selectedVitality = createSelector(sliceState, state => {
-		return state.selectedVitality
-	})
-
-	const selectedLanguages = createSelector(sliceState, state => {
-		return state.selectedLanguages
-	})
-
-	const selectedLicences = createSelector(sliceState, state => {
-		return state.selectedLicences
-	})
-
-	const selectedDevStatus = createSelector(sliceState, state => {
-		return state.selectedDevStatus
-	})
-
-	const selectedOrganisations = createSelector(sliceState, state => {
-		return state.selectedOrganisations
-	})
-
-	const organisations = createSelector(sliceState, state => {
-		return state.organisations
-	})
-
-	const dependencies = createSelector(sliceState, state => {
-		return state.dependencies
-	});
-
-	const isExperimentalReposHidden = createSelector(sliceState, state => {
-		return state.isExperimentalReposHidden
-	});
+		return { filterBySearch };
+	})();
 
 	const filterByAdministration = (repos: Repository[], organisations: Organisation[], selectedAdministrations: string[]): Repository[] => {
 
@@ -298,10 +279,6 @@ export const selectors = (() => {
 		return repos.filter(repo => selectedDependencies.some(dependency => dependency.repository_urls.includes(repo.url)))
 	}
 
-	function between(x: number, min: number, max: number) {
-		return x >= min && x <= max;
-	}
-
 	const filterByVitality = (repos: Repository[], selectedVitality: number[]): Repository[] => {
 		/*TODO: Add debounce*/
 		return repos.filter(repo => between(repo.vitality, selectedVitality[0], selectedVitality[1]))
@@ -309,6 +286,7 @@ export const selectors = (() => {
 
 	const filteredRepositories = createSelector(
 		internalRepositories,
+		search,
 		selectedAdministrations,
 		selectedCategories,
 		selectedDependencies,
@@ -323,6 +301,7 @@ export const selectors = (() => {
 		dependencies,
 		(
 			internalRepositories,
+			search,
 			selectedAdministrations,
 			selectedCategories,
 			selectedDependencies,
@@ -340,6 +319,7 @@ export const selectors = (() => {
 			// TODO: change pipe by chain ?
 			const repositories: Repository[] = pipe(
 				(repos: Repository[]) => isExperimentalReposHidden ? repos.filter(repo => !repo.is_experimental) : repos,
+				(repos: Repository[]) => search ? filterBySearch({ repos, search }) : repos,
 				(repos: Repository[]) => selectedAdministrations.length ? filterByAdministration(repos, organisations, selectedAdministrations) : repos,
 				(repos: Repository[]) => selectedCategories.length ? repos.filter(repo => selectedCategories.some(selectedCategory => repo.topics.includes(selectedCategory))) : repos,
 				(repos: Repository[]) => selectedDependencies.length ? filterByDependencies(repos, dependencies, selectedDependencies) : repos,

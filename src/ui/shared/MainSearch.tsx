@@ -10,13 +10,15 @@ import { selectors, useCoreState } from "../../core";
 
 type Props = {
     className?: string
+    search: string
+    onSearchChange: (search: string) => void
     header?: JSX.Element
     altButton?: JSX.Element
 }
 
 export const MainSearch = (props: Props) => {
 
-    const {className, header, altButton, ...rest} = props
+    const {className, header, altButton, search, onSearchChange, ...rest} = props
     assert<Equals<typeof rest, {}>>()
 
     const {t} = useTranslation({ MainSearch });
@@ -29,7 +31,12 @@ export const MainSearch = (props: Props) => {
             { header }
             <h2 className={classes.title}>{t("title", { repoCount: repositoryStatistics.repository_count, forgeCount: repositoryStatistics.forge_count })}</h2>
             <div className={classes.searchBarContainer}>
-                <SearchBar className={classes.searchBar}/>
+                <SearchBar className={classes.searchBar}
+                           nativeInputProps={{
+                               value: search,
+                               onChange: event => onSearchChange(event.currentTarget.value)
+                           }}
+                />
                 { altButton }
             </div>
         </div>

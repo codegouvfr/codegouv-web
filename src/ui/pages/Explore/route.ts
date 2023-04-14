@@ -1,7 +1,12 @@
-import { createGroup, defineRoute, createRouter, type Route } from "type-route";
+import { createGroup, defineRoute, createRouter, type Route, param } from "type-route";
 
 export const routeDefs = {
-    "explore": defineRoute("/public")
+    "explore": defineRoute(
+        {
+            "search": param.query.optional.string.default(""),
+        },
+        () => "/public"
+    )
 };
 
 export const routeGroup = createGroup(Object.values(createRouter(routeDefs).routes));
