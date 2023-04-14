@@ -7,6 +7,9 @@ import Popper from '@mui/material/Popper';
 import { useTheme, styled } from '@mui/material/styles';
 import { VariableSizeList, ListChildComponentProps } from 'react-window';
 import Typography from '@mui/material/Typography';
+import { fr } from "@codegouvfr/react-dsfr";
+import {makeStyles} from "tss-react/dsfr";
+import { MultiSelect } from "./MultiSelect";
 
 const LISTBOX_PADDING = 8; // px
 
@@ -129,6 +132,9 @@ const StyledPopper = styled(Popper)({
 export function AutocompleteInputMultiple(props: Props) {
 
     const { options, selectedValues, onChange} = props
+
+    const {cx, classes} = useStyles();
+
     return (
         <Autocomplete
             id="virtualize-demo"
@@ -148,6 +154,56 @@ export function AutocompleteInputMultiple(props: Props) {
             onChange={(_event, values) => {
                 onChange(values)
             }}
+            className={cx(fr.cx("fr-select"), classes.multiSelect)}
+            renderTags={(tagValue) => {
+                return tagValue.map((option, index) => (
+                    <span
+                        className={cx(
+                            fr.cx(
+                                "fr-badge--no-icon",
+                                "fr-badge--yellow-moutarde",
+                                "fr-badge",
+                            ),
+                            classes.badge
+                        )}
+                        key={index}
+                    >
+                        {option}
+                    </span>
+                    //<MyChip {...getTagProps({ index })} label={option.title} />
+                ));
+            }}
         />
     );
 }
+
+
+const useStyles = makeStyles({name: {MultiSelect}})(theme => ({
+    root: {},
+    multiSelect: {
+        marginTop: fr.spacing("2v"),
+        paddingRight: 0,
+        "&& .MuiInputBase-input": {
+            padding: 0,
+        },
+        "&& .MuiInputBase-root": {
+            "&::before" : {
+                borderBottom: "none"
+            },
+            "&:hover &&::before" : {
+                borderBottom: "none"
+            },
+            "&::after" : {
+                borderBottom: "none"
+            }
+        },
+        "&& .MuiSvgIcon-root": {
+            display: "none"
+        }
+    },
+    badge: {
+        "&&:not(:last-of-type)": {
+            marginRight: fr.spacing("2v")
+        }
+    }
+}));
