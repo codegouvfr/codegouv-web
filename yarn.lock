@@ -1182,12 +1182,12 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@codegouvfr/react-dsfr@^0.39.0":
-  version "0.39.2"
-  resolved "https://registry.yarnpkg.com/@codegouvfr/react-dsfr/-/react-dsfr-0.39.2.tgz#1627321bc41233929876b64af1fa46dd2bcb3240"
-  integrity sha512-GNQz/J3tucwD4WzQyFDMqD2e21YUmnjO+UTR+gNMIsHw8QZuvQX1mIetC+D/ZybHuvliIjTVP+VDbW8pnV2qRw==
+"@codegouvfr/react-dsfr@^0.46.4":
+  version "0.46.4"
+  resolved "https://registry.yarnpkg.com/@codegouvfr/react-dsfr/-/react-dsfr-0.46.4.tgz#0c6b18485a6ecbd5d9e809fc8073ac1baf3fed21"
+  integrity sha512-HLMQZdQ79bAFLVtPdmZmKvA1a6nkZUf5+DF6qcEQu/Xt7i8bem7jVjfH+5X6v5jtLCMBTZV9ACHqJKQLurQCHw==
   dependencies:
-    tsafe "^1.4.0"
+    tsafe "^1.6.0"
 
 "@colors/colors@1.5.0":
   version "1.5.0"
@@ -10222,6 +10222,11 @@ mkdirp@^1.0.3, mkdirp@^1.0.4:
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-1.0.4.tgz#3eb5ed62622756d79a5f0e2a221dfebad75c2f7e"
   integrity sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==
 
+moment@^2.29.4:
+  version "2.29.4"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.4.tgz#3dbe052889fe7c1b2ed966fcb3a77328964ef108"
+  integrity sha512-5LC9SOxjSc2HF6vO2CyuTDNivEdoz2IvyJJGj6X8DJ0eFyfszE0QiEd+iXmBvUP3WHxSjFH/vIsA0EN00cgr8w==
+
 moo@^0.5.1:
   version "0.5.2"
   resolved "https://registry.yarnpkg.com/moo/-/moo-0.5.2.tgz#f9fe82473bc7c184b0d32e2215d3f6e67278733c"
@@ -13886,7 +13891,7 @@ ts-pnp@^1.1.6:
   resolved "https://registry.yarnpkg.com/ts-pnp/-/ts-pnp-1.2.0.tgz#a500ad084b0798f1c3071af391e65912c86bca92"
   integrity sha512-csd+vJOb/gkzvcCHgTGSChYpy5f1/XKNsmvBGO4JXS+z1v2HobugDz4s1IeFXM3wZB44uczs+eazB5Q/ccdhQw==
 
-tsafe@^1.2.1, tsafe@^1.4.0, tsafe@^1.4.1, tsafe@^1.5.1, tsafe@^1.6.0:
+tsafe@^1.2.1, tsafe@^1.4.1, tsafe@^1.5.1, tsafe@^1.6.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/tsafe/-/tsafe-1.6.0.tgz#48a9bd0a4c43df43d289bdfc1d89f0d7fffbd612"
   integrity sha512-wlUeRBnyN3EN2chXznpLm7vBEvJLEOziDU+MN6NRlD99AkwmXgtChNQhp+V97VyRa3Bp05IaL4Cocsc7JlyEUg==

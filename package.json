@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@codegouvfr/react-dsfr": "^0.39.0",
+    "@codegouvfr/react-dsfr": "^0.46.4",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@mui/material": "^5.11.12",
@@ -14,6 +14,7 @@
     "evt": "^2.4.15",
     "i18n": "^0.15.1",
     "i18nifty": "^1.4.0",
+    "moment": "^2.29.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-window": "^1.8.8",
