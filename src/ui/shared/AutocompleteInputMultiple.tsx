@@ -13,6 +13,7 @@ const LISTBOX_PADDING = 8; // px
 type Props = {
     id: string
     options: string[]
+    selectedValues: string[]
     onChange: (options: string[]) => void;
 }
 
@@ -127,7 +128,7 @@ const StyledPopper = styled(Popper)({
 
 export function AutocompleteInputMultiple(props: Props) {
 
-    const { options, onChange} = props
+    const { options, selectedValues, onChange} = props
     return (
         <Autocomplete
             id="virtualize-demo"
@@ -139,6 +140,7 @@ export function AutocompleteInputMultiple(props: Props) {
             PopperComponent={StyledPopper}
             ListboxComponent={ListboxComponent}
             options={options}
+            value={selectedValues}
             renderInput={(params) => <TextField {...params} variant={"standard"} />}
             renderOption={(props, option, state) =>
                 [props, option, state.index] as React.ReactNode

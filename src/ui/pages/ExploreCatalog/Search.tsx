@@ -143,6 +143,7 @@ export const Search = (props: Props) => {
                         <AutocompleteInputMultiple
                             id={"Dépendances"}
                             options={dependenciesOptions}
+                            selectedValues={selectedDependencies}
                             onChange={onDependenciesChange}
                         />
                     </div>
@@ -159,6 +160,7 @@ export const Search = (props: Props) => {
                             value={selectedVitality}
                             onChange={(_event, newValue) => onVitalityChange(newValue as number[])}
                             valueLabelDisplay="auto"
+
                         />
                     </div>
                     <MultiSelect
@@ -187,10 +189,16 @@ export const Search = (props: Props) => {
                         <AutocompleteInputMultiple
                             id={"Organisation"}
                             options={organisationsOptions}
+                            selectedValues={selectedOrganisations}
                             onChange={onOrganisationsChange}
                         />
                     </div>
-                    <ToggleSwitch checked={isExperimentalReposHidden} onChange={onIsExperimentalReposHidden} label="Masquer les dépots expérimentaux" inputTitle="Masquer les dépots expérimentaux" />
+                    <ToggleSwitch
+                        checked={isExperimentalReposHidden}
+                        onChange={onIsExperimentalReposHidden}
+                        label="Masquer les dépots expérimentaux"
+                        inputTitle="Masquer les dépots expérimentaux"
+                    />
                 </div>
             </div>
         </div>
