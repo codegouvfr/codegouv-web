@@ -126,20 +126,20 @@ export const Search = (props: Props) => {
                 <div className={cx(classes.filtersWrapper)}>
                     <MultiSelect
                         id="administrations"
-                        label="administrations"
+                        label={t("administrations label")}
                         options={administrationsOptions}
                         selectedValues={selectedAdministrations}
                         onChange={onAdministrationsChange}
                     />
                     <MultiSelect
                         id="Catégories"
-                        label="Catégories"
+                        label={t("categories label")}
                         options={categoriesOptions}
                         selectedValues={selectedCategories}
                         onChange={onCategoriesChange}
                     />
                     <div className={classes.filterSelectGroup}>
-                        <label>Dépendances</label>
+                        <label>{t("dependencies label")}</label>
                         <AutocompleteInputMultiple
                             id={"Dépendances"}
                             options={dependenciesOptions}
@@ -149,13 +149,13 @@ export const Search = (props: Props) => {
                     </div>
                     <MultiSelect
                         id="Fonctions"
-                        label="Fonctions"
+                        label={t("functions label")}
                         options={functionsOptions}
                         selectedValues={selectedFunctions}
                         onChange={onFunctionsChange}
                     />
                     <div className={classes.filterSelectGroup}>
-                        <label>Indice de vitalité</label>
+                        <label>{t("vitality index label")}</label>
                         <Slider
                             value={selectedVitality}
                             onChange={(_event, newValue) => onVitalityChange(newValue as number[])}
@@ -165,27 +165,27 @@ export const Search = (props: Props) => {
                     </div>
                     <MultiSelect
                         id="Languages"
-                        label="Languages"
+                        label={t("languages label")}
                         options={languagesOptions}
                         selectedValues={selectedLanguages}
                         onChange={onLanguagesChange}
                     />
                     <MultiSelect
                         id="Licences"
-                        label="Licences"
+                        label={t("licences label")}
                         options={licencesOptions}
                         selectedValues={selectedLicences}
                         onChange={onLicencesChange}
                     />
                     <MultiSelect
                         id="Status du développement"
-                        label="Status du développement"
+                        label={t("dev status label")}
                         options={devStatusOptions}
                         selectedValues={selectedDevStatus}
                         onChange={onDevStatusChange}
                     />
                     <div className={classes.filterSelectGroup}>
-                        <label>Organisation</label>
+                        <label>{t("organisation label")}</label>
                         <AutocompleteInputMultiple
                             id={"Organisation"}
                             options={organisationsOptions}
@@ -196,8 +196,8 @@ export const Search = (props: Props) => {
                     <ToggleSwitch
                         checked={isExperimentalReposHidden}
                         onChange={onIsExperimentalReposHidden}
-                        label="Masquer les dépots expérimentaux"
-                        inputTitle="Masquer les dépots expérimentaux"
+                        label={t("experimental toggle switch label")}
+                        inputTitle={t("experimental toggle switch label")}
                     />
                 </div>
             </div>
@@ -273,4 +273,16 @@ export const {i18n} = declareComponentKeys<
     | "filters"
     | "breadcrumb explore"
     | "breadcrumb current page"
+    | "administrations label"
+    | "categories label"
+    | "dependencies label"
+    | "functions label"
+    | "vitality index label"
+    | "languages label"
+    | "licences label"
+    | "dev status label"
+    | "organisation label"
+    | "experimental toggle switch label"
+
+
 >()({Search});

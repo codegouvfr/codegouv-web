@@ -115,7 +115,17 @@ const {
             "Search": {
                 "breadcrumb explore": "Explore!",
                 "breadcrumb current page": "All source codes",
-                "filters": "Filters"
+                "filters": "Filters",
+                "administrations label": "Administrations",
+                "categories label": "Categories",
+                "dependencies label": "Dependencies",
+                "functions label": "Functions",
+                "vitality index label": "Vitality index",
+                "languages label": "Languages",
+                "licences label": "Licences",
+                "dev status label": "Development status",
+                "organisation label": "Organisation",
+                "experimental toggle switch label": "Hide experimental repositories",
             },
             "RepoCard": {
                 "latest update": ({ fromNowText }) => `Latest update:${fromNowText}`,
@@ -202,7 +212,17 @@ const {
             "Search": {
                 "breadcrumb explore": "Explorer !",
                 "breadcrumb current page": "Tous les codes sources",
-                "filters": "Filtres"
+                "filters": "Filtres",
+                "administrations label": "Administrations",
+                "categories label": "Catégories",
+                "dependencies label": "Dépendences",
+                "functions label": "Fonctions",
+                "vitality index label": "Indice de vitalité",
+                "languages label": "Languages",
+                "licences label": "Licences",
+                "dev status label": "Status du développement",
+                "organisation label": "Organisation",
+                "experimental toggle switch label": "Masquer les dépots expérimentaux",
             },
             "RepoCard": {
                 "latest update": ({ fromNowText }) => `Dernière mise à jour : ${fromNowText}`,
