@@ -1,4 +1,4 @@
-import React from "react";
+import { FormEvent } from "react";
 import { assert } from "tsafe/assert";
 import type { Equals } from "tsafe";
 import { makeStyles } from "tss-react/dsfr";
@@ -6,19 +6,21 @@ import { declareComponentKeys } from "i18nifty";
 import { fr } from "@codegouvfr/react-dsfr";
 import { useTranslation } from "ui/i18n";
 import SearchBar from "@codegouvfr/react-dsfr/SearchBar";
-import { selectors, useCoreState } from "../../core";
+import { selectors, useCoreState } from "core";
+import { noop } from "lodash"
 
 type Props = {
     className?: string
     search: string
     onSearchChange: (search: string) => void
+    onSearchSubmit?: (event: FormEvent) => void
     header?: JSX.Element
     altButton?: JSX.Element
 }
 
 export const MainSearch = (props: Props) => {
 
-    const {className, header, altButton, search, onSearchChange, ...rest} = props
+    const {className, header, altButton, search, onSearchChange, onSearchSubmit, ...rest} = props
     assert<Equals<typeof rest, {}>>()
 
     const {t} = useTranslation({ MainSearch });
@@ -34,7 +36,8 @@ export const MainSearch = (props: Props) => {
                 <SearchBar className={classes.searchBar}
                            nativeInputProps={{
                                value: search,
-                               onChange: event => onSearchChange(event.currentTarget.value)
+                               onChange: event => onSearchChange(event.currentTarget.value),
+                               onSubmit: event => onSearchSubmit ? onSearchSubmit(event) : noop
                            }}
                 />
                 { altButton }

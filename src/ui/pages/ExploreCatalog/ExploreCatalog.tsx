@@ -15,7 +15,7 @@ import { useConstCallback } from "powerhooks/useConstCallback";
 import { Props as SearchProps } from "ui/pages/ExploreCatalog/Search"
 import { routes } from "ui/routes"
 import { RepoCard } from "./RepoCard";
-import useDebounce from "../../tools/cancelableDebounce";
+import useDebounce from "ui/tools/cancelableDebounce";
 
 type Props = {
 	className?: string;

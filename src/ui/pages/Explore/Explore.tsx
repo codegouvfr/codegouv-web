@@ -10,19 +10,17 @@ import { TileColumns } from "ui/shared/TileColumns";
 import { TileProps } from "@codegouvfr/react-dsfr/Tile";
 import { Contribute } from "ui/shared/Contribute";
 import { SiteStats } from "ui/shared/SiteStats";
-import { MainSearch } from "../../shared/MainSearch";
+import { MainSearch } from "ui/shared/MainSearch";
 import { useConstCallback } from "powerhooks/useConstCallback";
 import { Props as SearchProps } from "ui/pages/ExploreCatalog/Search";
 import type { PageRoute } from "./route";
-import { createUseDebounce } from "powerhooks/useDebounce";
-import { useCoreFunctions } from "../../../core";
+
+import { useCoreFunctions } from "core";
 
 type Props = {
     className?: string
     route: PageRoute;
 }
-
-const { useDebounce } = createUseDebounce({ "delay": 400 });
 
 export default function Explore (props: Props) {
     const {className, route, ...rest} = props
@@ -40,7 +38,7 @@ export default function Explore (props: Props) {
     >(search => {
             return startTransition(() =>
                 routes
-                    .exploreCatalog({
+                    .explore({
                         ...route.params,
                         search
                     })
@@ -49,14 +47,20 @@ export default function Explore (props: Props) {
         }
     );
 
-    useDebounce(
-        () =>
-            catalog.updateFilter({
-                "key": "search",
-                "value": route.params.search
-            }),
-        [route.params.search]
-    );
+    useEffect(() => {
+        catalog.updateFilter({
+            key: "search",
+            value: route.params.search
+        });
+    }, [route.params.search]);
+
+    const onSearchSubmit = (e: any) => {
+        e.preventDefault()
+
+        /*
+        * Waiting for DSFR team to add onSubmit method on SearchBar component to handle the search by clicking the button
+        * */
+    }
 
     const reposSelection: TileProps[] = [
         {
@@ -95,9 +99,12 @@ export default function Explore (props: Props) {
     return (
         <div className={className}>
             <section className={fr.cx("fr-container")}>
-                {/*<MainSearch
-                   altButton={<a className={fr.cx("fr-btn")}{...routes.exploreCatalog().link} >{t("advanced mode")}</a>}
-                />*/}
+                <MainSearch
+                   altButton={<a className={fr.cx("fr-btn")} {...routes.exploreCatalog().link}>{t("advanced mode")}</a>}
+                   search={route.params.search}
+                   onSearchChange={onSearchChange}
+                   onSearchSubmit={onSearchSubmit}
+                />
             </section>
             <section className={classes.lightBlueBackground}>
                 <TileColumns className={fr.cx("fr-container")} title={ t("software selection title") } tileList={reposSelection} />

@@ -34,7 +34,7 @@ export const repositories = new Promise<Repository[]>((resolve) => {
             topics: ["IA", "Chimie"],
             type: "Library",
             url: "https://github.com/betagouv/hedgedoc",
-            vitality: 100,
+            vitality: 50,
         },
         {
             description: "Json formated data from from set of page of travail-emploi website",
