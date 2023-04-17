@@ -283,6 +283,4 @@ export const {i18n} = declareComponentKeys<
     | "dev status label"
     | "organisation label"
     | "experimental toggle switch label"
-
-
 >()({Search});

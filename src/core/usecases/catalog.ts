@@ -280,7 +280,6 @@ export const selectors = (() => {
 	}
 
 	const filterByVitality = (repos: Repository[], selectedVitality: number[]): Repository[] => {
-		/*TODO: Add debounce*/
 		return repos.filter(repo => between(repo.vitality, selectedVitality[0], selectedVitality[1]))
 	}
 
@@ -314,10 +313,8 @@ export const selectors = (() => {
 			isExperimentalReposHidden,
 			organisations,
 			dependencies,
-		) => {
-			// TODO: return pipe
-			// TODO: change pipe by chain ?
-			const repositories: Repository[] = pipe(
+		) => (
+			pipe(
 				(repos: Repository[]) => isExperimentalReposHidden ? repos.filter(repo => !repo.is_experimental) : repos,
 				(repos: Repository[]) => search ? filterBySearch({ repos, search }) : repos,
 				(repos: Repository[]) => selectedAdministrations.length ? filterByAdministration(repos, organisations, selectedAdministrations) : repos,
@@ -329,10 +326,8 @@ export const selectors = (() => {
 				(repos: Repository[]) => selectedLicences.length ? repos.filter(repo => selectedLicences.some(selectedLicence => repo.license.includes(selectedLicence))) : repos,
 				(repos: Repository[]) => selectedDevStatus.length ? repos.filter(repo => selectedDevStatus.some(selectedStatus => repo.status.includes(selectedStatus))) : repos,
 				(repos: Repository[]) => selectedOrganisations.length ? repos.filter(repo => selectedOrganisations.some(selectedOrganisation => repo.organisation_name.includes(selectedOrganisation))) : repos,
-			)(internalRepositories)
-
-			return repositories
-		}
+			)(internalRepositories) as Repository[]
+		)
 	);
 
 	const administrationsFilterOptions = createSelector(sliceState, state => {

@@ -12,17 +12,15 @@ import Explore from "ui/pages/Explore/Explore";
 import { declareComponentKeys } from "i18nifty";
 import {Search} from "./Search";
 import { useConstCallback } from "powerhooks/useConstCallback";
-import { createUseDebounce } from "powerhooks/useDebounce";
 import { Props as SearchProps } from "ui/pages/ExploreCatalog/Search"
 import { routes } from "ui/routes"
 import { RepoCard } from "./RepoCard";
+import useDebounce from "../../tools/cancelableDebounce";
 
 type Props = {
 	className?: string;
 	route: PageRoute;
 };
-
-const { useDebounce } = createUseDebounce({ "delay": 400 });
 
 export default function ExploreCatalog(props: Props) {
 
@@ -61,14 +59,16 @@ export default function ExploreCatalog(props: Props) {
 		}
 	);
 
-	useDebounce(
-		() =>
-			catalog.updateFilter({
-				"key": "search",
-				"value": route.params.search
-			}),
-		[route.params.search]
-	);
+	const debouncedSearch = useDebounce({ value: route.params.search, delay: 1000 });
+
+	useEffect(() => {
+
+		catalog.updateFilter({
+			"key": "search",
+			"value": route.params.search
+		})
+
+	}, [debouncedSearch]);
 
 	const onAdministrationsChange = useConstCallback<
 		SearchProps["onAdministrationsChange"]
@@ -252,12 +252,16 @@ export default function ExploreCatalog(props: Props) {
 		}
 	);
 
+	const debouncedVitality = useDebounce({ value: route.params.vitality, delay: 500 });
+
 	useEffect(() => {
+
 		catalog.updateFilter({
-			key: "selectedVitality",
-			value: route.params.vitality
-		});
-	}, [route.params.vitality]);
+			"key": "selectedVitality",
+			"value": route.params.vitality
+		})
+
+	}, [debouncedVitality]);
 
 	const onIsExperimentalReposChange = useConstCallback<
 		SearchProps["onIsExperimentalReposHidden"]
