@@ -111,6 +111,10 @@ const {
                 "search results": ({ count }) =>
                     `${count} repositor${count > 1 ? "ies" : "y"}`,
                 "sort by": "Sort by",
+                "name asc" : "Ascending name (A-Z)",
+                "name desc" : "Descending name (Z-A)",
+                "last update asc" : "Last updated",
+                "last update desc" : "Oldest updated",
             },
             "Search": {
                 "breadcrumb explore": "Explore!",
@@ -208,6 +212,10 @@ const {
                 "search results": ({ count }) =>
                     `${count} dépot${count > 1 ? "s" : ""} de code source`,
                 "sort by": "Trier par",
+                "name asc" : "Nom ascendant (A-Z)",
+                "name desc" : "Nom descendant (Z-A)",
+                "last update asc" : "Dernier mis à jour",
+                "last update desc" : "Mise à jour la plus ancienne",
             },
             "Search": {
                 "breadcrumb explore": "Explorer !",

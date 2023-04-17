@@ -1,8 +1,34 @@
-import { createGroup, defineRoute, createRouter, param, type Route } from "type-route";
+import { createGroup, defineRoute, createRouter, noMatch, param, type Route } from "type-route";
+import { z } from "zod";
+import { assert, type Equals } from "tsafe";
+import type { State } from "core/usecases/catalog";
 
 export const routeDefs = {
     "exploreCatalog": defineRoute(
         {
+            "sort": param.query.optional
+                .ofType({
+                    "parse": raw => {
+                        const schema = z.union([
+                            z.literal("name_asc"),
+                            z.literal("name_desc"),
+                            z.literal("last_update_asc"),
+                            z.literal("last_update_desc"),
+                        ]);
+
+                        assert<
+                            Equals<ReturnType<(typeof schema)["parse"]>, State.Sort>
+                        >();
+
+                        try {
+                            return schema.parse(raw);
+                        } catch {
+                            return noMatch;
+                        }
+                    },
+                    "stringify": value => value
+                })
+                .default("name_asc"),
             "search": param.query.optional.string.default(""),
             "administrations": param.query.optional.array.string.default([]),
             "categories": param.query.optional.array.string.default([]),

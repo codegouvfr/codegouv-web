@@ -10,12 +10,15 @@ import { useTranslation } from "ui/i18n";
 import { makeStyles } from "tss-react/dsfr";
 import Explore from "ui/pages/Explore/Explore";
 import { declareComponentKeys } from "i18nifty";
-import {Search} from "./Search";
+import { Search } from "./Search";
 import { useConstCallback } from "powerhooks/useConstCallback";
 import { Props as SearchProps } from "ui/pages/ExploreCatalog/Search"
 import { routes } from "ui/routes"
 import { RepoCard } from "./RepoCard";
 import useDebounce from "ui/tools/cancelableDebounce";
+import SelectNext from "ui/shared/SelectNext";
+import type { State as CatalogState } from "core/usecases/catalog";
+
 
 type Props = {
 	className?: string;
@@ -36,6 +39,7 @@ export default function ExploreCatalog(props: Props) {
 	const { filteredRepositories } = useCoreState(selectors.catalog.filteredRepositories)
 	const { isLoading } = useCoreState(selectors.catalog.isLoading)
 
+	const { sortOptions } = useCoreState(selectors.catalog.sortOptions);
 	const { administrationsFilterOptions } = useCoreState(selectors.catalog.administrationsFilterOptions)
 	const { categoriesFilterOptions } = useCoreState(selectors.catalog.categoriesFilterOptions)
 	const { dependenciesFilterOptions } = useCoreState(selectors.catalog.dependenciesFilterOptions)
@@ -44,6 +48,24 @@ export default function ExploreCatalog(props: Props) {
 	const { licencesFilterOptions } = useCoreState(selectors.catalog.licencesFilterOptions)
 	const { devStatusFilterOptions } = useCoreState(selectors.catalog.devStatusFilterOptions)
 	const { organisationsFilterOptions } = useCoreState(selectors.catalog.organisationsFilterOptions)
+
+	const onSortChange = useConstCallback((sort: CatalogState.Sort) => {
+			return startTransition(() =>
+				routes
+					.exploreCatalog({
+						...route.params,
+						sort
+					})
+					.replace()
+			)
+		}
+	);
+
+	useEffect(() => {
+		catalog.updateSort({
+			sort: route.params.sort
+		});
+	}, [route.params.sort]);
 
 	const onSearchChange = useConstCallback<
 		SearchProps["onSearchChange"]
@@ -332,15 +354,30 @@ export default function ExploreCatalog(props: Props) {
 								"count": filteredRepositories.length
 							})}
 						</h6>
-{/*						<SelectNext
+						<SelectNext
 							label={t("sort by")}
 							className={classes.sort}
 							nativeSelectProps={{
-								"value": undefined,
-								"onChange": event => {}
+								"value": route.params.sort,
+								"onChange": event => onSortChange(event.target.value)
 							}}
-							options={[]}
-						/>*/}
+							options={sortOptions.map(value => ({
+								value,
+								label: (() => {
+									switch (value) {
+										case "name_asc":
+											return t("name asc");
+										case "name_desc":
+											return t("name desc");
+										case "last_update_asc":
+											return t("last update asc");
+										case "last_update_desc":
+											return t("last update desc");
+
+									}
+								})()
+							}))}
+						/>
 					</div>
 					<div className={classes.repoList}>
 						{filteredRepositories.map(repo => (
@@ -402,4 +439,8 @@ export const { i18n } = declareComponentKeys<
 	P: { count: number };
 }
 	| "sort by"
+	| "name asc"
+	| "name desc"
+	| "last update asc"
+	| "last update desc"
 >()({ ExploreCatalog });

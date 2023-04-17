@@ -8,6 +8,7 @@ import { uniqBy } from "lodash"
 import { pipe } from "lodash/fp"
 import memoize from "memoizee";
 import { Fzf } from "fzf"
+import { assert, type Equals } from "tsafe";
 
 import {categories as mockCategories, repositories as mockRepositories, languages as mockLanguages} from "core/usecases/mock/catalog"
 import { between } from "../../ui/tools/num";
@@ -23,6 +24,7 @@ export type State = {
 	dependencies: Dependency[]
 	organisations: Organisation[]
 	organisationNames: State.OrganisationName[]
+	sort: State.Sort
 	search: string
 	selectedAdministrations: State.Administration[]
 	selectedCategories: State.Category[]
@@ -38,6 +40,11 @@ export type State = {
 
 export namespace State {
 	export type RepositoryInternal = Repository
+	export type Sort =
+		| "name_asc"
+		| "name_desc"
+		| "last_update_asc"
+		| "last_update_desc"
 	export type Administration = string
 	export type Category = string
 	export type Dependency = string
@@ -100,6 +107,8 @@ export const { reducer, actions } = createSlice({
 				organisationNames,
 			} = payload;
 
+			const sort: State.Sort = "name_asc";
+
 			return {
 				repositories,
 				filter: undefined,
@@ -112,6 +121,7 @@ export const { reducer, actions } = createSlice({
 				categories,
 				organisations,
 				organisationNames,
+				sort,
 				search: "",
 				selectedAdministrations: [],
 				selectedCategories: [],
@@ -140,7 +150,15 @@ export const { reducer, actions } = createSlice({
 			const { key, value } = payload;
 
 			(state as any)[key] = value;
-		}
+		},
+		sortUpdated: (
+			state,
+			{ payload }: PayloadAction<{ sort: State.Sort }>
+		) => {
+			const { sort } = payload;
+
+			state.sort = sort
+		},
 	},
 });
 
@@ -195,7 +213,15 @@ export const thunks = {
 			(...args) => {
 				const [dispatch] = args;
 				dispatch(actions.filterUpdated(params));
-			}
+			},
+	updateSort:
+		(
+			params: Record<"sort", State.Sort>
+		): ThunkAction<void> =>
+			(...args) => {
+				const [dispatch] = args;
+				dispatch(actions.sortUpdated(params));
+			},
 };
 
 export const selectors = (() => {
@@ -213,6 +239,7 @@ export const selectors = (() => {
 	const languages = createSelector(sliceState, state => state.languages);
 	const licences = createSelector(sliceState, state => state.licences);
 	const devStatus = createSelector(sliceState, state => uniqBy(state.repositories, "status").map(repo => repo.status))
+	const sort = createSelector(sliceState, state => state.sort);
 	const search = createSelector(sliceState, state => state.search)
 	const selectedAdministrations = createSelector(sliceState, state => state.selectedAdministrations)
 	const selectedCategories = createSelector(sliceState, state => state.selectedCategories)
@@ -283,8 +310,26 @@ export const selectors = (() => {
 		return repos.filter(repo => between(repo.vitality, selectedVitality[0], selectedVitality[1]))
 	}
 
+	const sortRepos = (repos: Repository[], sort: State.Sort) => {
+		switch (sort) {
+			case "name_asc":
+			default:
+				return [...repos].sort((repoA, repoB) => repoA.name.localeCompare(repoB.name))
+
+			case "name_desc":
+				return repos.sort((repoA, repoB) => repoB.name.localeCompare(repoA.name))
+
+			case "last_update_asc":
+				return repos.sort((repoA, repoB) => repoB.last_updated - repoA.last_updated)
+
+			case "last_update_desc":
+				return repos.sort((repoA, repoB) => repoA.last_updated - repoB.last_updated)
+		}
+	}
+
 	const filteredRepositories = createSelector(
 		internalRepositories,
+		sort,
 		search,
 		selectedAdministrations,
 		selectedCategories,
@@ -300,6 +345,7 @@ export const selectors = (() => {
 		dependencies,
 		(
 			internalRepositories,
+			sort,
 			search,
 			selectedAdministrations,
 			selectedCategories,
@@ -326,9 +372,23 @@ export const selectors = (() => {
 				(repos: Repository[]) => selectedLicences.length ? repos.filter(repo => selectedLicences.some(selectedLicence => repo.license.includes(selectedLicence))) : repos,
 				(repos: Repository[]) => selectedDevStatus.length ? repos.filter(repo => selectedDevStatus.some(selectedStatus => repo.status.includes(selectedStatus))) : repos,
 				(repos: Repository[]) => selectedOrganisations.length ? repos.filter(repo => selectedOrganisations.some(selectedOrganisation => repo.organisation_name.includes(selectedOrganisation))) : repos,
+				(repos: Repository[]) => sortRepos(repos, sort),
 			)(internalRepositories) as Repository[]
 		)
 	);
+
+	const sortOptions =  createSelector(sliceState, _state => {
+		const sorts = [
+			"name_asc" as const,
+			"name_desc" as const,
+			"last_update_asc" as const,
+			"last_update_desc" as const,
+		];
+
+		assert<Equals<(typeof sorts)[number], State.Sort>>();
+
+		return sorts;
+	});
 
 	const administrationsFilterOptions = createSelector(sliceState, state => {
 		return state.administrations;
@@ -380,6 +440,7 @@ export const selectors = (() => {
 		organisations,
 		dependencies,
 		categories,
+		sortOptions,
 		administrationsFilterOptions,
 		categoriesFilterOptions,
 		dependenciesFilterOptions,
