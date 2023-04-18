@@ -129,10 +129,10 @@ export default function ExploreCatalog(props: Props) {
 
 	useEffect(() => {
 		catalog.updateFilter({
-			key: "selectedDependencies",
-			value: route.params.dependencies
+			key: "selectedCategories",
+			value: route.params.categories
 		});
-	}, [route.params.dependencies]);
+	}, [route.params.categories]);
 
 	const onDependenciesChange = useConstCallback<
 		SearchProps["onDependenciesChange"]
