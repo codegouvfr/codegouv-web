@@ -1,4 +1,3 @@
-import { FormEvent } from "react";
 import { assert } from "tsafe/assert";
 import type { Equals } from "tsafe";
 import { makeStyles } from "tss-react/dsfr";
@@ -7,13 +6,12 @@ import { fr } from "@codegouvfr/react-dsfr";
 import { useTranslation } from "ui/i18n";
 import SearchBar from "@codegouvfr/react-dsfr/SearchBar";
 import { selectors, useCoreState } from "core";
-import { noop } from "lodash"
 
 type Props = {
     className?: string
     search: string
     onSearchChange: (search: string) => void
-    onSearchSubmit?: (event: FormEvent) => void
+    onSearchSubmit?: () => void
     header?: JSX.Element
     altButton?: JSX.Element
 }
@@ -37,8 +35,8 @@ export const MainSearch = (props: Props) => {
                            nativeInputProps={{
                                value: search,
                                onChange: event => onSearchChange(event.currentTarget.value),
-                               onSubmit: event => onSearchSubmit ? onSearchSubmit(event) : noop
                            }}
+                           onButtonClick={onSearchSubmit}
                 />
                 { altButton }
             </div>

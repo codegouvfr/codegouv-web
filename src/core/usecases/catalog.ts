@@ -441,6 +441,7 @@ export const selectors = (() => {
 		dependencies,
 		categories,
 		sortOptions,
+		search,
 		administrationsFilterOptions,
 		categoriesFilterOptions,
 		dependenciesFilterOptions,

@@ -15,7 +15,7 @@ import { useConstCallback } from "powerhooks/useConstCallback";
 import { Props as SearchProps } from "ui/pages/ExploreCatalog/Search";
 import type { PageRoute } from "./route";
 
-import { useCoreFunctions } from "core";
+import {selectors, useCoreFunctions, useCoreState} from "core";
 
 type Props = {
     className?: string
@@ -32,6 +32,7 @@ export default function Explore (props: Props) {
     const [, startTransition] = useTransition();
 
     const { catalog } = useCoreFunctions()
+    const { search } = useCoreState(selectors.catalog.search)
 
     const onSearchChange = useConstCallback<
         SearchProps["onSearchChange"]
@@ -54,12 +55,15 @@ export default function Explore (props: Props) {
         });
     }, [route.params.search]);
 
-    const onSearchSubmit = (e: any) => {
-        e.preventDefault()
-
-        /*
-        * Waiting for DSFR team to add onSubmit method on SearchBar component to handle the search by clicking the button
-        * */
+    const onSearchSubmit = () => {
+        return startTransition(() =>
+            routes
+                .exploreCatalog({
+                    ...route.params,
+                    search
+                })
+                .replace()
+        )
     }
 
     const reposSelection: TileProps[] = [
