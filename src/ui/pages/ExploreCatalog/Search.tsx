@@ -30,8 +30,8 @@ export type Props = {
     functionsOptions: string[]
     selectedFunctions: string[]
     onFunctionsChange: (functions: string[]) => void
-    selectedVitality: number[]
-    onVitalityChange: (range: number[]) => void
+    selectedVitality: number
+    onVitalityChange: (range: number) => void
     languagesOptions: string[]
     selectedLanguages: string[]
     onLanguagesChange: (languages: string[]) => void
@@ -158,9 +158,9 @@ export const Search = (props: Props) => {
                         <label>{t("vitality index label")}</label>
                         <Slider
                             value={selectedVitality}
-                            onChange={(_event, newValue) => onVitalityChange(newValue as number[])}
+                            onChange={(_event, newValue) => onVitalityChange(newValue as number)}
                             valueLabelDisplay="auto"
-
+                            track="inverted"
                         />
                     </div>
                     <MultiSelect

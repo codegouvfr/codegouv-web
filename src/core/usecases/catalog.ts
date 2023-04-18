@@ -30,7 +30,7 @@ export type State = {
 	selectedCategories: State.Category[]
 	selectedDependencies : State.Dependency[]
 	selectedFunctions: State.Function[]
-	selectedVitality: State.Vitality[]
+	selectedVitality: State.Vitality
 	selectedLanguages: State.Language[]
 	selectedLicences: State.Licence[]
 	selectedDevStatus: State.DevStatus[]
@@ -127,7 +127,7 @@ export const { reducer, actions } = createSlice({
 				selectedCategories: [],
 				selectedDependencies: [],
 				selectedFunctions: [],
-				selectedVitality: [],
+				selectedVitality: 0,
 				selectedLanguages: [],
 				selectedLicences: [],
 				selectedDevStatus: [],
@@ -306,8 +306,8 @@ export const selectors = (() => {
 		return repos.filter(repo => selectedDependencies.some(dependency => dependency.repository_urls.includes(repo.url)))
 	}
 
-	const filterByVitality = (repos: Repository[], selectedVitality: number[]): Repository[] => {
-		return repos.filter(repo => between(repo.vitality, selectedVitality[0], selectedVitality[1]))
+	const filterByVitality = (repos: Repository[], selectedVitality: number): Repository[] => {
+		return repos.filter(repo => between(repo.vitality, selectedVitality, 100))
 	}
 
 	const sortRepos = (repos: Repository[], sort: State.Sort) => {
@@ -367,7 +367,7 @@ export const selectors = (() => {
 				(repos: Repository[]) => selectedCategories.length ? repos.filter(repo => selectedCategories.some(selectedCategory => repo.topics.includes(selectedCategory))) : repos,
 				(repos: Repository[]) => selectedDependencies.length ? filterByDependencies(repos, dependencies, selectedDependencies) : repos,
 				(repos: Repository[]) => selectedFunctions.length ? repos.filter(repo => selectedFunctions.some(selectedFunction => repo.type.includes(selectedFunction))) : repos,
-				(repos: Repository[]) => selectedVitality.length ? filterByVitality(repos, selectedVitality) : repos,
+				(repos: Repository[]) => selectedVitality ? filterByVitality(repos, selectedVitality) : repos,
 				(repos: Repository[]) => selectedLanguages.length ? repos.filter(repo => selectedLanguages.some(selectedLanguage => repo.language.includes(selectedLanguage))) : repos,
 				(repos: Repository[]) => selectedLicences.length ? repos.filter(repo => selectedLicences.some(selectedLicence => repo.license.includes(selectedLicence))) : repos,
 				(repos: Repository[]) => selectedDevStatus.length ? repos.filter(repo => selectedDevStatus.some(selectedStatus => repo.status.includes(selectedStatus))) : repos,

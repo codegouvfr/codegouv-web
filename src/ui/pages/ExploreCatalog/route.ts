@@ -34,7 +34,7 @@ export const routeDefs = {
             "categories": param.query.optional.array.string.default([]),
             "dependencies": param.query.optional.array.string.default([]),
             "functions": param.query.optional.array.string.default([]),
-            "vitality": param.query.optional.array.number.default([0,100]),
+            "vitality": param.query.optional.number.default(0),
             "languages": param.query.optional.array.string.default([]),
             "licences": param.query.optional.array.string.default([]),
             "devStatus": param.query.optional.array.string.default([]),
