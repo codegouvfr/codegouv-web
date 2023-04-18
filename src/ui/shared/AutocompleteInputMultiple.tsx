@@ -2,7 +2,6 @@ import * as React from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete, { autocompleteClasses } from '@mui/material/Autocomplete';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import ListSubheader from '@mui/material/ListSubheader';
 import Popper from '@mui/material/Popper';
 import { useTheme, styled } from '@mui/material/styles';
 import { VariableSizeList, ListChildComponentProps } from 'react-window';
@@ -28,17 +27,9 @@ function renderRow(props: ListChildComponentProps) {
         top: (style.top as number) + LISTBOX_PADDING,
     };
 
-    if (dataSet.hasOwnProperty('group')) {
-        return (
-            <ListSubheader key={dataSet.key} component="div" style={inlineStyle}>
-                {dataSet.group}
-            </ListSubheader>
-        );
-    }
-
     return (
         <Typography component="li" {...dataSet[0]} noWrap style={inlineStyle}>
-            {`#${dataSet[2] + 1} - ${dataSet[1]}`}
+            {`${dataSet[1]}`}
         </Typography>
     );
 }
@@ -125,6 +116,7 @@ const StyledPopper = styled(Popper)({
         '& ul': {
             padding: 0,
             margin: 0,
+            width: "100%"
         },
     },
 });
@@ -188,7 +180,8 @@ const useStyles = makeStyles({name: {MultiSelect}})(() => ({
             gap: fr.spacing("2v"),
 
             "&::before" : {
-                borderBottom: "none"
+                borderBottom: "none",
+                content: "none"
             },
             "&:hover &&::before" : {
                 borderBottom: "none"

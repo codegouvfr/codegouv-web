@@ -1,4 +1,4 @@
-import React, {memo} from "react";
+import React from "react";
 import {assert} from "tsafe/assert";
 import type {Equals} from "tsafe";
 import {makeStyles} from "tss-react/dsfr";
@@ -23,8 +23,12 @@ export const MultiSelect = (props: Props) => {
 
     const {cx, classes} = useStyles();
 
+    const MenuProps = {
+        className: classes.menu
+    }
+
     return (
-        <div className={cx(className, classes.root)}>
+        <div className={cx(className, classes.root, fr.cx("fr-select-group"))}>
             {label && <label htmlFor={`${label}-label`}>
                 { label }
             </label>}
@@ -42,6 +46,7 @@ export const MultiSelect = (props: Props) => {
                 )}
                 className={cx(fr.cx("fr-select"), classes.multiSelect)}
                 input={<InputBase />}
+                MenuProps={MenuProps}
             >
                 {options.map(option => (
                     <MenuItem
@@ -56,7 +61,7 @@ export const MultiSelect = (props: Props) => {
     )
 }
 
-const useStyles = makeStyles({name: {MultiSelect}})(theme => ({
+const useStyles = makeStyles({name: {MultiSelect}})(() => ({
     root: {},
     multiSelect: {
         marginTop: fr.spacing("2v"),
@@ -67,5 +72,9 @@ const useStyles = makeStyles({name: {MultiSelect}})(theme => ({
         "&&>.MuiSvgIcon-root": {
             display: "none"
         }
+    },
+    menu: {
+        maxHeight: "20rem",
+        width: "300px"
     }
 }));
