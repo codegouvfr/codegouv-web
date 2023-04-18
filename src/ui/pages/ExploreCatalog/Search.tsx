@@ -130,6 +130,7 @@ export const Search = (props: Props) => {
                         options={administrationsOptions}
                         selectedValues={selectedAdministrations}
                         onChange={onAdministrationsChange}
+                        className={classes.filterSelectGroup}
                     />
                     <MultiSelect
                         id="Catégories"
@@ -137,6 +138,7 @@ export const Search = (props: Props) => {
                         options={categoriesOptions}
                         selectedValues={selectedCategories}
                         onChange={onCategoriesChange}
+                        className={classes.filterSelectGroup}
                     />
                     <div className={classes.filterSelectGroup}>
                         <label>{t("dependencies label")}</label>
@@ -153,6 +155,7 @@ export const Search = (props: Props) => {
                         options={functionsOptions}
                         selectedValues={selectedFunctions}
                         onChange={onFunctionsChange}
+                        className={classes.filterSelectGroup}
                     />
                     <div className={classes.filterSelectGroup}>
                         <label>{t("vitality index label")}</label>
@@ -169,6 +172,7 @@ export const Search = (props: Props) => {
                         options={languagesOptions}
                         selectedValues={selectedLanguages}
                         onChange={onLanguagesChange}
+                        className={classes.filterSelectGroup}
                     />
                     <MultiSelect
                         id="Licences"
@@ -176,6 +180,7 @@ export const Search = (props: Props) => {
                         options={licencesOptions}
                         selectedValues={selectedLicences}
                         onChange={onLicencesChange}
+                        className={classes.filterSelectGroup}
                     />
                     <MultiSelect
                         id="Status du développement"
@@ -183,6 +188,7 @@ export const Search = (props: Props) => {
                         options={devStatusOptions}
                         selectedValues={selectedDevStatus}
                         onChange={onDevStatusChange}
+                        className={classes.filterSelectGroup}
                     />
                     <div className={classes.filterSelectGroup}>
                         <label>{t("organisation label")}</label>
@@ -198,6 +204,7 @@ export const Search = (props: Props) => {
                         onChange={onIsExperimentalReposHidden}
                         label={t("experimental toggle switch label")}
                         inputTitle={t("experimental toggle switch label")}
+                        className={classes.filterSelectGroup}
                     />
                 </div>
             </div>
@@ -247,7 +254,7 @@ const useStyles = makeStyles({name: {Search}})(theme => ({
         }
     },
     filterSelectGroup: {
-        "&:not(:last-of-type)": {
+        "&:not(:nth-of-type(4n))": {
             borderRight: `1px ${theme.decisions.border.default.grey.default} solid`,
             paddingRight: fr.spacing("4v")
         },
