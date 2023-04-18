@@ -163,14 +163,12 @@ export function AutocompleteInputMultiple(props: Props) {
                                 "fr-badge--no-icon",
                                 "fr-badge--yellow-moutarde",
                                 "fr-badge",
-                            ),
-                            classes.badge
+                            )
                         )}
                         key={index}
                     >
                         {option}
                     </span>
-                    //<MyChip {...getTagProps({ index })} label={option.title} />
                 ));
             }}
         />
@@ -178,7 +176,7 @@ export function AutocompleteInputMultiple(props: Props) {
 }
 
 
-const useStyles = makeStyles({name: {MultiSelect}})(theme => ({
+const useStyles = makeStyles({name: {MultiSelect}})(() => ({
     root: {},
     multiSelect: {
         marginTop: fr.spacing("2v"),
@@ -187,6 +185,8 @@ const useStyles = makeStyles({name: {MultiSelect}})(theme => ({
             padding: 0,
         },
         "&& .MuiInputBase-root": {
+            gap: fr.spacing("2v"),
+
             "&::before" : {
                 borderBottom: "none"
             },
@@ -201,9 +201,4 @@ const useStyles = makeStyles({name: {MultiSelect}})(theme => ({
             display: "none"
         }
     },
-    badge: {
-        "&&:not(:last-of-type)": {
-            marginRight: fr.spacing("2v")
-        }
-    }
 }));
