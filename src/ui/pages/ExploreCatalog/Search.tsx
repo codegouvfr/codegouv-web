@@ -236,10 +236,6 @@ const useStyles = makeStyles({name: {Search}})(theme => ({
     },
     filters: {
         "&&": {
-            overflowX: "visible",
-            ...fr.spacing("padding", {
-                rightLeft: "1v"
-            }),
             margin: 0
         }
     },
