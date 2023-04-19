@@ -15,7 +15,7 @@ type Props = {
     repositories: Repository[];
 };
 
-export default function VirtualizedCatalog(props: Props) {
+export function VirtualizedCatalog(props: Props) {
 
     const {className, repositories, ...rest} = props
     assert<Equals<typeof rest, {}>>()

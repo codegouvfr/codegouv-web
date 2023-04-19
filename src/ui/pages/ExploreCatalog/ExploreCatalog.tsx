@@ -16,7 +16,7 @@ import { routes } from "ui/routes"
 import useDebounce from "ui/tools/cancelableDebounce";
 import SelectNext from "ui/shared/SelectNext";
 import type { State as CatalogState } from "core/usecases/catalog";
-import VirtualizedCatalog from "./VirtualizedCatalog";
+import { VirtualizedCatalog } from "./VirtualizedCatalog";
 
 type Props = {
 	className?: string;
