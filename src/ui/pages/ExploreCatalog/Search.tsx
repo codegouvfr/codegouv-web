@@ -245,24 +245,30 @@ const useStyles = makeStyles({name: {Search}})(theme => ({
     },
     filtersWrapper: {
         display: "grid",
-        gridTemplateColumns: `repeat(4, minmax(20%, 1fr))`,
+        gridTemplateColumns: `repeat(4, 1fr)`,
         columnGap: fr.spacing("4v"),
         rowGap: fr.spacing("4v"),
         marginTop: fr.spacing("3v"),
+        [fr.breakpoints.down("lg")]: {
+            gridTemplateColumns: `repeat(2, 1fr)`
+        },
         [fr.breakpoints.down("md")]: {
             gridTemplateColumns: `repeat(1, 1fr)`
         }
     },
     filterSelectGroup: {
-        "&:not(:nth-of-type(4n))": {
-            borderRight: `1px ${theme.decisions.border.default.grey.default} solid`,
-            paddingRight: fr.spacing("4v")
+        [fr.breakpoints.up("lg")]: {
+            "&:not(:nth-of-type(4n))": {
+                borderRight: `1px ${theme.decisions.border.default.grey.default} solid`,
+                paddingRight: fr.spacing("4v")
+            },
         },
-        [fr.breakpoints.down("md")]: {
-            "&:not(:last-of-type)": {
-                "border": "none"
-            }
-        }
+        [fr.breakpoints.down("lg") && fr.breakpoints.up("md")]: {
+            "&:not(:nth-of-type(2n))": {
+                borderRight: `1px ${theme.decisions.border.default.grey.default} solid`,
+                paddingRight: fr.spacing("4v")
+            },
+        },
     },
     multiSelect: {
         marginTop: fr.spacing("2v"),
