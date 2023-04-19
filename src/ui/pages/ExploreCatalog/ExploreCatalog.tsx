@@ -1,4 +1,3 @@
-
 import { selectors, useCoreFunctions, useCoreState } from "core";
 import CircularProgress from '@mui/material/CircularProgress';
 import type { PageRoute } from "./route";
@@ -14,11 +13,10 @@ import { Search } from "./Search";
 import { useConstCallback } from "powerhooks/useConstCallback";
 import { Props as SearchProps } from "ui/pages/ExploreCatalog/Search"
 import { routes } from "ui/routes"
-import { RepoCard } from "./RepoCard";
 import useDebounce from "ui/tools/cancelableDebounce";
 import SelectNext from "ui/shared/SelectNext";
 import type { State as CatalogState } from "core/usecases/catalog";
-
+import VirtualizedCatalog from "./VirtualizedCatalog";
 
 type Props = {
 	className?: string;
@@ -379,19 +377,11 @@ export default function ExploreCatalog(props: Props) {
 							}))}
 						/>
 					</div>
-					<div className={classes.repoList}>
-						{filteredRepositories.map(repo => (
-							<RepoCard
-								key={repo.url}
-								repositoryName={repo.name}
-								devStatus={repo.status}
-								description={repo.description}
-								language={repo.language}
-								lastUpdate={repo.last_updated}
-								starCount={repo.star_count}
-							/>
-						))}
-					</div>
+					{filteredRepositories.length === 0 ? null : (
+						<VirtualizedCatalog
+							repositories={filteredRepositories}
+						/>
+					)}
 				</div>
 			</section>
 		</div>
@@ -425,11 +415,6 @@ const useStyles = makeStyles({name: {Explore}})(() => ({
 		[fr.breakpoints.down("md")]: {
 			marginTop: fr.spacing("4v")
 		}
-	},
-	repoList: {
-		display: "grid",
-		gridTemplateColumns: "repeat(2, 1fr)",
-		gap: fr.spacing("4v")
 	},
 }));
 

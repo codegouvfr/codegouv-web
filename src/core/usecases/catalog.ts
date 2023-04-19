@@ -10,7 +10,7 @@ import memoize from "memoizee";
 import { Fzf } from "fzf"
 import { assert, type Equals } from "tsafe";
 
-import {categories as mockCategories, repositories as mockRepositories, languages as mockLanguages} from "core/usecases/mock/catalog"
+import {categories as mockCategories, languages as mockLanguages} from "core/usecases/mock/catalog"
 import { between } from "../../ui/tools/num";
 
 export type State = {
@@ -61,7 +61,6 @@ export const name = "catalog" as const;
 /**
  * Mocked data (see initialisation with mock in privateThunks > "initialize" method)
  * - categories
- * - repositories
  * - languages
  */
 
@@ -169,8 +168,8 @@ export const privateThunks = {
 
 				const [dispatch, , { codeGouvApi }] = args;
 
-				const repositories = await mockRepositories;
-				/*const repositories = await codeGouvApi.getRepositories();*/
+				/*const repositories = await mockRepositories;*/
+				const repositories = await codeGouvApi.getRepositories();
 				const repositoryStatistics = await codeGouvApi.getRepositoryStatistics();
 				/*const languages = await codeGouvApi.getLanguages();*/
 				const languages = await mockLanguages;

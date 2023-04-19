@@ -133,7 +133,7 @@ export const Search = (props: Props) => {
                         className={classes.filterSelectGroup}
                     />
                     <MultiSelect
-                        id="Catégories"
+                        id="categories"
                         label={t("categories label")}
                         options={categoriesOptions}
                         selectedValues={selectedCategories}
@@ -143,14 +143,14 @@ export const Search = (props: Props) => {
                     <div className={classes.filterSelectGroup}>
                         <label>{t("dependencies label")}</label>
                         <AutocompleteInputMultiple
-                            id={"Dépendances"}
+                            id={"dependencies"}
                             options={dependenciesOptions}
                             selectedValues={selectedDependencies}
                             onChange={onDependenciesChange}
                         />
                     </div>
                     <MultiSelect
-                        id="Fonctions"
+                        id="functions"
                         label={t("functions label")}
                         options={functionsOptions}
                         selectedValues={selectedFunctions}
@@ -167,7 +167,7 @@ export const Search = (props: Props) => {
                         />
                     </div>
                     <MultiSelect
-                        id="Languages"
+                        id="languages"
                         label={t("languages label")}
                         options={languagesOptions}
                         selectedValues={selectedLanguages}
@@ -175,7 +175,7 @@ export const Search = (props: Props) => {
                         className={classes.filterSelectGroup}
                     />
                     <MultiSelect
-                        id="Licences"
+                        id="licences"
                         label={t("licences label")}
                         options={licencesOptions}
                         selectedValues={selectedLicences}
@@ -183,7 +183,7 @@ export const Search = (props: Props) => {
                         className={classes.filterSelectGroup}
                     />
                     <MultiSelect
-                        id="Status du développement"
+                        id="devStatus"
                         label={t("dev status label")}
                         options={devStatusOptions}
                         selectedValues={selectedDevStatus}
@@ -193,7 +193,7 @@ export const Search = (props: Props) => {
                     <div className={classes.filterSelectGroup}>
                         <label>{t("organisation label")}</label>
                         <AutocompleteInputMultiple
-                            id={"Organisation"}
+                            id={"organisation"}
                             options={organisationsOptions}
                             selectedValues={selectedOrganisations}
                             onChange={onOrganisationsChange}
