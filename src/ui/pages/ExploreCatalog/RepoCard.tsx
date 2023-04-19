@@ -41,7 +41,7 @@ export const RepoCard = (props: Props) => {
                     { description }
                 </p>
                 <div className={cx(fr.cx("fr-card__footer"), classes.footer)}>
-                    <span
+                    {language && <span
                         className={cx(
                             fr.cx(
                                 "fr-badge--no-icon",
@@ -51,8 +51,8 @@ export const RepoCard = (props: Props) => {
                             )
                         )}
                     >
-                        { language }
-                    </span>
+                        {language}
+                    </span>}
                     <span
                         className={cx(
                             fr.cx(
@@ -72,7 +72,8 @@ export const RepoCard = (props: Props) => {
                                 "fr-badge--yellow-tournesol",
                                 "fr-badge",
                                 "fr-badge--sm"
-                            )
+                            ),
+                            classes.lastUpdate
                         )}
                     >
                          {t("latest update", { fromNowText })}
@@ -134,7 +135,11 @@ const useStyles = makeStyles({name: {RepoCard}})(theme => ({
     },
     footer: {
         display: "flex",
-        gap: fr.spacing("4v")
+        gap: fr.spacing("4v"),
+        flexWrap: "wrap"
+    },
+    lastUpdate: {
+        whiteSpace: "nowrap"
     }
 }));
 
