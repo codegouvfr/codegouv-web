@@ -1,7 +1,7 @@
 import { RepoCard } from "ui/pages/ExploreCatalog/RepoCard";
-import { sectionName } from "./sectionName";
+import { sectionName } from "./sectionName"
 import { getStoryFactory } from "stories/getStory";
-import { repository } from "core/usecases/mock/catalog"
+import { repository } from "core/usecases/mock/catalog";
 
 const { meta, getStory } = getStoryFactory({
     sectionName,
