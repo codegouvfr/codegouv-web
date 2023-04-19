@@ -316,13 +316,13 @@ export const selectors = (() => {
 				return [...repos].sort((repoA, repoB) => repoA.name.localeCompare(repoB.name))
 
 			case "name_desc":
-				return repos.sort((repoA, repoB) => repoB.name.localeCompare(repoA.name))
+				return [...repos].sort((repoA, repoB) => repoB.name.localeCompare(repoA.name))
 
 			case "last_update_asc":
-				return repos.sort((repoA, repoB) => repoB.last_updated - repoA.last_updated)
+				return [...repos].sort((repoA, repoB) => repoB.last_updated - repoA.last_updated)
 
 			case "last_update_desc":
-				return repos.sort((repoA, repoB) => repoA.last_updated - repoB.last_updated)
+				return [...repos].sort((repoA, repoB) => repoA.last_updated - repoB.last_updated)
 		}
 	}
 
