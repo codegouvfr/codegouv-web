@@ -10,7 +10,7 @@ import { useFromNow } from "ui/useMoment";
 type Props = {
     className?: string
     repositoryName: string
-    starCount: number
+    starCount?: number
     description: string
     language: string
     devStatus: string
@@ -32,10 +32,10 @@ export const RepoCard = (props: Props) => {
             <div className={classes.cardBody}>
                 <div className={cx(fr.cx("fr-card__header"), classes.header)}>
                     <h3 className={classes.name}>{repositoryName}</h3>
-                    <div className={classes.startCountWrapper}>
+                    {starCount && <div className={classes.startCountWrapper}>
                         <i className={fr.cx("fr-icon-star-fill")}/>
-                        <span>{ starCount }</span>
-                    </div>
+                        <span>{starCount}</span>
+                    </div>}
                 </div>
                 <p className={cx(fr.cx("fr-card__content"), classes.description)}>
                     { description }
