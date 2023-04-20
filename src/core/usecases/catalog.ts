@@ -168,7 +168,6 @@ export const privateThunks = {
 
 				const [dispatch, , { codeGouvApi }] = args;
 
-				/*const repositories = await mockRepositories;*/
 				const repositories = await codeGouvApi.getRepositories();
 				const repositoryStatistics = await codeGouvApi.getRepositoryStatistics();
 				/*const languages = await codeGouvApi.getLanguages();*/
@@ -195,16 +194,6 @@ export const privateThunks = {
 };
 
 export const thunks = {
-	/*addRepository:
-		(params: { url: string; }): ThunkAction =>
-			async (...args) => {
-
-				const { url } = params;
-
-				const [dispatch, , { codeGouvApi }] = args;
-
-				dispatch(actions.addRepositoryStarted());
-			},*/
 	updateFilter:
 		<K extends UpdateFilterParams.Key>(
 			params: UpdateFilterParams<K>
