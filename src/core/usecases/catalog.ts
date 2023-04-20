@@ -4,7 +4,6 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSelector } from "@reduxjs/toolkit";
 import type { Dependency, Organisation, Repository, RepositoryStatistics } from "core/ports/CodeGouvApi";
 import { createObjectThatThrowsIfAccessed } from "redux-clean-architecture";
-import { uniqBy } from "lodash"
 import { pipe } from "lodash/fp"
 import memoize from "memoizee";
 import { Fzf } from "fzf"
@@ -55,6 +54,8 @@ export namespace State {
 	export type DevStatus = 'Concept' | 'Alpha' | 'Beta' | 'RC' | 'Stable'
 	export type OrganisationName = string
 }
+
+const MAX_VITALITY = 100
 
 export const name = "catalog" as const;
 
@@ -294,7 +295,7 @@ export const selectors = (() => {
 	}
 
 	const filterByVitality = (repos: Repository[], selectedVitality: number): Repository[] => {
-		return repos.filter(repo => between(repo.vitality, selectedVitality, 100))
+		return repos.filter(repo => between(repo.vitality, selectedVitality, MAX_VITALITY))
 	}
 
 	const sortRepos = (repos: Repository[], sort: State.Sort) => {
