@@ -30,16 +30,22 @@ export const MainSearch = (props: Props) => {
         <div className={className}>
             { header }
             <h2 className={classes.title}>{t("title", { repoCount: repositoryStatistics.repository_count, forgeCount: repositoryStatistics.forge_count })}</h2>
-            <div className={classes.searchBarContainer}>
-                <SearchBar className={classes.searchBar}
-                           nativeInputProps={{
-                               value: search,
-                               onChange: event => onSearchChange(event.currentTarget.value),
-                           }}
-                           onButtonClick={onSearchSubmit}
+            <form className={classes.searchBarContainer} onSubmit={(event) => {
+                event.preventDefault()
+                if (onSearchSubmit) {
+                    onSearchSubmit()
+                }
+            }}>
+                <SearchBar
+                    className={classes.searchBar}
+                       nativeInputProps={{
+                           value: search,
+                           onChange: event => onSearchChange(event.currentTarget.value),
+                       }}
+                       onButtonClick={onSearchSubmit}
                 />
                 { altButton }
-            </div>
+            </form>
         </div>
     )
 }
