@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import {useEffect, useTransition} from "react";
 import { assert } from "tsafe/assert";
 import type { Equals } from "tsafe";
 import { makeStyles } from "tss-react/dsfr";
@@ -10,18 +10,61 @@ import { TileColumns } from "ui/shared/TileColumns";
 import { TileProps } from "@codegouvfr/react-dsfr/Tile";
 import { Contribute } from "ui/shared/Contribute";
 import { SiteStats } from "ui/shared/SiteStats";
-import SearchBar from "@codegouvfr/react-dsfr/SearchBar";
+import { MainSearch } from "ui/shared/MainSearch";
+import { useConstCallback } from "powerhooks/useConstCallback";
+import { Props as SearchProps } from "ui/pages/ExploreCatalog/Search";
+import type { PageRoute } from "./route";
+
+import {selectors, useCoreFunctions, useCoreState} from "core";
 
 type Props = {
     className?: string
+    route: PageRoute;
 }
 
 export default function Explore (props: Props) {
-    const {className, ...rest} = props
+    const {className, route, ...rest} = props
     assert<Equals<typeof rest, {}>>()
 
     const {t} = useTranslation({ Explore });
-    const {cx, classes} = useStyles();
+    const {classes} = useStyles();
+
+    const [, startTransition] = useTransition();
+
+    const { catalog } = useCoreFunctions()
+    const { search } = useCoreState(selectors.catalog.search)
+
+    const onSearchChange = useConstCallback<
+        SearchProps["onSearchChange"]
+    >(search => {
+            return startTransition(() =>
+                routes
+                    .explore({
+                        ...route.params,
+                        search
+                    })
+                    .replace()
+            )
+        }
+    );
+
+    useEffect(() => {
+        catalog.updateFilter({
+            key: "search",
+            value: route.params.search
+        });
+    }, [route.params.search]);
+
+    const onSearchSubmit = () => {
+        return startTransition(() =>
+            routes
+                .exploreCatalog({
+                    ...route.params,
+                    search
+                })
+                .replace()
+        )
+    }
 
     const reposSelection: TileProps[] = [
         {
@@ -59,12 +102,13 @@ export default function Explore (props: Props) {
 
     return (
         <div className={className}>
-            <section className={cx(fr.cx("fr-container"))}>
-                <h2 className={classes.title}>{t("title", { repoCount: 15415, forgeCount: 42 })}</h2>
-                <div className={classes.searchBarContainer}>
-                    <SearchBar className={classes.searchBar}/>
-                    <a className={fr.cx("fr-btn")} {...routes.exploreCatalog().link}>{t("advanced mode")}</a>
-                </div>
+            <section className={fr.cx("fr-container")}>
+                <MainSearch
+                   altButton={<a className={fr.cx("fr-btn")} {...routes.exploreCatalog().link}>{t("advanced mode")}</a>}
+                   search={route.params.search}
+                   onSearchChange={onSearchChange}
+                   onSearchSubmit={onSearchSubmit}
+                />
             </section>
             <section className={classes.lightBlueBackground}>
                 <TileColumns className={fr.cx("fr-container")} title={ t("software selection title") } tileList={reposSelection} />
@@ -102,11 +146,6 @@ const useStyles = makeStyles({name: {Explore}})(theme => ({
 }));
 
 export const {i18n} = declareComponentKeys<
-    | {
-        K: "title";
-        P: { repoCount: number, forgeCount: number }
-        R: JSX.Element;
-    }
     | "advanced mode"
     | "software selection title"
     | "software selection by adm"

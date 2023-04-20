@@ -28,6 +28,10 @@ const {
     | typeof import("ui/shared/Header").i18n
     | typeof import("ui/shared/Contribute").i18n
     | typeof import("ui/pages/Explore/Explore").i18n
+    | typeof import("ui/shared/MainSearch").i18n
+    | typeof import("ui/pages/ExploreCatalog/ExploreCatalog").i18n
+    | typeof import("ui/pages/ExploreCatalog/Search").i18n
+    | typeof import("ui/pages/ExploreCatalog/RepoCard").i18n
 >()(
     { languages, fallbackLanguage },
     {
@@ -85,11 +89,6 @@ const {
                 "contribute suggest mail body": "Propose a workshop or an article email body to change",
             },
             "Explore": {
-                "title": ({ repoCount, forgeCount }) => (
-                    <>
-                        <span>Search among </span>the { repoCount } source code repositories and the { forgeCount } administration forges.
-                    </>
-                ),
                 "advanced mode": "Advanced mode",
                 "software selection title": "Some source code selections",
                 "software selection by adm": "By adm.",
@@ -100,6 +99,40 @@ const {
                 "stats authorities": "Authorities",
                 "stats organisations": "Organizations",
                 "stats deposit": "Analyzed deposits",
+            },
+            "MainSearch": {
+                "title": ({ repoCount, forgeCount }) => (
+                    <>
+                        <span>Search among </span>the { repoCount } source code repositories and the { forgeCount } administration forges.
+                    </>
+                ),
+            },
+            "ExploreCatalog": {
+                "search results": ({ count }) =>
+                    `${count} repositor${count > 1 ? "ies" : "y"}`,
+                "sort by": "Sort by",
+                "name asc" : "Ascending name (A-Z)",
+                "name desc" : "Descending name (Z-A)",
+                "last update asc" : "Last updated",
+                "last update desc" : "Oldest updated",
+            },
+            "Search": {
+                "breadcrumb explore": "Explore!",
+                "breadcrumb current page": "All source codes",
+                "filters": "Filters",
+                "administrations label": "Administrations",
+                "categories label": "Categories",
+                "dependencies label": "Dependencies",
+                "functions label": "Functions",
+                "vitality index label": "Vitality index",
+                "languages label": "Languages",
+                "licences label": "Licences",
+                "dev status label": "Development status",
+                "organisation label": "Organisation",
+                "experimental toggle switch label": "Hide experimental repositories",
+            },
+            "RepoCard": {
+                "latest update": ({ fromNowText }) => `Latest update:${fromNowText}`,
             }
         },
         "fr": {
@@ -157,11 +190,6 @@ const {
                 "contribute suggest mail body": "Proposer un atelier ou un article email body à modifier",
             },
             "Explore": {
-                "title": ({ repoCount, forgeCount }) => (
-                    <>
-                        <span>Effectuez une recherche </span>parmis les { repoCount } dépôts de code source et les { forgeCount } forges de l'administration.
-                    </>
-                ),
                 "advanced mode": "Mode avancé",
                 "software selection title": "Quelques sélections de codes sources",
                 "software selection by adm": "Par adm.",
@@ -172,6 +200,40 @@ const {
                 "stats authorities": "Administrations",
                 "stats organisations": "Organisations",
                 "stats deposit": "Dépôts analysés",
+            },
+            "MainSearch": {
+                "title": ({ repoCount, forgeCount }) => (
+                    <>
+                        <span>Effectuez une recherche </span>parmis les { repoCount } dépôts de code source et les { forgeCount } forges de l'administration.
+                    </>
+                ),
+            },
+            "ExploreCatalog": {
+                "search results": ({ count }) =>
+                    `${count} dépot${count > 1 ? "s" : ""} de code source`,
+                "sort by": "Trier par",
+                "name asc" : "Nom ascendant (A-Z)",
+                "name desc" : "Nom descendant (Z-A)",
+                "last update asc" : "Dernier mis à jour",
+                "last update desc" : "Mise à jour la plus ancienne",
+            },
+            "Search": {
+                "breadcrumb explore": "Explorer !",
+                "breadcrumb current page": "Tous les codes sources",
+                "filters": "Filtres",
+                "administrations label": "Administrations",
+                "categories label": "Catégories",
+                "dependencies label": "Dépendences",
+                "functions label": "Fonctions",
+                "vitality index label": "Indice de vitalité",
+                "languages label": "Languages",
+                "licences label": "Licences",
+                "dev status label": "Status du développement",
+                "organisation label": "Organisation",
+                "experimental toggle switch label": "Masquer les dépots expérimentaux",
+            },
+            "RepoCard": {
+                "latest update": ({ fromNowText }) => `Dernière mise à jour : ${fromNowText}`,
             }
             /* spell-checker: enable */
         }
