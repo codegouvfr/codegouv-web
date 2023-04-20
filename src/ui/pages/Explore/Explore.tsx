@@ -63,7 +63,7 @@ export default function Explore (props: Props) {
                     ...route.params,
                     search
                 })
-                .replace()
+                .push()
         )
     }
 
