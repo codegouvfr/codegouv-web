@@ -29,7 +29,7 @@ export default function ExploreCatalog(props: Props) {
 	assert<Equals<typeof rest, {}>>()
 
 	const {t} = useTranslation({ ExploreCatalog });
-	const {classes} = useStyles();
+	const {cx, classes} = useStyles();
 
 	const [, startTransition] = useTransition();
 
@@ -155,7 +155,7 @@ export default function ExploreCatalog(props: Props) {
 
 	const onFunctionsChange = useConstCallback<
 		SearchProps["onFunctionsChange"]
-	>(functions => {
+	>((functions) => {
 			return startTransition(() =>
 				routes
 					.exploreCatalog({
@@ -344,7 +344,7 @@ export default function ExploreCatalog(props: Props) {
 					onIsExperimentalReposHidden={onIsExperimentalReposChange}
 				/>
 			</div>
-			<section className={fr.cx("fr-container")}>
+			<div className={cx(classes.filteredView, fr.cx("fr-container"))}>
 				<div>
 					<div className={classes.header}>
 						<h6 className={classes.filteredRepositoriesCount}>
@@ -383,12 +383,15 @@ export default function ExploreCatalog(props: Props) {
 						/>
 					)}
 				</div>
-			</section>
+			</div>
 		</div>
 	);
 }
 
 const useStyles = makeStyles({name: {Explore}})(() => ({
+	filteredView: {
+		marginTop: fr.spacing("4v")
+	},
 	header: {
 		display: "flex",
 		alignItems: "center",
