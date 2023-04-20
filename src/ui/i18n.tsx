@@ -130,6 +130,9 @@ const {
                 "dev status label": "Development status",
                 "organisation label": "Organisation",
                 "experimental toggle switch label": "Hide experimental repositories",
+                "algorithm": "Algorithm",
+                "library": "Library",
+                "source code": "Source code"
             },
             "RepoCard": {
                 "latest update": ({ fromNowText }) => `Latest update:${fromNowText}`,
@@ -231,6 +234,9 @@ const {
                 "dev status label": "Status du développement",
                 "organisation label": "Organisation",
                 "experimental toggle switch label": "Masquer les dépots expérimentaux",
+                "algorithm": "Algorithme",
+                "library": "Bibliothèque",
+                "source code": "Code source"
             },
             "RepoCard": {
                 "latest update": ({ fromNowText }) => `Dernière mise à jour : ${fromNowText}`,

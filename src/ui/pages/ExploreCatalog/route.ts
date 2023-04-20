@@ -33,7 +33,28 @@ export const routeDefs = {
             "administrations": param.query.optional.array.string.default([]),
             "categories": param.query.optional.array.string.default([]),
             "dependencies": param.query.optional.array.string.default([]),
-            "functions": param.query.optional.array.string.default([]),
+            "functions": param.query.optional.array
+                .ofType({
+                    "parse": raw => {
+                        const schema = z.union([
+                            z.literal("Source Code"),
+                            z.literal("Library"),
+                            z.literal("Algorithm"),
+                        ]);
+
+                        assert<
+                            Equals<ReturnType<(typeof schema)["parse"]>, State.Function>
+                        >();
+
+                        try {
+                            return schema.parse(raw);
+                        } catch {
+                            return noMatch;
+                        }
+                    },
+                    "stringify": value => value
+                })
+                .default([]),
             "vitality": param.query.optional.number.default(0),
             "languages": param.query.optional.array.string.default([]),
             "licences": param.query.optional.array.string.default([]),

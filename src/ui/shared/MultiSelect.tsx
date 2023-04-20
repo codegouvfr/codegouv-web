@@ -7,11 +7,16 @@ import SelectMui from "@mui/material/Select";
 import {InputBase} from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 
+type Option = {
+    value: string
+    label: string
+} | string
+
 type Props = {
     className?: string
     id: string
     label?: string
-    options: string[]
+    options: Option[]
     selectedValues: string[]
     onChange: (options: string[]) => void;
 }
@@ -49,15 +54,31 @@ export const MultiSelect = (props: Props) => {
                 MenuProps={MenuProps}
             >
                 {options.map(option => (
-                    <MenuItem
-                        key={option}
-                        value={option}
-                    >
-                        {option}
-                    </MenuItem>
+                    menuItem(option)
                 ))}
             </SelectMui>
         </div>
+    )
+}
+
+const menuItem = (option: Option) => {
+    if (typeof option === "object" && "label" in option) {
+        return (
+            <MenuItem
+                key={option.label}
+                value={option.value}
+            >
+                {option.label}
+            </MenuItem>
+        )
+    }
+    return (
+        <MenuItem
+            key={option}
+            value={option}
+        >
+            {option}
+        </MenuItem>
     )
 }
 

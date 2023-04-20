@@ -402,11 +402,10 @@ export const selectors = (() => {
 	});
 
 	const functionFilterOptions = createSelector(
-		internalRepositories,
-		(
-			internalRepositories,
-		) => {
-			return uniqBy(internalRepositories, "type").map(repo => repo.type)
+		sliceState, _state => {
+			const options: State.Function[] = ["Source Code", "Library", "Algorithm"]
+
+			return options
 		}
 	);
 

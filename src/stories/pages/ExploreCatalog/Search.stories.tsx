@@ -26,7 +26,7 @@ export const VueDefault = getStory({
     administrationsOptions: ["Option 1", "Option 2", "Option 3"],
     organisationsOptions: ["Option 1", "Option 2", "Option 3"],
     devStatusOptions: ["Option 1", "Option 2", "Option 3"],
-    functionsOptions: ["Option 1", "Option 2", "Option 3"],
+    functionsOptions: ["Library", "Algorithm", "Source Code"],
     languagesOptions: ["Option 1", "Option 2", "Option 3"],
     licencesOptions: ["Option 1", "Option 2", "Option 3"],
     isExperimentalReposHidden: false,

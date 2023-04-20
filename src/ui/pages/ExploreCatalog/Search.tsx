@@ -13,6 +13,7 @@ import {AutocompleteInputMultiple} from "../../shared/AutocompleteInputMultiple"
 import { ToggleSwitch } from "@codegouvfr/react-dsfr/ToggleSwitch"
 import { Slider } from "@mui/material";
 import {MultiSelect} from "../../shared/MultiSelect";
+import {State} from "../../../core/usecases/catalog";
 
 export type Props = {
     className?: string
@@ -27,9 +28,9 @@ export type Props = {
     dependenciesOptions: string[]
     onDependenciesChange: (dependencies: string[]) => void
     selectedDependencies: string[]
-    functionsOptions: string[]
-    selectedFunctions: string[]
-    onFunctionsChange: (functions: string[]) => void
+    functionsOptions: State.Function[]
+    selectedFunctions: State.Function[]
+    onFunctionsChange: (functions: State.Function[]) => void
     selectedVitality: number
     onVitalityChange: (range: number) => void
     languagesOptions: string[]
@@ -97,8 +98,6 @@ export const Search = (props: Props) => {
         },
     ]
 
-    {/*Todo : className={cx(fr.cx("fr-select"), classes.multiSelect)} */}
-
     return (
         <div className={cx(className, classes.root)}>
             <div className={cx(classes.basicSearch, className)}>
@@ -152,9 +151,22 @@ export const Search = (props: Props) => {
                     <MultiSelect
                         id="functions"
                         label={t("functions label")}
-                        options={functionsOptions}
+                        options={functionsOptions.map(value => ({
+                            value,
+                            label: (() => {
+                                switch (value) {
+                                    case "Algorithm":
+                                        return t("algorithm");
+                                    case "Library":
+                                        return t("library");
+                                    case "Source Code":
+                                        return t("source code");
+
+                                }
+                            })()
+                        }))}
                         selectedValues={selectedFunctions}
-                        onChange={onFunctionsChange}
+                        onChange={options => onFunctionsChange(options as State.Function[])}
                         className={classes.filterSelectGroup}
                     />
                     <div className={classes.filterSelectGroup}>
@@ -241,7 +253,7 @@ const useStyles = makeStyles({name: {Search}})(theme => ({
     },
     filtersWrapper: {
         display: "grid",
-        gridTemplateColumns: `repeat(4, 1fr)`,
+        gridTemplateColumns: `repeat(4, minmax(20%, 1fr))`,
         columnGap: fr.spacing("4v"),
         rowGap: fr.spacing("4v"),
         marginTop: fr.spacing("3v"),
@@ -292,4 +304,7 @@ export const {i18n} = declareComponentKeys<
     | "dev status label"
     | "organisation label"
     | "experimental toggle switch label"
+    | "algorithm"
+    | "library"
+    | "source code"
 >()({Search});
