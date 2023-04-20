@@ -4,11 +4,9 @@ import { declareComponentKeys } from "i18nifty";
 import { useTranslation } from "ui/i18n";
 import { fr } from "@codegouvfr/react-dsfr";
 import { makeStyles } from "tss-react/dsfr";
-import Tile from "@codegouvfr/react-dsfr/Tile";
 import Card from "@codegouvfr/react-dsfr/Card";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { SoftwareCard } from "./SoftwareCard";
-import Input from "@codegouvfr/react-dsfr/Input";
 import { SiteStats } from "ui/shared/SiteStats"
 import { TileColumns } from "../../shared/TileColumns";
 import { Contribute } from "../../shared/Contribute";
