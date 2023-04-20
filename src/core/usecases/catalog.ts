@@ -226,7 +226,6 @@ export const selectors = (() => {
 	const categories = createSelector(sliceState, state => state.categories);
 	const languages = createSelector(sliceState, state => state.languages);
 	const licences = createSelector(sliceState, state => state.licences);
-	const devStatus = createSelector(sliceState, state => uniqBy(state.repositories, "status").map(repo => repo.status))
 	const sort = createSelector(sliceState, state => state.sort);
 	const search = createSelector(sliceState, state => state.search)
 	const selectedAdministrations = createSelector(sliceState, state => state.selectedAdministrations)
@@ -422,7 +421,6 @@ export const selectors = (() => {
 		languages,
 		administrations,
 		licences,
-		devStatus,
 		selectedFunctions,
 		organisations,
 		dependencies,
