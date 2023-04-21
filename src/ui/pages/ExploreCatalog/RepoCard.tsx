@@ -32,7 +32,7 @@ export const RepoCard = (props: Props) => {
             <div className={classes.cardBody}>
                 <div className={cx(fr.cx("fr-card__header"), classes.header)}>
                     <h3 className={classes.name}>{repositoryName}</h3>
-                    {starCount && <div className={classes.startCountWrapper}>
+                    {starCount !== undefined && <div className={classes.startCountWrapper}>
                         <i className={fr.cx("fr-icon-star-fill")}/>
                         <span>{starCount}</span>
                     </div>}

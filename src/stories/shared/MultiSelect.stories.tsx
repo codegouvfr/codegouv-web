@@ -13,7 +13,20 @@ export default meta;
 export const VueDefault = getStory({
     id: "1",
     onChange: () => {},
-    options: ["Option 1", "Option 2", "Option 3"],
+    options: [
+        {
+            label: "Option 1",
+            itemCount: 1,
+        },
+        {
+            label: "Option 2",
+            itemCount: 0,
+        },
+        {
+            label: "Option 3",
+            itemCount: 2
+        }
+    ],
     selectedValues: [],
     label: "My multiselect"
 });

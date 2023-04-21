@@ -8,9 +8,10 @@ import {InputBase} from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 
 type Option = {
-    value: string
+    value?: string
     label: string
-} | string
+    itemCount: number
+}
 
 type Props = {
     className?: string
@@ -53,32 +54,17 @@ export const MultiSelect = (props: Props) => {
                 input={<InputBase />}
                 MenuProps={MenuProps}
             >
-                {options.map(option => (
-                    menuItem(option)
+                {options.map(( { label, value, itemCount } ) => (
+                    <MenuItem
+                        key={label}
+                        value={value ? value : label}
+                        disabled={itemCount === 0}
+                    >
+                        {label}
+                    </MenuItem>
                 ))}
             </SelectMui>
         </div>
-    )
-}
-
-const menuItem = (option: Option) => {
-    if (typeof option === "object" && "label" in option) {
-        return (
-            <MenuItem
-                key={option.label}
-                value={option.value}
-            >
-                {option.label}
-            </MenuItem>
-        )
-    }
-    return (
-        <MenuItem
-            key={option}
-            value={option}
-        >
-            {option}
-        </MenuItem>
     )
 }
 

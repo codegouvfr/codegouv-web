@@ -19,30 +19,54 @@ export type Props = {
     className?: string
     search: string
     onSearchChange: (search: string) => void
-    administrationsOptions: string[]
+    administrationsOptions: {
+        administration: string
+        repoCount: number
+    }[]
     selectedAdministrations: string[]
     onAdministrationsChange: (administrations: string[]) => void
-    categoriesOptions: string[]
+    categoriesOptions: {
+        category: State.Category
+        repoCount: number
+    }[]
     selectedCategories: string[]
     onCategoriesChange: (categories: string[]) => void
-    dependenciesOptions: string[]
+    dependenciesOptions: {
+        dependency: State.Dependency
+        repoCount: number
+    }[]
     onDependenciesChange: (dependencies: string[]) => void
     selectedDependencies: string[]
-    functionsOptions: State.Function[]
+    functionsOptions: {
+        function: State.Function
+        repoCount: number
+    }[]
     selectedFunctions: State.Function[]
     onFunctionsChange: (functions: State.Function[]) => void
     selectedVitality: number
     onVitalityChange: (range: number) => void
-    languagesOptions: string[]
+    languagesOptions: {
+        language: State.Language
+        repoCount: number
+    }[]
     selectedLanguages: string[]
     onLanguagesChange: (languages: string[]) => void
-    licencesOptions: string[]
+    licencesOptions: {
+        licence: State.Licence
+        repoCount: number
+    }[]
     onLicencesChange: (licences: string[]) => void
     selectedLicences: string[]
-    devStatusOptions: string[]
+    devStatusOptions: {
+        status: State.DevStatus
+        repoCount: number
+    }[]
     onDevStatusChange: (licences: string[]) => void
     selectedDevStatus: string[]
-    organisationsOptions: string[]
+    organisationsOptions: {
+        organisation: string,
+        repoCount: number
+    }[]
     onOrganisationsChange: (organisation: string[]) => void
     selectedOrganisations: string[]
     isExperimentalReposHidden: boolean,
@@ -126,7 +150,10 @@ export const Search = (props: Props) => {
                     <MultiSelect
                         id="administrations"
                         label={t("administrations label")}
-                        options={administrationsOptions}
+                        options={administrationsOptions.map(({ administration, repoCount }) => ({
+                            label: administration,
+                            itemCount: repoCount,
+                        }))}
                         selectedValues={selectedAdministrations}
                         onChange={onAdministrationsChange}
                         className={classes.filterSelectGroup}
@@ -134,7 +161,10 @@ export const Search = (props: Props) => {
                     <MultiSelect
                         id="categories"
                         label={t("categories label")}
-                        options={categoriesOptions}
+                        options={categoriesOptions.map(({ category, repoCount }) => ({
+                            label: category,
+                            itemCount: repoCount,
+                        }))}
                         selectedValues={selectedCategories}
                         onChange={onCategoriesChange}
                         className={classes.filterSelectGroup}
@@ -143,7 +173,10 @@ export const Search = (props: Props) => {
                         <label>{t("dependencies label")}</label>
                         <AutocompleteInputMultiple
                             id={"dependencies"}
-                            options={dependenciesOptions}
+                            options={dependenciesOptions.map(({ dependency, repoCount }) => ({
+                                label: dependency,
+                                itemCount: repoCount,
+                            }))}
                             selectedValues={selectedDependencies}
                             onChange={onDependenciesChange}
                         />
@@ -151,19 +184,19 @@ export const Search = (props: Props) => {
                     <MultiSelect
                         id="functions"
                         label={t("functions label")}
-                        options={functionsOptions.map(value => ({
-                            value,
+                        options={functionsOptions.map(option => ({
+                            value: option.function,
                             label: (() => {
-                                switch (value) {
+                                switch (option.function) {
                                     case "Algorithm":
                                         return t("algorithm");
                                     case "Library":
                                         return t("library");
                                     case "Source Code":
                                         return t("source code");
-
                                 }
-                            })()
+                            })(),
+                            itemCount: option.repoCount,
                         }))}
                         selectedValues={selectedFunctions}
                         onChange={options => onFunctionsChange(options as State.Function[])}
@@ -181,7 +214,10 @@ export const Search = (props: Props) => {
                     <MultiSelect
                         id="languages"
                         label={t("languages label")}
-                        options={languagesOptions}
+                        options={languagesOptions.map(({ language, repoCount }) => ({
+                            label: language,
+                            itemCount: repoCount,
+                        }))}
                         selectedValues={selectedLanguages}
                         onChange={onLanguagesChange}
                         className={classes.filterSelectGroup}
@@ -189,7 +225,10 @@ export const Search = (props: Props) => {
                     <MultiSelect
                         id="licences"
                         label={t("licences label")}
-                        options={licencesOptions}
+                        options={licencesOptions.map(({ licence, repoCount }) => ({
+                            label: licence,
+                            itemCount: repoCount,
+                        }))}
                         selectedValues={selectedLicences}
                         onChange={onLicencesChange}
                         className={classes.filterSelectGroup}
@@ -197,7 +236,10 @@ export const Search = (props: Props) => {
                     <MultiSelect
                         id="devStatus"
                         label={t("dev status label")}
-                        options={devStatusOptions}
+                        options={devStatusOptions.map(({ status, repoCount }) => ({
+                            label: status,
+                            itemCount: repoCount,
+                        }))}
                         selectedValues={selectedDevStatus}
                         onChange={onDevStatusChange}
                         className={classes.filterSelectGroup}
@@ -206,7 +248,10 @@ export const Search = (props: Props) => {
                         <label>{t("organisation label")}</label>
                         <AutocompleteInputMultiple
                             id={"organisation"}
-                            options={organisationsOptions}
+                            options={organisationsOptions.map(({ organisation, repoCount }) => ({
+                                label: organisation,
+                                itemCount: repoCount,
+                            }))}
                             selectedValues={selectedOrganisations}
                             onChange={onOrganisationsChange}
                         />

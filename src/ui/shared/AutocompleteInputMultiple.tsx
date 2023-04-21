@@ -12,9 +12,15 @@ import { MultiSelect } from "./MultiSelect";
 
 const LISTBOX_PADDING = 8; // px
 
+type Option = {
+    value?: string
+    label: string
+    itemCount: number
+}
+
 type Props = {
     id: string
-    options: string[]
+    options: Option[]
     selectedValues: string[]
     onChange: (options: string[]) => void;
 }
@@ -29,7 +35,7 @@ function renderRow(props: ListChildComponentProps) {
 
     return (
         <Typography component="li" {...dataSet[0]} noWrap style={inlineStyle}>
-            {`${dataSet[1]}`}
+            {`${dataSet[1].label}`}
         </Typography>
     );
 }
@@ -127,6 +133,8 @@ export function AutocompleteInputMultiple(props: Props) {
 
     const {cx, classes} = useStyles();
 
+    const value = options.filter(option => selectedValues.includes(option.label))
+
     return (
         <Autocomplete
             id="virtualize-demo"
@@ -134,17 +142,21 @@ export function AutocompleteInputMultiple(props: Props) {
             disableCloseOnSelect
             disableListWrap
             limitTags={2}
-            getOptionLabel={(option) => option}
+            getOptionLabel={({ label }) => label}
             PopperComponent={StyledPopper}
             ListboxComponent={ListboxComponent}
             options={options}
-            value={selectedValues}
+            getOptionDisabled={(option) =>
+                option.itemCount === 0
+            }
+            value={value}
             renderInput={(params) => <TextField {...params} variant={"standard"} />}
             renderOption={(props, option, state) =>
                 [props, option, state.index] as React.ReactNode
             }
             onChange={(_event, values) => {
-                onChange(values)
+                const labels = values.map(value => value.label)
+                onChange(labels)
             }}
             className={cx(fr.cx("fr-select"), classes.multiSelect)}
             renderTags={(tagValue) => {
@@ -159,7 +171,7 @@ export function AutocompleteInputMultiple(props: Props) {
                         )}
                         key={index}
                     >
-                        {option}
+                        {option.label}
                     </span>
                 ));
             }}
