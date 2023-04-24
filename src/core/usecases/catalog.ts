@@ -4,12 +4,13 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSelector } from "@reduxjs/toolkit";
 import type { Dependency, Organisation, Repository, RepositoryStatistics } from "core/ports/CodeGouvApi";
 import { createObjectThatThrowsIfAccessed } from "redux-clean-architecture";
+import { uniq, groupBy, chain, sumBy } from "lodash"
 import { pipe } from "lodash/fp"
 import memoize from "memoizee";
 import { Fzf } from "fzf"
 import { assert, type Equals } from "tsafe";
 
-import {categories as mockCategories, languages as mockLanguages} from "core/usecases/mock/catalog"
+import { categories as mockCategories } from "core/usecases/mock/catalog"
 import { between } from "../../ui/tools/num";
 
 export type State = {
@@ -34,7 +35,15 @@ export type State = {
 	selectedLicences: State.Licence[]
 	selectedDevStatus: State.DevStatus[]
 	selectedOrganisations: State.OrganisationName[]
-	isExperimentalReposHidden: boolean
+	isExperimentalReposHidden: boolean,
+	administrationsFilterOptions: State.AdministrationFilterOption[]
+	categoriesFilterOptions: State.CategoryFilterOption[]
+	dependenciesFilterOptions: State.DependenciesFilterOption[]
+	functionsFilterOptions: State.FunctionsFilterOption[]
+	languagesFilterOptions: State.LanguagesFilterOption[]
+	licencesFilterOptions: State.LicencesFilterOption[]
+	devStatusFilterOptions: State.DevStatusFilterOption[]
+	organisationsFilterOptions: State.OrganisationsFilterOption[]
 };
 
 export namespace State {
@@ -53,6 +62,38 @@ export namespace State {
 	export type Licence = string
 	export type DevStatus = 'Concept' | 'Alpha' | 'Beta' | 'RC' | 'Stable'
 	export type OrganisationName = string
+	export type AdministrationFilterOption = {
+		administration: string,
+		repoCount: number
+	}
+	export type CategoryFilterOption = {
+		category: string,
+		repoCount: number
+	}
+	export type DependenciesFilterOption = {
+		dependency: string,
+		repoCount: number
+	}
+	export type FunctionsFilterOption = {
+		function: State.Function,
+		repoCount: number
+	}
+	export type LanguagesFilterOption = {
+		language: string,
+		repoCount: number
+	}
+	export type LicencesFilterOption = {
+		licence: string,
+		repoCount: number
+	}
+	export type DevStatusFilterOption = {
+		status: State.DevStatus,
+		repoCount: number
+	}
+	export type OrganisationsFilterOption = {
+		organisation: string,
+		repoCount: number
+	}
 }
 
 const MAX_VITALITY = 100
@@ -109,6 +150,19 @@ export const { reducer, actions } = createSlice({
 
 			const sort: State.Sort = "name_asc";
 
+			/*
+			* For filters options
+			* */
+			const reposInOrganisations = organisations.map(organisation => (
+				{
+					administrations: organisation.administrations,
+					repoCount: organisationNames.filter(name => name === organisation.name).length
+				}
+			))
+
+			const optionsFunction: State.Function[] = ["Source Code", "Library", "Algorithm"]
+			const optionsStatus: State.DevStatus[] = ["Beta", "RC", "Concept", "Alpha", "Stable"]
+
 			return {
 				repositories,
 				filter: undefined,
@@ -132,8 +186,59 @@ export const { reducer, actions } = createSlice({
 				selectedLicences: [],
 				selectedDevStatus: [],
 				selectedOrganisations: [],
-				isExperimentalReposHidden: false
-			};
+				isExperimentalReposHidden: false,
+				administrationsFilterOptions: chain(reposInOrganisations)
+					.groupBy("administrations")
+					.map((value, key) => {
+						return {
+							administration: key,
+							repoCount: sumBy(value, "repoCount")
+						}
+					})
+					.value(),
+				categoriesFilterOptions: categories.map(category => (
+					{
+						category,
+						repoCount: repositories.filter(repo => repo.topics.includes(category)).length
+					}
+				)),
+				dependenciesFilterOptions: dependencies.map(dependency => (
+					{
+						dependency: dependency.name,
+						repoCount: repositories.filter(repo => dependency.repository_urls.includes(repo.url)).length
+					}
+				)),
+				functionsFilterOptions: optionsFunction.map(option => (
+				{
+					function: option,
+					repoCount: repositories.filter(repo => repo.type === option).length
+				}
+				)),
+				languagesFilterOptions: languages.map(language => (
+					{
+						language,
+						repoCount: repositories.filter(repo => repo.language === language).length
+					}
+				)),
+				licencesFilterOptions: licences.map(licence => (
+					{
+						licence,
+						repoCount: repositories.filter(repo => repo.license === licence).length
+					}
+				)),
+				devStatusFilterOptions: optionsStatus.map(option => (
+					{
+						status: option,
+						repoCount: repositories.filter(repo => repo.status === option).length
+					}
+				)),
+				organisationsFilterOptions: organisationNames.map(organisationName => (
+					{
+						organisation: organisationName,
+						repoCount: repositories.filter(repo => repo.organisation_name === organisationName).length
+					}
+				))
+			}
 
 		},
 		addRepositoryStarted: state => {
@@ -171,8 +276,7 @@ export const privateThunks = {
 
 				const repositories = await codeGouvApi.getRepositories();
 				const repositoryStatistics = await codeGouvApi.getRepositoryStatistics();
-				/*const languages = await codeGouvApi.getLanguages();*/
-				const languages = await mockLanguages;
+				const languages = await codeGouvApi.getLanguages();
 				const administrations = await codeGouvApi.getAdministrations();
 				const licences = await codeGouvApi.getLicences()
 				const dependencies = await codeGouvApi.getDependencies();
@@ -378,42 +482,39 @@ export const selectors = (() => {
 		return sorts;
 	});
 
-	const administrationsFilterOptions = createSelector(sliceState, state => {
-		return state.administrations;
+	const getAdministrationsFilterOptions = createSelector(sliceState, state => {
+		return state.administrationsFilterOptions
 	});
 
-	const categoriesFilterOptions = createSelector(sliceState, state => {
-		return state.categories;
+	const getCategoriesFilterOptions = createSelector(sliceState, state => {
+		return state.categoriesFilterOptions
 	});
 
-	const dependenciesFilterOptions = createSelector(sliceState, state => {
-		return state.dependencies.map(dependency => dependency.name);
+	const getDependenciesFilterOptions = createSelector(sliceState, state => {
+		return state.dependenciesFilterOptions
+
 	});
 
-	const functionFilterOptions = createSelector(
-		sliceState, _state => {
-			const options: State.Function[] = ["Source Code", "Library", "Algorithm"]
-
-			return options
+	const getFunctionsFilterOptions = createSelector(
+		sliceState, state => {
+			return state.functionsFilterOptions
 		}
 	);
 
-	const languagesFilterOptions = createSelector(sliceState, state => {
-		return state.languages;
+	const getLanguagesFilterOptions = createSelector(sliceState, state => {
+		return state.languagesFilterOptions
 	});
 
-	const licencesFilterOptions = createSelector(sliceState, state => {
-		return state.licences;
+	const getLicencesFilterOptions = createSelector(sliceState, state => {
+		return state.licencesFilterOptions
 	});
 
-	const devStatusFilterOptions = createSelector(sliceState, _state => {
-		const options: State.DevStatus[] = ["Beta", "RC", "Concept", "Alpha", "Stable"]
-
-		return options;
+	const getDevStatusFilterOptions = createSelector(sliceState, state => {
+		return state.devStatusFilterOptions
 	});
 
-	const organisationsFilterOptions = createSelector(sliceState, state => {
-		return state.organisationNames;
+	const getOrganisationsFilterOptions = createSelector(sliceState, state => {
+		return state.organisationsFilterOptions
 	});
 
 	return {
@@ -428,14 +529,14 @@ export const selectors = (() => {
 		categories,
 		sortOptions,
 		search,
-		administrationsFilterOptions,
-		categoriesFilterOptions,
-		dependenciesFilterOptions,
-		functionFilterOptions,
-		languagesFilterOptions,
-		licencesFilterOptions,
-		devStatusFilterOptions,
-		organisationsFilterOptions,
+		getAdministrationsFilterOptions,
+		getCategoriesFilterOptions,
+		getDependenciesFilterOptions,
+		getFunctionsFilterOptions,
+		getLanguagesFilterOptions,
+		getLicencesFilterOptions,
+		getDevStatusFilterOptions,
+		getOrganisationsFilterOptions,
 		filteredRepositories
 	};
 })();
