@@ -65,13 +65,13 @@ export function VirtualizedCatalog(props: Props) {
         parentOffsetRef.current = parentRef.current?.offsetTop ?? 0;
     }, []);
 
-    const height = 332;
+    const height = 390;
 
     const virtualizer = useWindowVirtualizer({
         "count": repositoriesGroupedByLine.length,
         "estimateSize": () => height,
         "scrollMargin": parentOffsetRef.current,
-        "overscan": 5
+        "overscan": 5,
     });
     const items = virtualizer.getVirtualItems();
 
@@ -81,19 +81,20 @@ export function VirtualizedCatalog(props: Props) {
         <div ref={parentRef}>
             <div
                 style={{
-                    "height": virtualizer.getTotalSize(),
-                    "position": "relative"
+                    height: virtualizer.getTotalSize(),
+                    position: "relative",
+                    marginBottom: fr.spacing("25v")
                 }}
             >
                 <div
                     style={{
-                        "position": "absolute",
-                        "top": 0,
-                        "left": 0,
-                        "width": "100%",
-                        "transform": `translateY(${
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        transform: `translateY(${
                             items[0].start - virtualizer.options.scrollMargin
-                        }px)`
+                        }px)`,
                     }}
                 >
                     {items.map(virtualRow => (
@@ -101,10 +102,8 @@ export function VirtualizedCatalog(props: Props) {
                             key={virtualRow.key}
                             data-index={virtualRow.index}
                             ref={virtualizer.measureElement}
+                            className={classes.repoList}
                         >
-                            <div
-                                className={classes.repoList}
-                            >
                                 {repositoriesGroupedByLine[virtualRow.index].map(
                                     (repo, i) => {
                                         if (repo === undefined) {
@@ -124,7 +123,6 @@ export function VirtualizedCatalog(props: Props) {
                                         );
                                     }
                                 )}
-                            </div>
                         </div>
                     ))}
                 </div>
@@ -138,6 +136,6 @@ const useStyles = makeStyles<{ columnCount: number }>({name: {Explore}})((theme,
         display: "grid",
         gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))`,
         gap: fr.spacing("4v"),
-        marginTop: fr.spacing("4v")
+        paddingTop: fr.spacing("4v")
     },
 }));
