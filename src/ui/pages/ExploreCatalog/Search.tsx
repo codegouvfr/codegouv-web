@@ -9,11 +9,11 @@ import {routes} from "ui/routes";
 import Breadcrumb from "@codegouvfr/react-dsfr/Breadcrumb";
 import {MainSearch} from "ui/shared/MainSearch";
 import { Button } from "@codegouvfr/react-dsfr/Button"
-import {AutocompleteInputMultiple} from "../../shared/AutocompleteInputMultiple";
+import {AutocompleteInputMultiple} from "ui/shared/AutocompleteInputMultiple";
 import { ToggleSwitch } from "@codegouvfr/react-dsfr/ToggleSwitch"
 import { Slider } from "@mui/material";
-import {MultiSelect} from "../../shared/MultiSelect";
-import {State} from "../../../core/usecases/catalog";
+import {MultiSelect} from "ui/shared/MultiSelect";
+import {State} from "core/usecases/catalog";
 
 export type Props = {
     className?: string
@@ -71,6 +71,7 @@ export type Props = {
     selectedOrganisations: string[]
     isExperimentalReposHidden: boolean,
     onIsExperimentalReposHidden: (checked: boolean) => void
+    onResetFilters: () => void
 }
 
 export const Search = (props: Props) => {
@@ -107,6 +108,7 @@ export const Search = (props: Props) => {
         selectedOrganisations,
         isExperimentalReposHidden,
         onIsExperimentalReposHidden,
+        onResetFilters,
         ...rest} = props
     assert<Equals<typeof rest, {}>>()
 
@@ -202,15 +204,6 @@ export const Search = (props: Props) => {
                         onChange={options => onFunctionsChange(options as State.Function[])}
                         className={classes.filterSelectGroup}
                     />
-                    <div className={classes.filterSelectGroup}>
-                        <label>{t("vitality index label")}</label>
-                        <Slider
-                            value={selectedVitality}
-                            onChange={(_event, newValue) => onVitalityChange(newValue as number)}
-                            valueLabelDisplay="auto"
-                            track="inverted"
-                        />
-                    </div>
                     <MultiSelect
                         id="languages"
                         label={t("languages label")}
@@ -222,6 +215,15 @@ export const Search = (props: Props) => {
                         onChange={onLanguagesChange}
                         className={classes.filterSelectGroup}
                     />
+                    <div className={classes.filterSelectGroup}>
+                        <label>{t("vitality index label")}</label>
+                        <Slider
+                            value={selectedVitality}
+                            onChange={(_event, newValue) => onVitalityChange(newValue as number)}
+                            valueLabelDisplay="auto"
+                            track="inverted"
+                        />
+                    </div>
                     <MultiSelect
                         id="licences"
                         label={t("licences label")}
@@ -263,6 +265,11 @@ export const Search = (props: Props) => {
                         inputTitle={t("experimental toggle switch label")}
                         className={classes.filterSelectGroup}
                     />
+                    <Button
+                        onClick={onResetFilters}
+                    >
+                        Reset filters
+                    </Button>
                 </div>
             </div>
         </div>
@@ -302,6 +309,7 @@ const useStyles = makeStyles({name: {Search}})(theme => ({
         columnGap: fr.spacing("4v"),
         rowGap: fr.spacing("4v"),
         marginTop: fr.spacing("3v"),
+        alignItems: "center",
         [fr.breakpoints.down("lg")]: {
             gridTemplateColumns: `repeat(2, 1fr)`
         },
@@ -310,6 +318,7 @@ const useStyles = makeStyles({name: {Search}})(theme => ({
         }
     },
     filterSelectGroup: {
+        height: "100%",
         [fr.breakpoints.up("lg")]: {
             "&:not(:nth-of-type(4n))": {
                 borderRight: `1px ${theme.decisions.border.default.grey.default} solid`,

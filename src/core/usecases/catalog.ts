@@ -117,6 +117,19 @@ export namespace UpdateFilterParams {
 	export type Key = keyof Omit<State, "repositories" | "isLoading">;
 }
 
+export const defaultSelectedFilters = {
+	selectedAdministrations: [],
+	selectedCategories: [],
+	selectedDependencies: [],
+	selectedFunctions: [],
+	selectedVitality: 0,
+	selectedLanguages: [],
+	selectedLicences: [],
+	selectedDevStatus: [],
+	selectedOrganisations: [],
+	isExperimentalReposHidden: false
+}
+
 export const { reducer, actions } = createSlice({
 	name,
 	initialState: createObjectThatThrowsIfAccessed<State>({
@@ -177,16 +190,7 @@ export const { reducer, actions } = createSlice({
 				organisationNames,
 				sort,
 				search: "",
-				selectedAdministrations: [],
-				selectedCategories: [],
-				selectedDependencies: [],
-				selectedFunctions: [],
-				selectedVitality: 0,
-				selectedLanguages: [],
-				selectedLicences: [],
-				selectedDevStatus: [],
-				selectedOrganisations: [],
-				isExperimentalReposHidden: false,
+				...defaultSelectedFilters,
 				administrationsFilterOptions: administrations.map(administration => (
 					{
 						administration: administration,
@@ -261,6 +265,18 @@ export const { reducer, actions } = createSlice({
 
 			state.sort = sort
 		},
+		filtersReset: (state) => {
+			state.selectedVitality = defaultSelectedFilters.selectedVitality
+			state.selectedDependencies = defaultSelectedFilters.selectedDependencies
+			state.selectedOrganisations = defaultSelectedFilters.selectedOrganisations
+			state.selectedAdministrations = defaultSelectedFilters.selectedAdministrations
+			state.selectedLanguages = defaultSelectedFilters.selectedLanguages
+			state.selectedLicences = defaultSelectedFilters.selectedLicences
+			state.selectedDevStatus = defaultSelectedFilters.selectedDevStatus
+			state.selectedFunctions = defaultSelectedFilters.selectedFunctions
+			state.selectedCategories = defaultSelectedFilters.selectedCategories
+			state.isExperimentalReposHidden = defaultSelectedFilters.isExperimentalReposHidden
+		},
 	},
 });
 
@@ -311,6 +327,12 @@ export const thunks = {
 			(...args) => {
 				const [dispatch] = args;
 				dispatch(actions.sortUpdated(params));
+			},
+	resetFilters:
+		(): ThunkAction<void> =>
+			(...args) => {
+				const [dispatch] = args;
+				dispatch(actions.filtersReset());
 			},
 };
 

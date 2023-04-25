@@ -17,6 +17,7 @@ import useDebounce from "ui/tools/cancelableDebounce";
 import SelectNext from "ui/shared/SelectNext";
 import type { State as CatalogState } from "core/usecases/catalog";
 import { VirtualizedCatalog } from "./VirtualizedCatalog";
+import {defaultSelectedFilters} from "core/usecases/catalog";
 
 type Props = {
 	className?: string;
@@ -304,6 +305,41 @@ export default function ExploreCatalog(props: Props) {
 		});
 	}, [route.params.isExperimentalReposHidden]);
 
+	const onResetFilters = useConstCallback(() => {
+
+		const {
+			isExperimentalReposHidden,
+			selectedDependencies,
+			selectedFunctions,
+			selectedAdministrations,
+			selectedCategories,
+			selectedLanguages,
+			selectedLicences,
+			selectedOrganisations,
+			selectedVitality,
+			selectedDevStatus
+		} = defaultSelectedFilters
+
+			return startTransition(() =>
+				routes
+					.exploreCatalog({
+						...route.params,
+						categories: selectedCategories,
+						isExperimentalReposHidden: isExperimentalReposHidden,
+						vitality: selectedVitality,
+						dependencies: selectedDependencies,
+						licences: selectedLicences,
+						functions: selectedFunctions,
+						administrations: selectedAdministrations,
+						languages: selectedLanguages,
+						organisations: selectedOrganisations,
+						devStatus: selectedDevStatus
+					})
+					.replace()
+			)
+		}
+	);
+
 	if (isLoading) {
 		return <CircularProgress />
 	}
@@ -342,6 +378,7 @@ export default function ExploreCatalog(props: Props) {
 					onOrganisationsChange={onOrganisationsChange}
 					isExperimentalReposHidden={route.params.isExperimentalReposHidden}
 					onIsExperimentalReposHidden={onIsExperimentalReposChange}
+					onResetFilters={onResetFilters}
 				/>
 			</div>
 			<div className={cx(classes.filteredView, fr.cx("fr-container"))}>

@@ -153,4 +153,5 @@ export const VueDefault = getStory({
     onLicencesChange: () => {},
     onLanguagesChange: () => {},
     onFunctionsChange: () => {},
+    onResetFilters: ()=> {}
 });
