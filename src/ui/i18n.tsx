@@ -132,7 +132,8 @@ const {
                 "experimental toggle switch label": "Hide experimental repositories",
                 "algorithm": "Algorithm",
                 "library": "Library",
-                "source code": "Source code"
+                "source code": "Source code",
+                "reset filters": "Reset"
             },
             "RepoCard": {
                 "latest update": ({ fromNowText }) => `Latest update:${fromNowText}`,
@@ -236,7 +237,8 @@ const {
                 "experimental toggle switch label": "Masquer les dépots expérimentaux",
                 "algorithm": "Algorithme",
                 "library": "Bibliothèque",
-                "source code": "Code source"
+                "source code": "Code source",
+                "reset filters": "Réinitialiser"
             },
             "RepoCard": {
                 "latest update": ({ fromNowText }) => `Dernière mise à jour : ${fromNowText}`,

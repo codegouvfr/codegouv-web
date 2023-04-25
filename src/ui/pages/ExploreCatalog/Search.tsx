@@ -267,8 +267,11 @@ export const Search = (props: Props) => {
                     />
                     <Button
                         onClick={onResetFilters}
+                        priority={"secondary"}
+                        iconId="ri-restart-line"
+                        iconPosition="left"
                     >
-                        Reset filters
+                        {t("reset filters")}
                     </Button>
                 </div>
             </div>
@@ -361,4 +364,5 @@ export const {i18n} = declareComponentKeys<
     | "algorithm"
     | "library"
     | "source code"
+    | "reset filters"
 >()({Search});

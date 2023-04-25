@@ -4,14 +4,13 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSelector } from "@reduxjs/toolkit";
 import type { Dependency, Organisation, Repository, RepositoryStatistics } from "core/ports/CodeGouvApi";
 import { createObjectThatThrowsIfAccessed } from "redux-clean-architecture";
-import { uniq, groupBy, chain, sumBy } from "lodash"
-import { pipe } from "lodash/fp"
+import { pipe, concat } from "lodash/fp"
 import memoize from "memoizee";
 import { Fzf } from "fzf"
 import { assert, type Equals } from "tsafe";
 
 import { categories as mockCategories } from "core/usecases/mock/catalog"
-import { between } from "../../ui/tools/num";
+import { between } from "ui/tools/num";
 
 export type State = {
 	repositories: State.RepositoryInternal[];
@@ -162,16 +161,6 @@ export const { reducer, actions } = createSlice({
 			} = payload;
 
 			const sort: State.Sort = "name_asc";
-
-			/*
-			* For filters options
-			* */
-			const reposInOrganisations = organisations.map(organisation => (
-				{
-					administrations: organisation.administrations,
-					repoCount: organisationNames.filter(name => name === organisation.name).length
-				}
-			))
 
 			const optionsFunction: State.Function[] = ["Source Code", "Library", "Algorithm"]
 			const optionsStatus: State.DevStatus[] = ["Beta", "RC", "Concept", "Alpha", "Stable"]
@@ -472,19 +461,20 @@ export const selectors = (() => {
 			dependencies,
 		) => (
 			pipe(
-				(repos: Repository[]) => isExperimentalReposHidden ? repos.filter(repo => !repo.is_experimental) : repos,
-				(repos: Repository[]) => search ? filterBySearch({ repos, search }) : repos,
-				(repos: Repository[]) => selectedAdministrations.length ? filterByAdministration(repos, organisations, selectedAdministrations) : repos,
-				(repos: Repository[]) => selectedCategories.length ? repos.filter(repo => selectedCategories.some(selectedCategory => repo.topics.includes(selectedCategory))) : repos,
-				(repos: Repository[]) => selectedDependencies.length ? filterByDependencies(repos, dependencies, selectedDependencies) : repos,
-				(repos: Repository[]) => selectedFunctions.length ? repos.filter(repo => selectedFunctions.some(selectedFunction => repo.type.includes(selectedFunction))) : repos,
-				(repos: Repository[]) => selectedVitality ? filterByVitality(repos, selectedVitality) : repos,
-				(repos: Repository[]) => selectedLanguages.length ? repos.filter(repo => selectedLanguages.some(selectedLanguage => repo.language.includes(selectedLanguage))) : repos,
-				(repos: Repository[]) => selectedLicences.length ? repos.filter(repo => selectedLicences.some(selectedLicence => repo.license.includes(selectedLicence))) : repos,
-				(repos: Repository[]) => selectedDevStatus.length ? repos.filter(repo => selectedDevStatus.some(selectedStatus => repo.status.includes(selectedStatus))) : repos,
-				(repos: Repository[]) => selectedOrganisations.length ? repos.filter(repo => selectedOrganisations.some(selectedOrganisation => repo.organisation_name.includes(selectedOrganisation))) : repos,
-				(repos: Repository[]) => sortRepos(repos, sort),
-			)(internalRepositories) as Repository[]
+				(repos: Repository[]) => isExperimentalReposHidden ? concat(repos, internalRepositories.filter(repo => !repo.is_experimental)) : [],
+				(repos: Repository[]) => selectedAdministrations.length ? concat(repos, filterByAdministration(internalRepositories, organisations, selectedAdministrations)) : [],
+				(repos: Repository[]) => selectedCategories.length ? concat(repos, internalRepositories.filter(repo => selectedCategories.some(selectedCategory => repo.topics.includes(selectedCategory)))) : [],
+				(repos: Repository[]) => selectedDependencies.length ? concat(repos, filterByDependencies(internalRepositories, dependencies, selectedDependencies)) : [],
+				(repos: Repository[]) => selectedFunctions.length ? concat(repos, internalRepositories.filter(repo => selectedFunctions.some(selectedFunction => repo.type.includes(selectedFunction)))) : [],
+				(repos: Repository[]) => selectedVitality ? concat(repos, filterByVitality(internalRepositories, selectedVitality)) : [],
+				(repos: Repository[]) => selectedLanguages.length ? concat(repos, internalRepositories.filter(repo => selectedLanguages.some(selectedLanguage => repo.language.includes(selectedLanguage)))) : [],
+				(repos: Repository[]) => selectedDevStatus.length ? concat(repos, internalRepositories.filter(repo => selectedDevStatus.some(selectedStatus => repo.status.includes(selectedStatus)))) : [],
+				(repos: Repository[]) => selectedLicences ? concat(repos, internalRepositories.filter(repo => selectedLicences.some(selectedLicence => repo.license.includes(selectedLicence)))) : [],
+				(repos: Repository[]) => selectedOrganisations ? concat(repos, internalRepositories.filter(repo => selectedOrganisations.some(selectedOrganisation => repo.organisation_name === selectedOrganisation))) : [],
+				(repos: Repository[]) => repos.length === 0 ? internalRepositories : repos,
+				(repos: Repository[]) => search ? filterBySearch({repos: internalRepositories, search}) : repos,
+				(repos: Repository[]) => sortRepos(repos, sort)
+			)([]) as Repository[]
 		)
 	);
 
