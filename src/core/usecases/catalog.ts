@@ -187,25 +187,22 @@ export const { reducer, actions } = createSlice({
 				selectedDevStatus: [],
 				selectedOrganisations: [],
 				isExperimentalReposHidden: false,
-				administrationsFilterOptions: chain(reposInOrganisations)
-					.groupBy("administrations")
-					.map((value, key) => {
-						return {
-							administration: key,
-							repoCount: sumBy(value, "repoCount")
-						}
-					})
-					.value(),
+				administrationsFilterOptions: administrations.map(administration => (
+					{
+						administration: administration,
+						repoCount: 1
+					}
+				)),
 				categoriesFilterOptions: categories.map(category => (
 					{
 						category,
-						repoCount: repositories.filter(repo => repo.topics.includes(category)).length
+						repoCount: 1
 					}
 				)),
 				dependenciesFilterOptions: dependencies.map(dependency => (
 					{
 						dependency: dependency.name,
-						repoCount: repositories.filter(repo => dependency.repository_urls.includes(repo.url)).length
+						repoCount: 1
 					}
 				)),
 				functionsFilterOptions: optionsFunction.map(option => (
@@ -217,7 +214,7 @@ export const { reducer, actions } = createSlice({
 				languagesFilterOptions: languages.map(language => (
 					{
 						language,
-						repoCount: repositories.filter(repo => repo.language === language).length
+						repoCount: 1
 					}
 				)),
 				licencesFilterOptions: licences.map(licence => (
