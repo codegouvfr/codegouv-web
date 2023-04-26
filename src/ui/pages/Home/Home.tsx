@@ -8,8 +8,9 @@ import Card from "@codegouvfr/react-dsfr/Card";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { SoftwareCard } from "./SoftwareCard";
 import { SiteStats } from "ui/shared/SiteStats"
-import { TileColumns } from "../../shared/TileColumns";
-import { Contribute } from "../../shared/Contribute";
+import { TileColumns } from "ui/shared/TileColumns";
+import { Contribute } from "ui/shared/Contribute";
+import { routes } from "ui/routes";
 
 type Props = {
 	className?: string;
@@ -146,7 +147,7 @@ export default function Home(props: Props) {
 				<div className={cx(classes.intro, fr.cx("fr-container"))}>
 					<div>
 						<h2>{t("title")}</h2>
-						<Button>{tCommons("find out more")}</Button>
+						<a className={fr.cx("fr-btn")} {...routes.about().link}>{tCommons("find out more")}</a>
 					</div>
 					<div className={classes.primaryEvents}>
 						{
