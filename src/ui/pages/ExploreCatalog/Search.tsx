@@ -314,10 +314,10 @@ const useStyles = makeStyles({name: {Search}})(theme => ({
         marginTop: fr.spacing("3v"),
         alignItems: "center",
         [fr.breakpoints.down("lg")]: {
-            gridTemplateColumns: `repeat(2, 1fr)`
+            gridTemplateColumns: `repeat(2, minmax(20%, 1fr))`
         },
         [fr.breakpoints.down("md")]: {
-            gridTemplateColumns: `repeat(1, 1fr)`
+            gridTemplateColumns: `repeat(1, minmax(20%, 1fr))`
         }
     },
     filterSelectGroup: {

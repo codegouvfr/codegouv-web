@@ -4,7 +4,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSelector } from "@reduxjs/toolkit";
 import type { Dependency, Organisation, Repository, RepositoryStatistics } from "core/ports/CodeGouvApi";
 import { createObjectThatThrowsIfAccessed } from "redux-clean-architecture";
-import { pipe, concat } from "lodash/fp"
+import { pipe } from "lodash/fp"
 import memoize from "memoizee";
 import { Fzf } from "fzf"
 import { assert, type Equals } from "tsafe";
@@ -459,23 +459,22 @@ export const selectors = (() => {
 			isExperimentalReposHidden,
 			organisations,
 			dependencies,
-		) => (
-			pipe(
-				(repos: Repository[]) => isExperimentalReposHidden ? concat(repos, internalRepositories.filter(repo => !repo.is_experimental)) : [],
-				(repos: Repository[]) => selectedAdministrations.length ? concat(repos, filterByAdministration(internalRepositories, organisations, selectedAdministrations)) : [],
-				(repos: Repository[]) => selectedCategories.length ? concat(repos, internalRepositories.filter(repo => selectedCategories.some(selectedCategory => repo.topics.includes(selectedCategory)))) : [],
-				(repos: Repository[]) => selectedDependencies.length ? concat(repos, filterByDependencies(internalRepositories, dependencies, selectedDependencies)) : [],
-				(repos: Repository[]) => selectedFunctions.length ? concat(repos, internalRepositories.filter(repo => selectedFunctions.some(selectedFunction => repo.type.includes(selectedFunction)))) : [],
-				(repos: Repository[]) => selectedVitality ? concat(repos, filterByVitality(internalRepositories, selectedVitality)) : [],
-				(repos: Repository[]) => selectedLanguages.length ? concat(repos, internalRepositories.filter(repo => selectedLanguages.some(selectedLanguage => repo.language.includes(selectedLanguage)))) : [],
-				(repos: Repository[]) => selectedDevStatus.length ? concat(repos, internalRepositories.filter(repo => selectedDevStatus.some(selectedStatus => repo.status.includes(selectedStatus)))) : [],
-				(repos: Repository[]) => selectedLicences ? concat(repos, internalRepositories.filter(repo => selectedLicences.some(selectedLicence => repo.license.includes(selectedLicence)))) : [],
-				(repos: Repository[]) => selectedOrganisations ? concat(repos, internalRepositories.filter(repo => selectedOrganisations.some(selectedOrganisation => repo.organisation_name === selectedOrganisation))) : [],
-				(repos: Repository[]) => repos.length === 0 ? internalRepositories : repos,
-				(repos: Repository[]) => search ? filterBySearch({repos: internalRepositories, search}) : repos,
+		) => {
+			return pipe(
+				(repos: Repository[]) => search.length ? filterBySearch({repos, search}) : repos,
+				(repos: Repository[]) => isExperimentalReposHidden ? repos.filter(repo => !repo.is_experimental) : repos,
+				(repos: Repository[]) => selectedAdministrations.length ? filterByAdministration(repos, organisations, selectedAdministrations) : repos,
+				(repos: Repository[]) => selectedCategories.length ?  repos.filter(repo => selectedCategories.some(selectedCategory => repo.topics.includes(selectedCategory))) : repos,
+				(repos: Repository[]) => selectedDependencies.length ? filterByDependencies(internalRepositories, dependencies, selectedDependencies) : repos,
+				(repos: Repository[]) => selectedFunctions.length ? repos.filter(repo => selectedFunctions.includes(repo.type)) : repos,
+				(repos: Repository[]) => filterByVitality(repos, selectedVitality),
+				(repos: Repository[]) => selectedLanguages.length ? repos.filter(repo => selectedLanguages.includes(repo.language)) : repos,
+				(repos: Repository[]) => selectedDevStatus.length ? repos.filter(repo => selectedDevStatus.includes(repo.status)) : repos,
+				(repos: Repository[]) => selectedLicences.length ? repos.filter(repo => selectedLicences.includes(repo.license)) : repos,
+				(repos: Repository[]) => selectedOrganisations.length ? repos.filter(repo => selectedOrganisations.includes(repo.organisation_name)) : repos,
 				(repos: Repository[]) => sortRepos(repos, sort)
-			)([]) as Repository[]
-		)
+			)(internalRepositories) as Repository[]
+	}
 	);
 
 	const sortOptions =  createSelector(sliceState, _state => {
@@ -501,7 +500,6 @@ export const selectors = (() => {
 
 	const getDependenciesFilterOptions = createSelector(sliceState, state => {
 		return state.dependenciesFilterOptions
-
 	});
 
 	const getFunctionsFilterOptions = createSelector(
