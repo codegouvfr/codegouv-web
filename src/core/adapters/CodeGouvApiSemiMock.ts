@@ -61,7 +61,8 @@ export function createCodeGouvApiSemiMock(): CodeGouvApi {
         getDependencies,
         getDependencyNames: async () => {
             const dependencies = await getDependencies();
-            return dependencies.map((dependency: Dependency) => dependency.name);
+            return dependencies.map((dependency: Dependency) => dependency.name)
+                .sort();
         },
         getLanguages: async () => {
             const repositories = await getRepositories();
@@ -76,7 +77,8 @@ export function createCodeGouvApiSemiMock(): CodeGouvApi {
         getOrganisations,
         getOrganisationNames: async () => {
             const organisations = await getOrganisations();
-            return organisations.map((organisation: Organisation) => organisation.name);
+            return organisations.map((organisation: Organisation) => organisation.name)
+                .sort();
         },
         getRepositoryStatistics: async () => {
             const response = await axios.get(`${url}/stats.json`);
