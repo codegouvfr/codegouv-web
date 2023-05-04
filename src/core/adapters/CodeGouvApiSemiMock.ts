@@ -25,7 +25,7 @@ export function createCodeGouvApiSemiMock(): CodeGouvApi {
                 url: repository.r,
                 vitality: 100,
             };
-        });
+        }).sort((a: Repository, b: Repository) => a.name.localeCompare(b.name));
     };
 
     const getDependencies = async () => {
@@ -35,7 +35,7 @@ export function createCodeGouvApiSemiMock(): CodeGouvApi {
                 name: dependency.n,
                 repository_urls: dependency.r,
             }
-        });
+        }).sort((a: Dependency, b: Dependency) => a.name.localeCompare(b.name));
     };
 
     const getOrganisations = async () => {
@@ -46,17 +46,17 @@ export function createCodeGouvApiSemiMock(): CodeGouvApi {
                 avatar_url: organisation.au,
                 name: organisation.n,
             }
-        });
+        }).sort((a: Organisation, b: Organisation) => a.name.localeCompare(b.name));
     };
 
     return {
         getRepositories,
         getAdministrations: async () => {
             const organisations = await getOrganisations();
-            const data = organisations
+            const administrationNames = organisations
                 .map((organisation: Organisation) => organisation.administrations)
                 .reduce((accumulator: Organisation[], value: Organisation) => accumulator.concat(value), []);
-            return [...new Set<string>(data)].sort();
+            return [...new Set<string>(administrationNames)].sort();
         },
         getDependencies,
         getDependencyNames: async () => {
@@ -66,13 +66,13 @@ export function createCodeGouvApiSemiMock(): CodeGouvApi {
         },
         getLanguages: async () => {
             const repositories = await getRepositories();
-            const data = repositories.map((repository: Repository) => repository.language);
-            return [...new Set<string>(data)].sort();
+            const languages = repositories.map((repository: Repository) => repository.language);
+            return [...new Set<string>(languages)].sort();
         },
         getLicences: async () => {
             const repositories = await getRepositories();
-            const data = repositories.map((repository: Repository) => repository.license);
-            return [...new Set<string>(data)].sort();
+            const licences = repositories.map((repository: Repository) => repository.license);
+            return [...new Set<string>(licences)].sort();
         },
         getOrganisations,
         getOrganisationNames: async () => {
