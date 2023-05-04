@@ -223,10 +223,10 @@ export const { reducer, actions } = createSlice({
 						repoCount: repositories.filter(repo => repo.status === option).length
 					}
 				)),
-				organisationsFilterOptions: organisationNames.map(organisationName => (
+				organisationsFilterOptions: organisationNames.map(organisationId => (
 					{
-						organisation: organisationName,
-						repoCount: repositories.filter(repo => repo.organisation_name === organisationName).length
+						organisation: organisationId,
+						repoCount: repositories.filter(repo => repo.organisation_id === organisationId).length
 					}
 				))
 			}
@@ -396,9 +396,9 @@ export const selectors = (() => {
 			.filter(organisation => {
 					return organisation.administrations.some(administration => selectedAdministrations.includes(administration))
 				}
-			).map(organisation => organisation.name)
+			).map(organisation => organisation.id)
 
-		return repos.filter(repo => selectedOrganisationsByAdministration.some(organisation => repo.organisation_name.includes(organisation)))
+		return repos.filter(repo => selectedOrganisationsByAdministration.some(organisation => repo.organisation_id.includes(organisation)))
 	}
 
 	const filterByDependencies = (repos: Repository[], dependencies: Dependency[], selectedDependenciesNames: string[]): Repository[] => {
@@ -472,7 +472,7 @@ export const selectors = (() => {
 				(repos: Repository[]) => selectedLanguages.length ? repos.filter(repo => selectedLanguages.includes(repo.language)) : repos,
 				(repos: Repository[]) => selectedDevStatus.length ? repos.filter(repo => selectedDevStatus.includes(repo.status)) : repos,
 				(repos: Repository[]) => selectedLicences.length ? repos.filter(repo => selectedLicences.includes(repo.license)) : repos,
-				(repos: Repository[]) => selectedOrganisations.length ? repos.filter(repo => selectedOrganisations.includes(repo.organisation_name)) : repos,
+				(repos: Repository[]) => selectedOrganisations.length ? repos.filter(repo => selectedOrganisations.includes(repo.organisation_id)) : repos,
 				(repos: Repository[]) => sortRepos(repos, sort)
 			)(internalRepositories) as Repository[]
 	}

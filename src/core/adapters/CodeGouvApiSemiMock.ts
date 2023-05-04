@@ -16,7 +16,7 @@ export function createCodeGouvApiSemiMock(): CodeGouvApi {
                 latest_tag: '',
                 license: repository.li || '',
                 name: repository.n || '',
-                organisation_name: repository.o || '',
+                organisation_id: repository.o || '',
                 sill_id: 0,
                 star_count: repository.s || 0,
                 status: 'Stable',
@@ -44,6 +44,7 @@ export function createCodeGouvApiSemiMock(): CodeGouvApi {
             return {
                 administrations: [organisation.m as string],
                 avatar_url: organisation.au,
+                id: organisation.l,
                 name: organisation.n,
             }
         }).sort((a: Organisation, b: Organisation) => a.name.localeCompare(b.name));

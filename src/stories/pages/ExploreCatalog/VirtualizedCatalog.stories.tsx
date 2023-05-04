@@ -30,7 +30,7 @@ for (var i = 0; i < NUMBER_OF_REPOSITORY; i++) {
          vitality: repository.vitality,
          is_experimental: repository.is_experimental,
          topics: repository.topics,
-         organisation_name: repository.organisation_name,
+         organisation_id: repository.organisation_id,
          license: repository.license,
          language: repository.language,
          description: repository.description,

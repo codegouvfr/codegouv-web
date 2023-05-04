@@ -22,7 +22,8 @@ export type Dependency = {
 export type Organisation = {
 	administrations: string[];
 	avatar_url: '';
-	name: string; // ID
+	id: string;
+	name: string;
 }
 
 export type Repository = {
@@ -33,7 +34,7 @@ export type Repository = {
 	latest_tag: string;
 	license: string;
 	name: string;
-	organisation_name: string;
+	organisation_id: string;
 	sill_id: number;
 	star_count: number;
 	status: 'Concept' | 'Alpha' | 'Beta' | 'RC' | 'Stable';
