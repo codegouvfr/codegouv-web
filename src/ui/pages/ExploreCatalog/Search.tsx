@@ -312,7 +312,7 @@ const useStyles = makeStyles({name: {Search}})(theme => ({
         columnGap: fr.spacing("4v"),
         rowGap: fr.spacing("4v"),
         marginTop: fr.spacing("3v"),
-        alignItems: "center",
+        alignItems: "flex-start",
         [fr.breakpoints.down("lg")]: {
             gridTemplateColumns: `repeat(2, minmax(20%, 1fr))`
         },
