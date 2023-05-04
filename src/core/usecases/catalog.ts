@@ -5,6 +5,7 @@ import { createSelector } from "@reduxjs/toolkit";
 import type { Dependency, Organisation, Repository, RepositoryStatistics } from "core/ports/CodeGouvApi";
 import { createObjectThatThrowsIfAccessed } from "redux-clean-architecture";
 import { pipe } from "lodash/fp"
+import { compact } from "lodash"
 import memoize from "memoizee";
 import { Fzf } from "fzf"
 import { assert, type Equals } from "tsafe";
@@ -278,13 +279,13 @@ export const privateThunks = {
 
 				const repositories = await codeGouvApi.getRepositories();
 				const repositoryStatistics = await codeGouvApi.getRepositoryStatistics();
-				const languages = await codeGouvApi.getLanguages();
-				const administrations = await codeGouvApi.getAdministrations();
-				const licences = await codeGouvApi.getLicences()
+				const languages = compact(await codeGouvApi.getLanguages())
+				const administrations = compact(await codeGouvApi.getAdministrations())
+				const licences = compact(await codeGouvApi.getLicences())
 				const dependencies = await codeGouvApi.getDependencies();
 				const categories = await mockCategories
 				const organisations = await codeGouvApi.getOrganisations()
-				const organisationNames = await codeGouvApi.getOrganisationNames()
+				const organisationNames = compact(await codeGouvApi.getOrganisationNames())
 
 				dispatch(actions.initialized({
 					repositories,
