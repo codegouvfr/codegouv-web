@@ -161,7 +161,7 @@ export const { reducer, actions } = createSlice({
 				organisationNames,
 			} = payload;
 
-			const sort: State.Sort = "name_asc";
+			const sort: State.Sort = "last_update_asc";
 
 			const optionsFunction: State.Function[] = ["Source Code", "Library", "Algorithm"]
 			const optionsStatus: State.DevStatus[] = ["Beta", "RC", "Concept", "Alpha", "Stable"]

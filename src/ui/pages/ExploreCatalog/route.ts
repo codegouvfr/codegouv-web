@@ -28,7 +28,7 @@ export const routeDefs = {
                     },
                     "stringify": value => value
                 })
-                .default("name_asc"),
+                .default("last_update_asc"),
             "search": param.query.optional.string.default(""),
             "administrations": param.query.optional.array.string.default([]),
             "categories": param.query.optional.array.string.default([]),
