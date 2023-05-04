@@ -114,6 +114,7 @@ export function VirtualizedCatalog(props: Props) {
                                             <RepoCard
                                                 key={repo.url}
                                                 repositoryName={repo.name}
+                                                repositoryUrl={repo.url}
                                                 devStatus={repo.status}
                                                 description={repo.description}
                                                 language={repo.language}
