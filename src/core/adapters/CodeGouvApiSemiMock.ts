@@ -76,11 +76,6 @@ export function createCodeGouvApiSemiMock(): CodeGouvApi {
             return [...new Set<string>(licences)].sort();
         },
         getOrganisations,
-        getOrganisationNames: async () => {
-            const organisations = await getOrganisations();
-            return organisations.map((organisation: Organisation) => organisation.name)
-                .sort();
-        },
         getRepositoryStatistics: async () => {
             const response = await axios.get(`${url}/stats.json`);
             const statistics = response.data;

@@ -23,7 +23,6 @@ export type State = {
 	licences: State.Licence[];
 	dependencies: Dependency[]
 	organisations: Organisation[]
-	organisationNames: State.OrganisationName[]
 	sort: State.Sort
 	search: string
 	selectedAdministrations: State.Administration[]
@@ -34,7 +33,7 @@ export type State = {
 	selectedLanguages: State.Language[]
 	selectedLicences: State.Licence[]
 	selectedDevStatus: State.DevStatus[]
-	selectedOrganisations: State.OrganisationName[]
+	selectedOrganisations: State.Organisation[]
 	isExperimentalReposHidden: boolean,
 	administrationsFilterOptions: State.AdministrationFilterOption[]
 	categoriesFilterOptions: State.CategoryFilterOption[]
@@ -61,7 +60,7 @@ export namespace State {
 	export type Language = string
 	export type Licence = string
 	export type DevStatus = 'Concept' | 'Alpha' | 'Beta' | 'RC' | 'Stable'
-	export type OrganisationName = string
+	export type Organisation = string
 	export type AdministrationFilterOption = {
 		administration: string,
 		repoCount: number
@@ -147,7 +146,6 @@ export const { reducer, actions } = createSlice({
 				dependencies: Dependency[];
 				categories: State.Category[];
 				organisations: Organisation[];
-				organisationNames: State.OrganisationName[]
 			}>) => {
 			const {
 				repositories,
@@ -158,7 +156,6 @@ export const { reducer, actions } = createSlice({
 				dependencies,
 				categories,
 				organisations,
-				organisationNames,
 			} = payload;
 
 			const sort: State.Sort = "last_update_asc";
@@ -177,7 +174,6 @@ export const { reducer, actions } = createSlice({
 				dependencies,
 				categories,
 				organisations,
-				organisationNames,
 				sort,
 				search: "",
 				...defaultSelectedFilters,
@@ -223,10 +219,10 @@ export const { reducer, actions } = createSlice({
 						repoCount: repositories.filter(repo => repo.status === option).length
 					}
 				)),
-				organisationsFilterOptions: organisationNames.map(organisationId => (
+				organisationsFilterOptions: organisations.map(organisation => (
 					{
-						organisation: organisationId,
-						repoCount: repositories.filter(repo => repo.organisation_id === organisationId).length
+						organisation: organisation.id,
+						repoCount: repositories.filter(repo => repo.organisation_id === organisation.id).length
 					}
 				))
 			}
@@ -285,7 +281,6 @@ export const privateThunks = {
 				const dependencies = await codeGouvApi.getDependencies();
 				const categories = await mockCategories
 				const organisations = await codeGouvApi.getOrganisations()
-				const organisationNames = compact(await codeGouvApi.getOrganisationNames())
 
 				dispatch(actions.initialized({
 					repositories,
@@ -296,7 +291,6 @@ export const privateThunks = {
 					dependencies,
 					categories,
 					organisations,
-					organisationNames
 				}));
 			},
 };

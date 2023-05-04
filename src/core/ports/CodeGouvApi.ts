@@ -10,7 +10,6 @@ export type CodeGouvApi = {
 	getDependencyNames: () => Promise<string[]>,
 	getLanguages: () => Promise<string[]>,
 	getLicences: () => Promise<string[]>,
-	getOrganisationNames: () => Promise<string[]>,
 	getTopics: () => Promise<string[]>,
 };
 
