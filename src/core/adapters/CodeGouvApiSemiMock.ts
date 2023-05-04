@@ -10,7 +10,7 @@ export function createCodeGouvApiSemiMock(): CodeGouvApi {
         return response.data.map((repository: any): Repository => {
             return {
                 description: repository.d || '',
-                is_experimental: repository.a || false,
+                is_experimental: repository["a?"] || false,
                 language: repository.l || '',
                 last_updated: new Date(repository.u).getTime() || 0,
                 latest_tag: '',
@@ -21,7 +21,7 @@ export function createCodeGouvApiSemiMock(): CodeGouvApi {
                 star_count: repository.s || 0,
                 status: 'Stable',
                 topics: [],
-                type: repository.l ? 'Library' : 'Source Code',
+                type: repository["l?"] ? 'Library' : 'Source Code',
                 url: repository.r,
                 vitality: 100,
             };
