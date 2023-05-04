@@ -127,7 +127,7 @@ export const defaultSelectedFilters = {
 	selectedLicences: [],
 	selectedDevStatus: [],
 	selectedOrganisations: [],
-	isExperimentalReposHidden: false
+	isExperimentalReposHidden: true
 }
 
 export const { reducer, actions } = createSlice({

@@ -60,7 +60,7 @@ export const routeDefs = {
             "licences": param.query.optional.array.string.default([]),
             "devStatus": param.query.optional.array.string.default([]),
             "organisations": param.query.optional.array.string.default([]),
-            "isExperimentalReposHidden": param.query.optional.boolean.default(false),
+            "isExperimentalReposHidden": param.query.optional.boolean.default(true),
         },
         () => "/public/repos"
     )
