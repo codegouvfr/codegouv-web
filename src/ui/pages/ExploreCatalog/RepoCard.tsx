@@ -34,21 +34,23 @@ export const RepoCard = (props: Props) => {
                 <div className={fr.cx("fr-card__content")}>
                     <div className="fr-card__start">
                         <ul className="fr-tags-group">
-                            {language && <li>
-                                <p className={fr.cx("fr-tag", "fr-tag--blue-ecume")}>
-                                    {language}
-                                </p>
-                            </li>}
-                            <li>
-                                <p className={fr.cx("fr-tag", "fr-tag--blue-cumulus")}>
-                                    { devStatus }
-                                </p>
-                            </li>
-                            <li>
-                                <p className={cx(fr.cx("fr-tag", "fr-tag--yellow-tournesol"),classes.lastUpdate)}>
-                                    {t("latest update", { fromNowText })}
-                                </p>
-                            </li>
+                                {language && <li>
+                                    <p className={fr.cx("fr-tag", "fr-tag--blue-ecume")}>
+                                        {language}
+                                    </p>
+                                </li>}
+                                <li>
+                                    <p className={fr.cx("fr-tag", "fr-tag--blue-cumulus")}>
+                                        { devStatus }
+                                    </p>
+                                </li>
+
+                                <li className={classes.lastUpdate}>
+                                    <p className={fr.cx("fr-tag", "fr-tag--yellow-tournesol")}>
+                                        {t("latest update", { fromNowText })}
+                                    </p>
+                                </li>
+
                         </ul>
                     </div>
                     <div className={cx(fr.cx("fr-card__title"), classes.header)}>
@@ -115,8 +117,9 @@ const useStyles = makeStyles({name: {RepoCard}})(theme => ({
         flexWrap: "wrap"
     },
     lastUpdate: {
-        whiteSpace: "nowrap"
-    }
+        whiteSpace: "nowrap",
+        width: "100%"
+    },
 }));
 
 export const {i18n} = declareComponentKeys<
