@@ -6,6 +6,8 @@ import {fr} from "@codegouvfr/react-dsfr";
 import SelectMui from "@mui/material/Select";
 import {InputBase} from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
+import Checkbox from '@mui/material/Checkbox';
+import ListItemText from '@mui/material/ListItemText';
 
 type Option = {
     value?: string
@@ -52,6 +54,7 @@ export const MultiSelect = (props: Props) => {
                 )}
                 className={cx(fr.cx("fr-select"), classes.multiSelect)}
                 input={<InputBase />}
+                renderValue={(selected) => selected.join(', ')}
                 MenuProps={MenuProps}
             >
                 {options.map(( { label, value, itemCount } ) => (
@@ -60,7 +63,8 @@ export const MultiSelect = (props: Props) => {
                         value={value ? value : label}
                         disabled={itemCount === 0}
                     >
-                        {label}
+                        <Checkbox checked={selectedValues.indexOf(label) > -1} />
+                        <ListItemText primary={label} />
                     </MenuItem>
                 ))}
             </SelectMui>
@@ -72,12 +76,12 @@ const useStyles = makeStyles({name: {MultiSelect}})(() => ({
     root: {},
     multiSelect: {
         marginTop: fr.spacing("2v"),
-        paddingRight: 0,
-        "&&>.MuiInputBase-input": {
-            padding: 0
-        },
+        padding: 0,
         "&&>.MuiSvgIcon-root": {
             display: "none"
+        },
+        "div[role='button']": {
+            padding: fr.spacing("2v")
         }
     },
     menu: {
