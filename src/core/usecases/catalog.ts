@@ -91,6 +91,7 @@ export namespace State {
 	}
 	export type OrganisationsFilterOption = {
 		organisation: string,
+		organisationId: string,
 		repoCount: number
 	}
 }
@@ -221,7 +222,8 @@ export const { reducer, actions } = createSlice({
 				)),
 				organisationsFilterOptions: organisations.map(organisation => (
 					{
-						organisation: organisation.id,
+						organisation: organisation.name,
+						organisationId: organisation.id,
 						repoCount: repositories.filter(repo => repo.organisation_id === organisation.id).length
 					}
 				))

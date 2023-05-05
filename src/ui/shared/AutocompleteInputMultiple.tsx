@@ -155,7 +155,7 @@ export function AutocompleteInputMultiple(props: Props) {
                 [props, option, state.index] as React.ReactNode
             }
             onChange={(_event, values) => {
-                const labels = values.map(value => value.label)
+                const labels = values.map(value => value.value ?? value.label)
                 onChange(labels)
             }}
             className={cx(fr.cx("fr-select"), classes.multiSelect)}

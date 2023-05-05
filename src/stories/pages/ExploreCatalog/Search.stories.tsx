@@ -66,14 +66,17 @@ export const VueDefault = getStory({
     organisationsOptions: [
         {
             organisation: "Organisation 1",
+            organisationId: "Id Organisation 1",
             repoCount: 1,
         },
         {
             organisation: "Organisation 2",
+            organisationId: "Id Organisation 2",
             repoCount: 0,
         },
         {
             organisation: "Organisation 3",
+            organisationId: "Id Organisation 3",
             repoCount: 2
         }
     ],

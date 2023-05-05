@@ -65,6 +65,7 @@ export type Props = {
     selectedDevStatus: string[]
     organisationsOptions: {
         organisation: string,
+        organisationId: string,
         repoCount: number
     }[]
     onOrganisationsChange: (organisation: string[]) => void
@@ -250,8 +251,9 @@ export const Search = (props: Props) => {
                         <label>{t("organisation label")}</label>
                         <AutocompleteInputMultiple
                             id={"organisation"}
-                            options={organisationsOptions.map(({ organisation, repoCount }) => ({
+                            options={organisationsOptions.map(({ organisation, organisationId, repoCount }) => ({
                                 label: organisation,
+                                value: organisationId,
                                 itemCount: repoCount,
                             }))}
                             selectedValues={selectedOrganisations}
