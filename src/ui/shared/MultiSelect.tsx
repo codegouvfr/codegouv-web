@@ -86,6 +86,5 @@ const useStyles = makeStyles({name: {MultiSelect}})(() => ({
     },
     menu: {
         maxHeight: "20rem",
-        width: "300px"
     }
 }));
