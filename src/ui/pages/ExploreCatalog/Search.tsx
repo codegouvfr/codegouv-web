@@ -142,7 +142,7 @@ export const Search = (props: Props) => {
                     }
                     iconPosition="right"
                     onClick={() => setIsFilterOpen(!isFilterOpen)}
-                    aria-expanded="false"
+                    aria-expanded="true"
                     aria-controls="accordion-filters"
                 >
                     {t("filters")}
