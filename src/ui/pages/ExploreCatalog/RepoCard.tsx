@@ -16,17 +16,35 @@ type Props = {
     language: string
     devStatus: string
     lastUpdate: number
+    organisation_id: string
+    licence: string
 }
 
+const regExpShortLicence = /\(([^)]+)\)/g
 export const RepoCard = (props: Props) => {
 
-    const {className, repositoryName, repositoryUrl, description, language, starCount, devStatus, lastUpdate, ...rest} = props
+    const {
+        className,
+        repositoryName,
+        repositoryUrl,
+        description,
+        language,
+        starCount,
+        devStatus,
+        lastUpdate,
+        organisation_id,
+        licence,
+        ...rest
+    } = props
     assert<Equals<typeof rest, {}>>()
 
     const {t} = useTranslation({RepoCard});
     const {cx, classes} = useStyles();
 
     const { fromNowText } = useFromNow({ "dateTime": lastUpdate });
+
+    const shortLicence = licence.match(regExpShortLicence)?.map(x => x.replace(/[()]/g, ""));
+
 
     return (
         <div className={cx(fr.cx("fr-card", "fr-enlarge-link"), classes.root, className)}>
@@ -44,6 +62,11 @@ export const RepoCard = (props: Props) => {
                                         { devStatus }
                                     </p>
                                 </li>
+                            {shortLicence && <li>
+                                <p className={fr.cx("fr-tag", "fr-tag--blue-cumulus")}>
+                                    {shortLicence[0]}
+                                </p>
+                            </li>}
 
                                 <li className={classes.lastUpdate}>
                                     <p className={fr.cx("fr-tag", "fr-tag--yellow-tournesol")}>

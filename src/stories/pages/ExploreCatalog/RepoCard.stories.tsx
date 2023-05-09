@@ -18,5 +18,7 @@ export const VueDefault = getStory({
     language: repository.language,
     description: repository.description,
     repositoryName: repository.name,
-    repositoryUrl: repository.url
+    repositoryUrl: repository.url,
+    organisation_id: repository.organisation_id,
+    licence: repository.license
 });

@@ -110,16 +110,30 @@ export function VirtualizedCatalog(props: Props) {
                                             return <div key={i}/>;
                                         }
 
+                                        const {
+                                            url,
+                                            name,
+                                            status,
+                                            description,
+                                            language,
+                                            last_updated,
+                                            star_count,
+                                            organisation_id,
+                                            license
+                                        } = repo
+
                                         return (
                                             <RepoCard
-                                                key={repo.url}
-                                                repositoryName={repo.name}
-                                                repositoryUrl={repo.url}
-                                                devStatus={repo.status}
-                                                description={repo.description}
-                                                language={repo.language}
-                                                lastUpdate={repo.last_updated}
-                                                starCount={repo.star_count}
+                                                key={url}
+                                                repositoryName={name}
+                                                repositoryUrl={url}
+                                                devStatus={status}
+                                                description={description}
+                                                language={language}
+                                                lastUpdate={last_updated}
+                                                starCount={star_count}
+                                                organisation_id={organisation_id}
+                                                licence={license}
                                             />
                                         );
                                     }
