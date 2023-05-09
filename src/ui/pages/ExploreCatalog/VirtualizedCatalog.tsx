@@ -9,6 +9,8 @@ import { useWindowVirtualizer } from "@tanstack/react-virtual";
 import { useWindowInnerSize } from "powerhooks/useWindowInnerSize";
 import { useBreakpointsValues } from "@codegouvfr/react-dsfr/useBreakpointsValues";
 import { Repository } from "core/ports/CodeGouvApi";
+import { repositoryOrganisation } from "core/usecases/catalog"
+import { selectors, useCoreState } from "../../../core";
 
 type Props = {
     className?: string;
@@ -19,6 +21,8 @@ export function VirtualizedCatalog(props: Props) {
 
     const {className, repositories, ...rest} = props
     assert<Equals<typeof rest, {}>>()
+
+    const { organisations } = useCoreState(selectors.catalog.organisations)
 
     const { columnCount } = (function useClosure() {
         const { breakpointsValues } = useBreakpointsValues();
@@ -122,6 +126,8 @@ export function VirtualizedCatalog(props: Props) {
                                             license
                                         } = repo
 
+                                        const organisation = repositoryOrganisation(repo, organisations)
+
                                         return (
                                             <RepoCard
                                                 key={url}
@@ -134,6 +140,7 @@ export function VirtualizedCatalog(props: Props) {
                                                 starCount={star_count}
                                                 organisation_id={organisation_id}
                                                 licence={license}
+                                                organisation={organisation}
                                             />
                                         );
                                     }

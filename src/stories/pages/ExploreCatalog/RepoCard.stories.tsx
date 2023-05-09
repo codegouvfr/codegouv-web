@@ -20,5 +20,11 @@ export const VueDefault = getStory({
     repositoryName: repository.name,
     repositoryUrl: repository.url,
     organisation_id: repository.organisation_id,
-    licence: repository.license
+    licence: repository.license,
+    organisation: {
+        name: "Organisation",
+        id: "Organisation",
+        avatar_url: "",
+        administrations: ["Administration"]
+    }
 });

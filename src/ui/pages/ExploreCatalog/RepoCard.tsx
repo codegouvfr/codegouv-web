@@ -1,4 +1,4 @@
-import React from "react";
+import React, {Fragment} from "react";
 import { assert } from "tsafe/assert";
 import type { Equals } from "tsafe";
 import { makeStyles } from "tss-react/dsfr";
@@ -6,6 +6,7 @@ import { declareComponentKeys } from "i18nifty";
 import { fr } from "@codegouvfr/react-dsfr";
 import { useTranslation } from "ui/i18n";
 import { useFromNow } from "ui/useMoment";
+import { Organisation } from "core/ports/CodeGouvApi"
 
 type Props = {
     className?: string
@@ -18,6 +19,7 @@ type Props = {
     lastUpdate: number
     organisation_id: string
     licence: string
+    organisation: Organisation | undefined
 }
 
 const regExpShortLicence = /\(([^)]+)\)/g
@@ -34,6 +36,7 @@ export const RepoCard = (props: Props) => {
         lastUpdate,
         organisation_id,
         licence,
+        organisation,
         ...rest
     } = props
     assert<Equals<typeof rest, {}>>()
@@ -44,7 +47,6 @@ export const RepoCard = (props: Props) => {
     const { fromNowText } = useFromNow({ "dateTime": lastUpdate });
 
     const shortLicence = licence.match(regExpShortLicence)?.map(x => x.replace(/[()]/g, ""));
-
 
     return (
         <div className={cx(fr.cx("fr-card", "fr-enlarge-link"), classes.root, className)}>
@@ -87,12 +89,14 @@ export const RepoCard = (props: Props) => {
                             <span>{starCount}</span>
                         </div>}
                     </div>
-                    <p className={cx(fr.cx("fr-card__desc"), classes.description)}>
+                    <p className={cx(fr.cx("fr-card__desc"))}>
                         { description }
                     </p>
-                </div>
-                <div className={cx(fr.cx("fr-card__footer"), classes.footer)}>
-
+                    <div className="fr-card__end">
+                        <p className="fr-card__detail">{ organisation?.administrations.map(administration => {
+                            return <Fragment key={administration}>{administration} {organisation?.name && <>({organisation?.name})</>}</Fragment>
+                        }) }</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -126,13 +130,6 @@ const useStyles = makeStyles({name: {RepoCard}})(theme => ({
         justifyContent: "center",
         alignItems: "center",
         gap: fr.spacing("1v")
-    },
-    description: {
-        overflow: "hidden",
-        display: "-webkit-box",
-        WebkitBoxOrient: "vertical",
-        WebkitLineClamp: "3",
-        whiteSpace: "pre-wrap"
     },
     footer: {
         display: "flex",

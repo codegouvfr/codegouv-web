@@ -322,6 +322,51 @@ export const thunks = {
 			},
 };
 
+const filterByAdministration = (repos: Repository[], organisations: Organisation[], selectedAdministrations: string[]): Repository[] => {
+	/*
+    * Administrations are linked to software by organisation
+    * We must find organisations linked to selected administrations to filter repositories
+    */
+	const selectedOrganisationsByAdministration = organisations
+		.filter(organisation => {
+				return organisation.administrations.some(administration => selectedAdministrations.includes(administration))
+			}
+		).map(organisation => organisation.id)
+
+	return repos.filter(repo => selectedOrganisationsByAdministration.some(organisation => repo.organisation_id.includes(organisation)))
+}
+
+export const repositoryOrganisation = (repo: Repository, organisations: Organisation[]) => {
+	return organisations.find(organisation => repo.organisation_id === organisation.id)
+}
+
+const filterByDependencies = (repos: Repository[], dependencies: Dependency[], selectedDependenciesNames: string[]): Repository[] => {
+	const selectedDependencies = dependencies.filter(dependency => selectedDependenciesNames.includes(dependency.name))
+
+	return repos.filter(repo => selectedDependencies.some(dependency => dependency.repository_urls.includes(repo.url)))
+}
+
+const filterByVitality = (repos: Repository[], selectedVitality: number): Repository[] => {
+	return repos.filter(repo => between(repo.vitality, selectedVitality, MAX_VITALITY))
+}
+
+const sortRepos = (repos: Repository[], sort: State.Sort) => {
+	switch (sort) {
+		case "name_asc":
+		default:
+			return [...repos].sort((repoA, repoB) => repoA.name.localeCompare(repoB.name))
+
+		case "name_desc":
+			return [...repos].sort((repoA, repoB) => repoB.name.localeCompare(repoA.name))
+
+		case "last_update_asc":
+			return [...repos].sort((repoA, repoB) => repoB.last_updated - repoA.last_updated)
+
+		case "last_update_desc":
+			return [...repos].sort((repoA, repoB) => repoA.last_updated - repoB.last_updated)
+	}
+}
+
 export const selectors = (() => {
 	const sliceState = (rootState: RootState) => {
 		return rootState[name];
@@ -354,7 +399,7 @@ export const selectors = (() => {
 	const { filterBySearch } = (() => {
 		const getFzf = memoize(
 			(repos: State.RepositoryInternal[]) =>
-				new Fzf(repos, { "selector": ({ name }) => name }),
+				new Fzf(repos, { "selector": ({ name }) => name, fuzzy: false}),
 			{ "max": 1 }
 		);
 
@@ -381,48 +426,6 @@ export const selectors = (() => {
 
 		return { filterBySearch };
 	})();
-
-	const filterByAdministration = (repos: Repository[], organisations: Organisation[], selectedAdministrations: string[]): Repository[] => {
-
-		/*
-		* Administrations are linked to software by organisation
-		* We must find organisations linked to selected administrations to filter repositories
-		*/
-		const selectedOrganisationsByAdministration = organisations
-			.filter(organisation => {
-					return organisation.administrations.some(administration => selectedAdministrations.includes(administration))
-				}
-			).map(organisation => organisation.id)
-
-		return repos.filter(repo => selectedOrganisationsByAdministration.some(organisation => repo.organisation_id.includes(organisation)))
-	}
-
-	const filterByDependencies = (repos: Repository[], dependencies: Dependency[], selectedDependenciesNames: string[]): Repository[] => {
-		const selectedDependencies = dependencies.filter(dependency => selectedDependenciesNames.includes(dependency.name))
-
-		return repos.filter(repo => selectedDependencies.some(dependency => dependency.repository_urls.includes(repo.url)))
-	}
-
-	const filterByVitality = (repos: Repository[], selectedVitality: number): Repository[] => {
-		return repos.filter(repo => between(repo.vitality, selectedVitality, MAX_VITALITY))
-	}
-
-	const sortRepos = (repos: Repository[], sort: State.Sort) => {
-		switch (sort) {
-			case "name_asc":
-			default:
-				return [...repos].sort((repoA, repoB) => repoA.name.localeCompare(repoB.name))
-
-			case "name_desc":
-				return [...repos].sort((repoA, repoB) => repoB.name.localeCompare(repoA.name))
-
-			case "last_update_asc":
-				return [...repos].sort((repoA, repoB) => repoB.last_updated - repoA.last_updated)
-
-			case "last_update_desc":
-				return [...repos].sort((repoA, repoB) => repoA.last_updated - repoB.last_updated)
-		}
-	}
 
 	const filteredRepositories = createSelector(
 		internalRepositories,
