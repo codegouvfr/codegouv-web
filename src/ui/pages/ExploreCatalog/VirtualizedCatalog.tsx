@@ -10,7 +10,7 @@ import { useWindowInnerSize } from "powerhooks/useWindowInnerSize";
 import { useBreakpointsValues } from "@codegouvfr/react-dsfr/useBreakpointsValues";
 import { Repository } from "core/ports/CodeGouvApi";
 import { repositoryOrganisation } from "core/usecases/catalog"
-import { selectors, useCoreState } from "../../../core";
+import { selectors, useCoreState } from "core";
 
 type Props = {
     className?: string;

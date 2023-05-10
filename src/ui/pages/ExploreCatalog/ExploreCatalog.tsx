@@ -17,7 +17,7 @@ import useDebounce from "ui/tools/cancelableDebounce";
 import SelectNext from "ui/shared/SelectNext";
 import type { State as CatalogState } from "core/usecases/catalog";
 import { VirtualizedCatalog } from "./VirtualizedCatalog";
-import {defaultSelectedFilters} from "core/usecases/catalog";
+import { defaultSelectedFilters } from "core/usecases/catalog";
 
 type Props = {
 	className?: string;
@@ -30,6 +30,7 @@ export default function ExploreCatalog(props: Props) {
 	assert<Equals<typeof rest, {}>>()
 
 	const {t} = useTranslation({ ExploreCatalog });
+	const {t: tSearch} = useTranslation({ "Search": null });
 	const {cx, classes} = useStyles();
 
 	const [, startTransition] = useTransition();
@@ -47,6 +48,26 @@ export default function ExploreCatalog(props: Props) {
 	const { getLicencesFilterOptions } = useCoreState(selectors.catalog.getLicencesFilterOptions)
 	const { getDevStatusFilterOptions } = useCoreState(selectors.catalog.getDevStatusFilterOptions)
 	const { getOrganisationsFilterOptions } = useCoreState(selectors.catalog.getOrganisationsFilterOptions)
+	const { filters } = useCoreState(selectors.catalog.filters)
+	const { selectedFunctions } = useCoreState(selectors.catalog.selectedFunctions)
+
+	const selectedFilters = useConstCallback(() => {
+		/*
+		* We add FunctionLabel here instead of in catalog.ts because we should not access i18n in core
+		* */
+		const selectedFunctionsLabel = selectedFunctions.map(selectedFunction => {
+			switch (selectedFunction) {
+				case "Algorithm":
+					return tSearch("algorithm");
+				case "Library":
+					return tSearch("library");
+				case "Source Code":
+					return tSearch("source code");
+			}
+		})
+
+		return filters.concat(selectedFunctionsLabel)
+	})
 
 	const onSortChange = useConstCallback((sort: CatalogState.Sort) => {
 			return startTransition(() =>
@@ -83,7 +104,6 @@ export default function ExploreCatalog(props: Props) {
 	const debouncedSearch = useDebounce({ value: route.params.search, delay: 1000 });
 
 	useEffect(() => {
-
 		catalog.updateFilter({
 			"key": "search",
 			"value": route.params.search
@@ -414,6 +434,15 @@ export default function ExploreCatalog(props: Props) {
 							}))}
 						/>
 					</div>
+					<div className={classes.activeFilters}>
+						{
+							selectedFilters().map((filter) => (
+								<p key={filter} className="fr-badge fr-badge--info fr-badge--sm fr-badge--no-icon">
+									{ filter }
+								</p>
+							))
+						}
+					</div>
 					{filteredRepositories.length === 0 ? null : (
 						<VirtualizedCatalog
 							repositories={filteredRepositories}
@@ -456,6 +485,11 @@ const useStyles = makeStyles({name: {Explore}})(() => ({
 			marginTop: fr.spacing("4v")
 		}
 	},
+	activeFilters: {
+		display: "flex",
+		gap: fr.spacing("4v"),
+		flexWrap: "wrap"
+	}
 }));
 
 export const { i18n } = declareComponentKeys<

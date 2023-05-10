@@ -155,6 +155,7 @@ export const Search = (props: Props) => {
                         label={t("administrations label")}
                         options={administrationsOptions.map(({ administration, repoCount }) => ({
                             label: administration,
+                            value: administration,
                             itemCount: repoCount,
                         }))}
                         selectedValues={selectedAdministrations}
@@ -166,6 +167,7 @@ export const Search = (props: Props) => {
                         label={t("categories label")}
                         options={categoriesOptions.map(({ category, repoCount }) => ({
                             label: category,
+                            value: category,
                             itemCount: repoCount,
                         }))}
                         selectedValues={selectedCategories}
@@ -210,6 +212,7 @@ export const Search = (props: Props) => {
                         label={t("languages label")}
                         options={languagesOptions.map(({ language, repoCount }) => ({
                             label: language,
+                            value: language,
                             itemCount: repoCount,
                         }))}
                         selectedValues={selectedLanguages}
@@ -230,6 +233,7 @@ export const Search = (props: Props) => {
                         label={t("licences label")}
                         options={licencesOptions.map(({ licence, repoCount }) => ({
                             label: licence,
+                            value: licence,
                             itemCount: repoCount,
                         }))}
                         selectedValues={selectedLicences}
@@ -241,6 +245,7 @@ export const Search = (props: Props) => {
                         label={t("dev status label")}
                         options={devStatusOptions.map(({ status, repoCount }) => ({
                             label: status,
+                            value: status,
                             itemCount: repoCount,
                         }))}
                         selectedValues={selectedDevStatus}

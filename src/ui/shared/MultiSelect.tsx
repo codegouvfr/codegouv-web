@@ -10,7 +10,7 @@ import Checkbox from '@mui/material/Checkbox';
 import ListItemText from '@mui/material/ListItemText';
 
 type Option = {
-    value?: string
+    value: string
     label: string
     itemCount: number
 }
@@ -35,6 +35,12 @@ export const MultiSelect = (props: Props) => {
         className: classes.menu
     }
 
+    //To get label from value
+    const selectedLabel = (value: string) => {
+        const option = options.find(option => option.value === value)
+        return option?.label
+    }
+
     return (
         <div className={cx(className, classes.root, fr.cx("fr-select-group"))}>
             {label && <label htmlFor={`${label}-label`}>
@@ -54,16 +60,16 @@ export const MultiSelect = (props: Props) => {
                 )}
                 className={cx(fr.cx("fr-select"), classes.multiSelect)}
                 input={<InputBase />}
-                renderValue={(selected) => selected.join(', ')}
+                renderValue={(selectedValues) => selectedValues.map(value => selectedLabel(value)).join(', ')}
                 MenuProps={MenuProps}
             >
                 {options.map(( { label, value, itemCount } ) => (
                     <MenuItem
                         key={label}
-                        value={value ? value : label}
+                        value={value}
                         disabled={itemCount === 0}
                     >
-                        <Checkbox checked={selectedValues.indexOf(label) > -1} />
+                        <Checkbox checked={selectedValues.indexOf(value) > -1} />
                         <ListItemText primary={label} />
                     </MenuItem>
                 ))}

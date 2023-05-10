@@ -5,7 +5,7 @@ import { createSelector } from "@reduxjs/toolkit";
 import type { Dependency, Organisation, Repository, RepositoryStatistics } from "core/ports/CodeGouvApi";
 import { createObjectThatThrowsIfAccessed } from "redux-clean-architecture";
 import { pipe } from "lodash/fp"
-import { compact } from "lodash"
+import { compact, concat } from "lodash"
 import memoize from "memoizee";
 import { Fzf } from "fzf"
 import { assert, type Equals } from "tsafe";
@@ -524,6 +524,26 @@ export const selectors = (() => {
 		return state.organisationsFilterOptions
 	});
 
+	const filters = createSelector(sliceState, state => {
+
+		const selectedOrganisationsLabel =
+			compact(
+				state.selectedOrganisations
+					.map(selectedOrganisation => state.organisations.find(organisation => organisation.id === selectedOrganisation)))
+				.map(organisation => organisation.name)
+
+
+		return concat(
+			state.selectedAdministrations,
+			state.selectedCategories,
+			state.selectedDependencies,
+			state.selectedLanguages,
+			state.selectedLicences,
+			state.selectedDevStatus,
+			selectedOrganisationsLabel
+		)
+	});
+
 	return {
 		isLoading,
 		repositoryStatistics,
@@ -544,6 +564,7 @@ export const selectors = (() => {
 		getLicencesFilterOptions,
 		getDevStatusFilterOptions,
 		getOrganisationsFilterOptions,
-		filteredRepositories
+		filteredRepositories,
+		filters
 	};
 })();
