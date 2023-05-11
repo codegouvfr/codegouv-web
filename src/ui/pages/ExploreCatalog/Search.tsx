@@ -13,60 +13,38 @@ import {AutocompleteInputMultiple} from "ui/shared/AutocompleteInputMultiple";
 import { ToggleSwitch } from "@codegouvfr/react-dsfr/ToggleSwitch"
 import { Slider } from "@mui/material";
 import {MultiSelect} from "ui/shared/MultiSelect";
-import {State} from "core/usecases/catalog";
+import type { State as CatalogState } from "core/usecases/catalog";
 
 export type Props = {
     className?: string
     search: string
     onSearchChange: (search: string) => void
-    administrationsOptions: {
-        administration: string
-        repoCount: number
-    }[]
+    administrationsOptions: CatalogState.Administration[]
     selectedAdministrations: string[]
     onAdministrationsChange: (administrations: string[]) => void
-    categoriesOptions: {
-        category: State.Category
-        repoCount: number
-    }[]
+    categoriesOptions: CatalogState.Category[]
     selectedCategories: string[]
     onCategoriesChange: (categories: string[]) => void
-    dependenciesOptions: {
-        dependency: State.Dependency
-        repoCount: number
-    }[]
+    dependenciesOptions: CatalogState.Dependency[]
     onDependenciesChange: (dependencies: string[]) => void
     selectedDependencies: string[]
-    functionsOptions: {
-        function: State.Function
-        repoCount: number
-    }[]
-    selectedFunctions: State.Function[]
-    onFunctionsChange: (functions: State.Function[]) => void
+    functionsOptions: CatalogState.Function[]
+    selectedFunctions: CatalogState.Function[]
+    onFunctionsChange: (functions: CatalogState.Function[]) => void
     selectedVitality: number
     onVitalityChange: (range: number) => void
-    languagesOptions: {
-        language: State.Language
-        repoCount: number
-    }[]
+    languagesOptions: CatalogState.Language []
     selectedLanguages: string[]
     onLanguagesChange: (languages: string[]) => void
-    licencesOptions: {
-        licence: State.Licence
-        repoCount: number
-    }[]
+    licencesOptions: CatalogState.Licence[]
     onLicencesChange: (licences: string[]) => void
     selectedLicences: string[]
-    devStatusOptions: {
-        status: State.DevStatus
-        repoCount: number
-    }[]
+    devStatusOptions: CatalogState.DevStatus[]
     onDevStatusChange: (licences: string[]) => void
     selectedDevStatus: string[]
     organisationsOptions: {
         organisation: string,
         organisationId: string,
-        repoCount: number
     }[]
     onOrganisationsChange: (organisation: string[]) => void
     selectedOrganisations: string[]
@@ -153,10 +131,9 @@ export const Search = (props: Props) => {
                     <MultiSelect
                         id="administrations"
                         label={t("administrations label")}
-                        options={administrationsOptions.map(({ administration, repoCount }) => ({
+                        options={administrationsOptions.map(administration => ({
                             label: administration,
                             value: administration,
-                            itemCount: repoCount,
                         }))}
                         selectedValues={selectedAdministrations}
                         onChange={onAdministrationsChange}
@@ -165,10 +142,9 @@ export const Search = (props: Props) => {
                     <MultiSelect
                         id="categories"
                         label={t("categories label")}
-                        options={categoriesOptions.map(({ category, repoCount }) => ({
+                        options={categoriesOptions.map( category => ({
                             label: category,
                             value: category,
-                            itemCount: repoCount,
                         }))}
                         selectedValues={selectedCategories}
                         onChange={onCategoriesChange}
@@ -178,9 +154,9 @@ export const Search = (props: Props) => {
                         <label>{t("dependencies label")}</label>
                         <AutocompleteInputMultiple
                             id={"dependencies"}
-                            options={dependenciesOptions.map(({ dependency, repoCount }) => ({
+                            options={dependenciesOptions.map(dependency => ({
                                 label: dependency,
-                                itemCount: repoCount,
+                                value: dependency
                             }))}
                             selectedValues={selectedDependencies}
                             onChange={onDependenciesChange}
@@ -190,9 +166,9 @@ export const Search = (props: Props) => {
                         id="functions"
                         label={t("functions label")}
                         options={functionsOptions.map(option => ({
-                            value: option.function,
+                            value: option,
                             label: (() => {
-                                switch (option.function) {
+                                switch (option) {
                                     case "Algorithm":
                                         return t("algorithm");
                                     case "Library":
@@ -201,19 +177,17 @@ export const Search = (props: Props) => {
                                         return t("source code");
                                 }
                             })(),
-                            itemCount: option.repoCount,
                         }))}
                         selectedValues={selectedFunctions}
-                        onChange={options => onFunctionsChange(options as State.Function[])}
+                        onChange={options => onFunctionsChange(options as CatalogState.Function[])}
                         className={classes.filterSelectGroup}
                     />
                     <MultiSelect
                         id="languages"
                         label={t("languages label")}
-                        options={languagesOptions.map(({ language, repoCount }) => ({
+                        options={languagesOptions.map(language => ({
                             label: language,
                             value: language,
-                            itemCount: repoCount,
                         }))}
                         selectedValues={selectedLanguages}
                         onChange={onLanguagesChange}
@@ -231,10 +205,9 @@ export const Search = (props: Props) => {
                     <MultiSelect
                         id="licences"
                         label={t("licences label")}
-                        options={licencesOptions.map(({ licence, repoCount }) => ({
+                        options={licencesOptions.map(licence => ({
                             label: licence,
                             value: licence,
-                            itemCount: repoCount,
                         }))}
                         selectedValues={selectedLicences}
                         onChange={onLicencesChange}
@@ -243,10 +216,9 @@ export const Search = (props: Props) => {
                     <MultiSelect
                         id="devStatus"
                         label={t("dev status label")}
-                        options={devStatusOptions.map(({ status, repoCount }) => ({
+                        options={devStatusOptions.map(status => ({
                             label: status,
                             value: status,
-                            itemCount: repoCount,
                         }))}
                         selectedValues={selectedDevStatus}
                         onChange={onDevStatusChange}
@@ -256,10 +228,9 @@ export const Search = (props: Props) => {
                         <label>{t("organisation label")}</label>
                         <AutocompleteInputMultiple
                             id={"organisation"}
-                            options={organisationsOptions.map(({ organisation, organisationId, repoCount }) => ({
+                            options={organisationsOptions.map(({ organisation, organisationId }) => ({
                                 label: organisation,
                                 value: organisationId,
-                                itemCount: repoCount,
                             }))}
                             selectedValues={selectedOrganisations}
                             onChange={onOrganisationsChange}

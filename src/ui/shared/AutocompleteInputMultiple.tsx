@@ -13,9 +13,8 @@ import { MultiSelect } from "./MultiSelect";
 const LISTBOX_PADDING = 8; // px
 
 type Option = {
-    value?: string
+    value: string
     label: string
-    itemCount: number
 }
 
 type Props = {
@@ -128,12 +127,9 @@ const StyledPopper = styled(Popper)({
 });
 
 export function AutocompleteInputMultiple(props: Props) {
-
     const { options, selectedValues, onChange} = props
-
     const {cx, classes} = useStyles();
-
-    const value = options.filter(option => selectedValues.includes(option.label))
+    const value = options.filter(option => selectedValues.includes(option.value))
 
     return (
         <Autocomplete
@@ -146,17 +142,14 @@ export function AutocompleteInputMultiple(props: Props) {
             PopperComponent={StyledPopper}
             ListboxComponent={ListboxComponent}
             options={options}
-            getOptionDisabled={(option) =>
-                option.itemCount === 0
-            }
             value={value}
             renderInput={(params) => <TextField {...params} variant={"standard"} />}
             renderOption={(props, option, state) =>
                 [props, option, state.index] as React.ReactNode
             }
-            onChange={(_event, values) => {
-                const labels = values.map(value => value.value ?? value.label)
-                onChange(labels)
+            onChange={(_event, options) => {
+                const values = options.map(value => value.value)
+                onChange(values)
             }}
             className={cx(fr.cx("fr-select"), classes.multiSelect)}
             renderTags={(tagValue) => {

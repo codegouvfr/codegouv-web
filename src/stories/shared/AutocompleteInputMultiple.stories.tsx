@@ -14,16 +14,16 @@ export const VueDefault = getStory({
     onChange: () => {},
     options: [
         {
+            value: "Option 1",
             label: "Option 1",
-            itemCount: 1,
         },
         {
+            value: "Option 2",
             label: "Option 2",
-            itemCount: 0,
         },
         {
+            value: "Option 3",
             label: "Option 3",
-            itemCount: 2
         }
     ],
     id: "1",

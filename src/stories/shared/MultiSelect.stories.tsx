@@ -16,18 +16,15 @@ export const VueDefault = getStory({
     options: [
         {
             label: "Option 1",
-            value: "Option 1",
-            itemCount: 1,
+            value: "Option 1"
         },
         {
             label: "Option 2",
-            value: "Option 2",
-            itemCount: 0,
+            value: "Option 2"
         },
         {
             label: "Option 3",
-            value: "Option 3",
-            itemCount: 2
+            value: "Option 3"
         }
     ],
     selectedValues: [],

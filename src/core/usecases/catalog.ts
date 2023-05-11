@@ -35,14 +35,6 @@ export type State = {
 	selectedDevStatus: State.DevStatus[]
 	selectedOrganisations: State.Organisation[]
 	isExperimentalReposHidden: boolean,
-	administrationsFilterOptions: State.AdministrationFilterOption[]
-	categoriesFilterOptions: State.CategoryFilterOption[]
-	dependenciesFilterOptions: State.DependenciesFilterOption[]
-	functionsFilterOptions: State.FunctionsFilterOption[]
-	languagesFilterOptions: State.LanguagesFilterOption[]
-	licencesFilterOptions: State.LicencesFilterOption[]
-	devStatusFilterOptions: State.DevStatusFilterOption[]
-	organisationsFilterOptions: State.OrganisationsFilterOption[]
 };
 
 export namespace State {
@@ -61,39 +53,6 @@ export namespace State {
 	export type Licence = string
 	export type DevStatus = 'Concept' | 'Alpha' | 'Beta' | 'RC' | 'Stable'
 	export type Organisation = string
-	export type AdministrationFilterOption = {
-		administration: string,
-		repoCount: number
-	}
-	export type CategoryFilterOption = {
-		category: string,
-		repoCount: number
-	}
-	export type DependenciesFilterOption = {
-		dependency: string,
-		repoCount: number
-	}
-	export type FunctionsFilterOption = {
-		function: State.Function,
-		repoCount: number
-	}
-	export type LanguagesFilterOption = {
-		language: string,
-		repoCount: number
-	}
-	export type LicencesFilterOption = {
-		licence: string,
-		repoCount: number
-	}
-	export type DevStatusFilterOption = {
-		status: State.DevStatus,
-		repoCount: number
-	}
-	export type OrganisationsFilterOption = {
-		organisation: string,
-		organisationId: string,
-		repoCount: number
-	}
 }
 
 const MAX_VITALITY = 100
@@ -161,9 +120,6 @@ export const { reducer, actions } = createSlice({
 
 			const sort: State.Sort = "last_update_asc";
 
-			const optionsFunction: State.Function[] = ["Source Code", "Library", "Algorithm"]
-			const optionsStatus: State.DevStatus[] = ["Beta", "RC", "Concept", "Alpha", "Stable"]
-
 			return {
 				repositories,
 				filter: undefined,
@@ -178,55 +134,6 @@ export const { reducer, actions } = createSlice({
 				sort,
 				search: "",
 				...defaultSelectedFilters,
-				administrationsFilterOptions: administrations.map(administration => (
-					{
-						administration: administration,
-						repoCount: 1
-					}
-				)),
-				categoriesFilterOptions: categories.map(category => (
-					{
-						category,
-						repoCount: 1
-					}
-				)),
-				dependenciesFilterOptions: dependencies.map(dependency => (
-					{
-						dependency: dependency.name,
-						repoCount: 1
-					}
-				)),
-				functionsFilterOptions: optionsFunction.map(option => (
-				{
-					function: option,
-					repoCount: repositories.filter(repo => repo.type === option).length
-				}
-				)),
-				languagesFilterOptions: languages.map(language => (
-					{
-						language,
-						repoCount: 1
-					}
-				)),
-				licencesFilterOptions: licences.map(licence => (
-					{
-						licence,
-						repoCount: repositories.filter(repo => repo.license === licence).length
-					}
-				)),
-				devStatusFilterOptions: optionsStatus.map(option => (
-					{
-						status: option,
-						repoCount: repositories.filter(repo => repo.status === option).length
-					}
-				)),
-				organisationsFilterOptions: organisations.map(organisation => (
-					{
-						organisation: organisation.name,
-						organisationId: organisation.id,
-						repoCount: repositories.filter(repo => repo.organisation_id === organisation.id).length
-					}
-				))
 			}
 
 		},
@@ -490,38 +397,43 @@ export const selectors = (() => {
 		return sorts;
 	});
 
-	const getAdministrationsFilterOptions = createSelector(sliceState, state => {
-		return state.administrationsFilterOptions
+	const administrationsFilterOptions = createSelector(sliceState, state => {
+		return state.administrations
 	});
 
-	const getCategoriesFilterOptions = createSelector(sliceState, state => {
-		return state.categoriesFilterOptions
+	const categoriesFilterOptions = createSelector(sliceState, state => {
+		return state.categories
 	});
 
-	const getDependenciesFilterOptions = createSelector(sliceState, state => {
-		return state.dependenciesFilterOptions
+	const dependenciesFilterOptions = createSelector(sliceState, state => {
+		return state.dependencies.map(dependency => dependency.name)
 	});
 
-	const getFunctionsFilterOptions = createSelector(
-		sliceState, state => {
-			return state.functionsFilterOptions
+	const functionsFilterOptions = createSelector(
+		sliceState, _state => {
+			return ["Source Code", "Library", "Algorithm"] satisfies State.Function[]
 		}
 	);
 
-	const getLanguagesFilterOptions = createSelector(sliceState, state => {
-		return state.languagesFilterOptions
+	const languagesFilterOptions = createSelector(sliceState, state => {
+		return state.languages
 	});
 
-	const getLicencesFilterOptions = createSelector(sliceState, state => {
-		return state.licencesFilterOptions
+	const licencesFilterOptions = createSelector(sliceState, state => {
+		return state.licences
 	});
 
-	const getDevStatusFilterOptions = createSelector(sliceState, state => {
-		return state.devStatusFilterOptions
+	const devStatusFilterOptions = createSelector(sliceState, state => {
+		return ["Beta", "RC", "Concept", "Alpha", "Stable"] satisfies State.DevStatus[]
 	});
 
-	const getOrganisationsFilterOptions = createSelector(sliceState, state => {
-		return state.organisationsFilterOptions
+	const organisationsFilterOptions = createSelector(sliceState, state => {
+		return state.organisations.map(organisation => (
+			{
+				organisation: organisation.name,
+				organisationId: organisation.id,
+			}
+		))
 	});
 
 	const filters = createSelector(sliceState, state => {
@@ -556,14 +468,14 @@ export const selectors = (() => {
 		categories,
 		sortOptions,
 		search,
-		getAdministrationsFilterOptions,
-		getCategoriesFilterOptions,
-		getDependenciesFilterOptions,
-		getFunctionsFilterOptions,
-		getLanguagesFilterOptions,
-		getLicencesFilterOptions,
-		getDevStatusFilterOptions,
-		getOrganisationsFilterOptions,
+		administrationsFilterOptions,
+		categoriesFilterOptions,
+		dependenciesFilterOptions,
+		functionsFilterOptions,
+		languagesFilterOptions,
+		licencesFilterOptions,
+		devStatusFilterOptions,
+		organisationsFilterOptions,
 		filteredRepositories,
 		filters
 	};

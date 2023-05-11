@@ -12,7 +12,6 @@ import ListItemText from '@mui/material/ListItemText';
 type Option = {
     value: string
     label: string
-    itemCount: number
 }
 
 type Props = {
@@ -63,11 +62,10 @@ export const MultiSelect = (props: Props) => {
                 renderValue={(selectedValues) => selectedValues.map(value => selectedLabel(value)).join(', ')}
                 MenuProps={MenuProps}
             >
-                {options.map(( { label, value, itemCount } ) => (
+                {options.map(( { label, value } ) => (
                     <MenuItem
                         key={label}
                         value={value}
-                        disabled={itemCount === 0}
                     >
                         <Checkbox checked={selectedValues.indexOf(value) > -1} />
                         <ListItemText primary={label} />
