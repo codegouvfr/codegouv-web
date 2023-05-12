@@ -80,7 +80,7 @@ export const RepoCard = (props: Props) => {
                     </div>
                     <div className={cx(fr.cx("fr-card__title"), classes.header)}>
                         <h3 className={classes.name}>
-                            <a href={repositoryUrl}>
+                            <a href={repositoryUrl} target="_blank">
                                 {repositoryName}
                             </a>
                         </h3>
