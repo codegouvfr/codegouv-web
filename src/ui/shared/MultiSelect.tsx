@@ -41,7 +41,7 @@ export const MultiSelect = (props: Props) => {
     }
 
     return (
-        <div className={cx(className, classes.root, fr.cx("fr-select-group"))}>
+        <div id={id} className={cx(className, classes.root, fr.cx("fr-select-group"))}>
             {label && <label htmlFor={`${label}-label`}>
                 { label }
             </label>}
@@ -85,7 +85,16 @@ const useStyles = makeStyles({name: {MultiSelect}})(() => ({
             display: "none"
         },
         "div[role='button']": {
-            padding: fr.spacing("2v")
+            padding: fr.spacing("2v"),
+            outlineOffset: "2px",
+            outlineWidth: "2px",
+            outlineColor: "#0a76f6"
+        },
+
+        "&.Mui-focused": {
+            "&& div[role='button']": {
+                outlineStyle: "solid"
+            }
         }
     },
     menu: {
