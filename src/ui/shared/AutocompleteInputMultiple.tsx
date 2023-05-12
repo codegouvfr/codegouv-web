@@ -9,6 +9,8 @@ import Typography from '@mui/material/Typography';
 import { fr } from "@codegouvfr/react-dsfr";
 import {makeStyles} from "tss-react/dsfr";
 import { MultiSelect } from "./MultiSelect";
+import Checkbox from "@mui/material/Checkbox";
+import ListItemText from "@mui/material/ListItemText";
 
 const LISTBOX_PADDING = 8; // px
 
@@ -34,6 +36,7 @@ function renderRow(props: ListChildComponentProps) {
 
     return (
         <Typography component="li" {...dataSet[0]} noWrap style={inlineStyle}>
+            <Checkbox checked={dataSet[0]["aria-selected"]} />
             {`${dataSet[1].label}`}
         </Typography>
     );
@@ -133,7 +136,7 @@ export function AutocompleteInputMultiple(props: Props) {
 
     return (
         <Autocomplete
-            id="virtualize-demo"
+            id="virtualize-autocomplete"
             multiple
             disableCloseOnSelect
             disableListWrap
