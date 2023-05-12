@@ -1,4 +1,4 @@
-import React from "react";
+import React, {Fragment} from "react";
 import { assert } from "tsafe/assert";
 import type { Equals } from "tsafe";
 import { makeStyles } from "tss-react/dsfr";
@@ -6,20 +6,39 @@ import { declareComponentKeys } from "i18nifty";
 import { fr } from "@codegouvfr/react-dsfr";
 import { useTranslation } from "ui/i18n";
 import { useFromNow } from "ui/useMoment";
+import { Organisation } from "core/ports/CodeGouvApi"
 
 type Props = {
     className?: string
     repositoryName: string
-    starCount: number
+    repositoryUrl: string
+    starCount?: number
     description: string
     language: string
     devStatus: string
     lastUpdate: number
+    organisation_id: string
+    licence: string
+    organisation: Organisation | undefined
 }
 
+const regExpShortLicence = /\(([^)]+)\)/g
 export const RepoCard = (props: Props) => {
 
-    const {className, repositoryName, description, language, starCount, devStatus, lastUpdate, ...rest} = props
+    const {
+        className,
+        repositoryName,
+        repositoryUrl,
+        description,
+        language,
+        starCount,
+        devStatus,
+        lastUpdate,
+        organisation_id,
+        licence,
+        organisation,
+        ...rest
+    } = props
     assert<Equals<typeof rest, {}>>()
 
     const {t} = useTranslation({RepoCard});
@@ -27,56 +46,57 @@ export const RepoCard = (props: Props) => {
 
     const { fromNowText } = useFromNow({ "dateTime": lastUpdate });
 
+    const shortLicence = licence.match(regExpShortLicence)?.map(x => x.replace(/[()]/g, ""));
+
     return (
-        <div className={cx(fr.cx("fr-card"), classes.root, className)}>
-            <div className={classes.cardBody}>
-                <div className={cx(fr.cx("fr-card__header"), classes.header)}>
-                    <h3 className={classes.name}>{repositoryName}</h3>
-                    <div className={classes.startCountWrapper}>
-                        <i className={fr.cx("fr-icon-star-fill")}/>
-                        <span>{ starCount }</span>
+        <div className={cx(fr.cx("fr-card", "fr-enlarge-link"), classes.root, className)}>
+            <div className={cx(fr.cx("fr-card__body"), classes.cardBody)}>
+                <div className={fr.cx("fr-card__content")}>
+                    <div className="fr-card__start">
+                        <ul className="fr-tags-group">
+                                {language && <li>
+                                    <p className={fr.cx("fr-tag", "fr-tag--blue-ecume")}>
+                                        {language}
+                                    </p>
+                                </li>}
+                                <li>
+                                    <p className={fr.cx("fr-tag", "fr-tag--blue-cumulus")}>
+                                        { devStatus }
+                                    </p>
+                                </li>
+                            {shortLicence && <li>
+                                <p className={fr.cx("fr-tag", "fr-tag--blue-cumulus")}>
+                                    {shortLicence[0]}
+                                </p>
+                            </li>}
+
+                                <li className={classes.lastUpdate}>
+                                    <p className={fr.cx("fr-tag", "fr-tag--yellow-tournesol")}>
+                                        {t("latest update", { fromNowText })}
+                                    </p>
+                                </li>
+
+                        </ul>
                     </div>
-                </div>
-                <p className={cx(fr.cx("fr-card__content"), classes.description)}>
-                    { description }
-                </p>
-                <div className={cx(fr.cx("fr-card__footer"), classes.footer)}>
-                    <span
-                        className={cx(
-                            fr.cx(
-                                "fr-badge--no-icon",
-                                "fr-badge--blue-ecume",
-                                "fr-badge",
-                                "fr-badge--sm"
-                            )
-                        )}
-                    >
-                        { language }
-                    </span>
-                    <span
-                        className={cx(
-                            fr.cx(
-                                "fr-badge--no-icon",
-                                "fr-badge--blue-cumulus",
-                                "fr-badge",
-                                "fr-badge--sm"
-                            )
-                        )}
-                    >
-                        { devStatus }
-                    </span>
-                    <span
-                        className={cx(
-                            fr.cx(
-                                "fr-badge--no-icon",
-                                "fr-badge--yellow-tournesol",
-                                "fr-badge",
-                                "fr-badge--sm"
-                            )
-                        )}
-                    >
-                         {t("latest update", { fromNowText })}
-                    </span>
+                    <div className={cx(fr.cx("fr-card__title"), classes.header)}>
+                        <h3 className={classes.name}>
+                            <a href={repositoryUrl} target="_blank">
+                                {repositoryName}
+                            </a>
+                        </h3>
+                        {starCount !== undefined && <div className={classes.startCountWrapper}>
+                            <i className={fr.cx("fr-icon-star-fill")}/>
+                            <span>{starCount}</span>
+                        </div>}
+                    </div>
+                    <p className={cx(fr.cx("fr-card__desc"))}>
+                        { description }
+                    </p>
+                    <div className="fr-card__end">
+                        <p className="fr-card__detail">{ organisation?.administrations.map(administration => {
+                            return <Fragment key={administration}>{administration} {organisation?.name && <>({organisation?.name})</>}</Fragment>
+                        }) }</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -85,17 +105,7 @@ export const RepoCard = (props: Props) => {
 
 const useStyles = makeStyles({name: {RepoCard}})(theme => ({
     root: {
-        ...fr.spacing("padding", {
-            topBottom: "7v",
-            rightLeft: "6v"
-        }),
         backgroundColor: theme.decisions.background.default.grey.default,
-        [fr.breakpoints.down("md")]: {
-            ...fr.spacing("padding", {
-                topBottom: "5v",
-                rightLeft: "3v"
-            })
-        }
     },
     cardBody: {
         height: "100%",
@@ -109,7 +119,6 @@ const useStyles = makeStyles({name: {RepoCard}})(theme => ({
     },
     name: {
         margin: 0,
-        color: theme.decisions.text.title.grey.default,
         display: "-webkit-box",
         WebkitBoxOrient: "vertical",
         WebkitLineClamp: "1",
@@ -122,20 +131,15 @@ const useStyles = makeStyles({name: {RepoCard}})(theme => ({
         alignItems: "center",
         gap: fr.spacing("1v")
     },
-    description: {
-        marginTop: 0,
-        marginBottom: fr.spacing("3v"),
-        color: theme.decisions.text.default.grey.default,
-        overflow: "hidden",
-        display: "-webkit-box",
-        WebkitBoxOrient: "vertical",
-        WebkitLineClamp: "3",
-        whiteSpace: "pre-wrap"
-    },
     footer: {
         display: "flex",
-        gap: fr.spacing("4v")
-    }
+        gap: fr.spacing("4v"),
+        flexWrap: "wrap"
+    },
+    lastUpdate: {
+        whiteSpace: "nowrap",
+        width: "100%"
+    },
 }));
 
 export const {i18n} = declareComponentKeys<

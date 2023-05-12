@@ -1,4 +1,3 @@
-
 import { selectors, useCoreFunctions, useCoreState } from "core";
 import CircularProgress from '@mui/material/CircularProgress';
 import type { PageRoute } from "./route";
@@ -14,11 +13,11 @@ import { Search } from "./Search";
 import { useConstCallback } from "powerhooks/useConstCallback";
 import { Props as SearchProps } from "ui/pages/ExploreCatalog/Search"
 import { routes } from "ui/routes"
-import { RepoCard } from "./RepoCard";
 import useDebounce from "ui/tools/cancelableDebounce";
 import SelectNext from "ui/shared/SelectNext";
 import type { State as CatalogState } from "core/usecases/catalog";
-
+import { VirtualizedCatalog } from "./VirtualizedCatalog";
+import { defaultFiltersValues } from "core/usecases/catalog";
 
 type Props = {
 	className?: string;
@@ -31,7 +30,8 @@ export default function ExploreCatalog(props: Props) {
 	assert<Equals<typeof rest, {}>>()
 
 	const {t} = useTranslation({ ExploreCatalog });
-	const {classes} = useStyles();
+	const {t: tSearch} = useTranslation({ "Search": null });
+	const {cx, classes} = useStyles();
 
 	const [, startTransition] = useTransition();
 
@@ -43,11 +43,31 @@ export default function ExploreCatalog(props: Props) {
 	const { administrationsFilterOptions } = useCoreState(selectors.catalog.administrationsFilterOptions)
 	const { categoriesFilterOptions } = useCoreState(selectors.catalog.categoriesFilterOptions)
 	const { dependenciesFilterOptions } = useCoreState(selectors.catalog.dependenciesFilterOptions)
-	const { functionFilterOptions } = useCoreState(selectors.catalog.functionFilterOptions)
+	const { functionsFilterOptions } = useCoreState(selectors.catalog.functionsFilterOptions)
 	const { languagesFilterOptions } = useCoreState(selectors.catalog.languagesFilterOptions)
 	const { licencesFilterOptions } = useCoreState(selectors.catalog.licencesFilterOptions)
 	const { devStatusFilterOptions } = useCoreState(selectors.catalog.devStatusFilterOptions)
 	const { organisationsFilterOptions } = useCoreState(selectors.catalog.organisationsFilterOptions)
+	const { filters } = useCoreState(selectors.catalog.filters)
+	const { selectedFunctions } = useCoreState(selectors.catalog.selectedFunctions)
+
+	const selectedFilters = useConstCallback(() => {
+		/*
+		* We add FunctionLabel here instead of in catalog.ts because we should not access i18n in core
+		* */
+		const selectedFunctionsLabel = selectedFunctions.map(selectedFunction => {
+			switch (selectedFunction) {
+				case "Algorithm":
+					return tSearch("algorithm");
+				case "Library":
+					return tSearch("library");
+				case "Source Code":
+					return tSearch("source code");
+			}
+		})
+
+		return filters.concat(selectedFunctionsLabel)
+	})
 
 	const onSortChange = useConstCallback((sort: CatalogState.Sort) => {
 			return startTransition(() =>
@@ -84,7 +104,6 @@ export default function ExploreCatalog(props: Props) {
 	const debouncedSearch = useDebounce({ value: route.params.search, delay: 1000 });
 
 	useEffect(() => {
-
 		catalog.updateFilter({
 			"key": "search",
 			"value": route.params.search
@@ -157,7 +176,7 @@ export default function ExploreCatalog(props: Props) {
 
 	const onFunctionsChange = useConstCallback<
 		SearchProps["onFunctionsChange"]
-	>(functions => {
+	>((functions) => {
 			return startTransition(() =>
 				routes
 					.exploreCatalog({
@@ -306,6 +325,43 @@ export default function ExploreCatalog(props: Props) {
 		});
 	}, [route.params.isExperimentalReposHidden]);
 
+	const onResetFilters = useConstCallback(() => {
+
+		const {
+			search,
+			isExperimentalReposHidden,
+			selectedDependencies,
+			selectedFunctions,
+			selectedAdministrations,
+			selectedCategories,
+			selectedLanguages,
+			selectedLicences,
+			selectedOrganisations,
+			selectedVitality,
+			selectedDevStatus
+		} = defaultFiltersValues
+
+			return startTransition(() =>
+				routes
+					.exploreCatalog({
+						...route.params,
+						search: search,
+						categories: selectedCategories,
+						isExperimentalReposHidden: isExperimentalReposHidden,
+						vitality: selectedVitality,
+						dependencies: selectedDependencies,
+						licences: selectedLicences,
+						functions: selectedFunctions,
+						administrations: selectedAdministrations,
+						languages: selectedLanguages,
+						organisations: selectedOrganisations,
+						devStatus: selectedDevStatus
+					})
+					.replace()
+			)
+		}
+	);
+
 	if (isLoading) {
 		return <CircularProgress />
 	}
@@ -326,7 +382,7 @@ export default function ExploreCatalog(props: Props) {
 					dependenciesOptions={dependenciesFilterOptions}
 					onDependenciesChange={onDependenciesChange}
 					selectedFunctions={route.params.functions}
-					functionsOptions={functionFilterOptions}
+					functionsOptions={functionsFilterOptions}
 					onFunctionsChange={onFunctionsChange}
 					selectedVitality={route.params.vitality}
 					onVitalityChange={onVitalityChange}
@@ -344,9 +400,10 @@ export default function ExploreCatalog(props: Props) {
 					onOrganisationsChange={onOrganisationsChange}
 					isExperimentalReposHidden={route.params.isExperimentalReposHidden}
 					onIsExperimentalReposHidden={onIsExperimentalReposChange}
+					onResetFilters={onResetFilters}
 				/>
 			</div>
-			<section className={fr.cx("fr-container")}>
+			<div className={cx(classes.filteredView, fr.cx("fr-container"))}>
 				<div>
 					<div className={classes.header}>
 						<h6 className={classes.filteredRepositoriesCount}>
@@ -379,26 +436,30 @@ export default function ExploreCatalog(props: Props) {
 							}))}
 						/>
 					</div>
-					<div className={classes.repoList}>
-						{filteredRepositories.map(repo => (
-							<RepoCard
-								key={repo.url}
-								repositoryName={repo.name}
-								devStatus={repo.status}
-								description={repo.description}
-								language={repo.language}
-								lastUpdate={repo.last_updated}
-								starCount={repo.star_count}
-							/>
-						))}
+					<div className={classes.activeFilters}>
+						{
+							selectedFilters().map((filter) => (
+								<p key={filter} className="fr-badge fr-badge--info fr-badge--sm fr-badge--no-icon">
+									{ filter }
+								</p>
+							))
+						}
 					</div>
+					{filteredRepositories.length === 0 ? null : (
+						<VirtualizedCatalog
+							repositories={filteredRepositories}
+						/>
+					)}
 				</div>
-			</section>
+			</div>
 		</div>
 	);
 }
 
 const useStyles = makeStyles({name: {Explore}})(() => ({
+	filteredView: {
+		marginTop: fr.spacing("4v")
+	},
 	header: {
 		display: "flex",
 		alignItems: "center",
@@ -426,11 +487,11 @@ const useStyles = makeStyles({name: {Explore}})(() => ({
 			marginTop: fr.spacing("4v")
 		}
 	},
-	repoList: {
-		display: "grid",
-		gridTemplateColumns: "repeat(2, 1fr)",
-		gap: fr.spacing("4v")
-	},
+	activeFilters: {
+		display: "flex",
+		gap: fr.spacing("4v"),
+		flexWrap: "wrap"
+	}
 }));
 
 export const { i18n } = declareComponentKeys<

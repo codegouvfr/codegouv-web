@@ -4,22 +4,18 @@ import { declareComponentKeys } from "i18nifty";
 import { useTranslation } from "ui/i18n";
 import { fr } from "@codegouvfr/react-dsfr";
 import { makeStyles } from "tss-react/dsfr";
-import Tile from "@codegouvfr/react-dsfr/Tile";
 import Card from "@codegouvfr/react-dsfr/Card";
-import { Button } from "@codegouvfr/react-dsfr/Button";
 import { SoftwareCard } from "./SoftwareCard";
-import Input from "@codegouvfr/react-dsfr/Input";
 import { SiteStats } from "ui/shared/SiteStats"
-import { TileColumns } from "../../shared/TileColumns";
-import { Contribute } from "../../shared/Contribute";
+import { TileColumns } from "ui/shared/TileColumns";
+import { Contribute } from "ui/shared/Contribute";
+import { routes } from "ui/routes";
 
 type Props = {
 	className?: string;
 	route: PageRoute;
 };
 export default function Home(props: Props) {
-	const { route } = props
-
 	const { t } = useTranslation({ Home });
 	const { t: tCommons } = useTranslation({ App: null });
 	const { cx, classes } = useStyles();
@@ -148,7 +144,7 @@ export default function Home(props: Props) {
 				<div className={cx(classes.intro, fr.cx("fr-container"))}>
 					<div>
 						<h2>{t("title")}</h2>
-						<Button>{tCommons("find out more")}</Button>
+						<a className={fr.cx("fr-btn")} {...routes.about().link}>{tCommons("find out more")}</a>
 					</div>
 					<div className={classes.primaryEvents}>
 						{
@@ -187,12 +183,12 @@ export default function Home(props: Props) {
 							<a href="https://code.gouv.fr/newsletters/subscribe/logiciels-libres-dsi@mail.etalab.studio" className={fr.cx("fr-btn")}>{tCommons("subscribe")}</a>
 						</div>
 						<div className={fr.cx("fr-col-4")}>
-							<div className={cx(fr.cx("fr-share", "fr-col-12"))}>
-								<h1 className={fr.cx("fr-h5", "fr-follow__title")}>{t("find us")}</h1>
-								<ul className={cx(fr.cx("fr-share__group"), classes.shareGroup)}>
+							<div className={fr.cx("fr-follow__social", "fr-col-12")}>
+								<p className={fr.cx("fr-h5")}>{t("find us")}</p>
+								<ul className={fr.cx("fr-btns-group")}>
 									<li>
 										<a
-											className={fr.cx("fr-share__link", "fr-icon-mastodon-fill")}
+											className={fr.cx("fr-btn", "fr-icon-mastodon-fill")}
 											href="https://mastodon.social/@CodeGouvFr"
 											title={t("title follow us on", { socialMedia: "Mastodon" })}
 											aria-label={t("follow us on", { socialMedia: "Mastodon" })}
@@ -200,7 +196,7 @@ export default function Home(props: Props) {
 									</li>
 									<li>
 										<a
-											className={fr.cx("fr-share__link", "fr-icon-twitter-fill")}
+											className={fr.cx("fr-btn", "fr-icon-twitter-fill")}
 											href="https://twitter.com/codegouvfr"
 											title={t("title follow us on", { socialMedia: "Twitter" })}
 											aria-label={t("follow us on", { socialMedia: "Twitter" })}
@@ -208,7 +204,7 @@ export default function Home(props: Props) {
 									</li>
 									<li>
 										<a
-											className={fr.cx("fr-share__link", "fr-icon-github-fill")}
+											className={fr.cx("fr-btn", "fr-icon-github-fill")}
 											href="https://github.com/codegouvfr"
 											rel="noreferrer noopener me"
 											title={t("title follow us on", { socialMedia: "Github" })}
@@ -216,16 +212,14 @@ export default function Home(props: Props) {
 										/>
 									</li>
 								</ul>
-								<h1 className={fr.cx("fr-h5", "fr-follow__title")}>{t("contact us")}</h1>
-								<ul className={cx(fr.cx("fr-share__group"), classes.shareGroup)}>
+								<p className={cx(fr.cx("fr-h5"), classes.contactTitle)}>{t("contact us")}</p>
+								<ul className={fr.cx("fr-btns-group")}>
 									<li>
 										<a
-											className={fr.cx("fr-share__link", "fr-icon-mail-fill")}
+											className={fr.cx("fr-btn", "fr-icon-mail-fill")}
 											href="mailto:contact@code.gouv.fr"
 											title={t("contact by mail")}
-										>
-											contact@code.gouv.fr
-										</a>
+										/>
 									</li>
 								</ul>
 							</div>
@@ -274,13 +268,8 @@ const useStyles = makeStyles()(theme => ({
 			rowGap: fr.spacing("4v")
 		},
 	},
-	shareGroup: {
-		order: "initial",
-		marginBottom: fr.spacing("4v"),
-
-		".fr-share__link": {
-			marginBottom: 0
-		}
+	contactTitle: {
+		marginTop: fr.spacing("4v"),
 	},
 	row: {
 		"& .fr-col-4": {

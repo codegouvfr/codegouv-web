@@ -9,43 +9,48 @@ import {routes} from "ui/routes";
 import Breadcrumb from "@codegouvfr/react-dsfr/Breadcrumb";
 import {MainSearch} from "ui/shared/MainSearch";
 import { Button } from "@codegouvfr/react-dsfr/Button"
-import {AutocompleteInputMultiple} from "../../shared/AutocompleteInputMultiple";
+import {AutocompleteInputMultiple} from "ui/shared/AutocompleteInputMultiple";
 import { ToggleSwitch } from "@codegouvfr/react-dsfr/ToggleSwitch"
 import { Slider } from "@mui/material";
-import {MultiSelect} from "../../shared/MultiSelect";
+import {MultiSelect} from "ui/shared/MultiSelect";
+import type { State as CatalogState } from "core/usecases/catalog";
 
 export type Props = {
     className?: string
     search: string
     onSearchChange: (search: string) => void
-    administrationsOptions: string[]
+    administrationsOptions: CatalogState.Administration[]
     selectedAdministrations: string[]
     onAdministrationsChange: (administrations: string[]) => void
-    categoriesOptions: string[]
+    categoriesOptions: CatalogState.Category[]
     selectedCategories: string[]
     onCategoriesChange: (categories: string[]) => void
-    dependenciesOptions: string[]
+    dependenciesOptions: CatalogState.Dependency[]
     onDependenciesChange: (dependencies: string[]) => void
     selectedDependencies: string[]
-    functionsOptions: string[]
-    selectedFunctions: string[]
-    onFunctionsChange: (functions: string[]) => void
+    functionsOptions: CatalogState.Function[]
+    selectedFunctions: CatalogState.Function[]
+    onFunctionsChange: (functions: CatalogState.Function[]) => void
     selectedVitality: number
     onVitalityChange: (range: number) => void
-    languagesOptions: string[]
+    languagesOptions: CatalogState.Language []
     selectedLanguages: string[]
     onLanguagesChange: (languages: string[]) => void
-    licencesOptions: string[]
+    licencesOptions: CatalogState.Licence[]
     onLicencesChange: (licences: string[]) => void
     selectedLicences: string[]
-    devStatusOptions: string[]
+    devStatusOptions: CatalogState.DevStatus[]
     onDevStatusChange: (licences: string[]) => void
     selectedDevStatus: string[]
-    organisationsOptions: string[]
+    organisationsOptions: {
+        organisation: string,
+        organisationId: string,
+    }[]
     onOrganisationsChange: (organisation: string[]) => void
     selectedOrganisations: string[]
     isExperimentalReposHidden: boolean,
     onIsExperimentalReposHidden: (checked: boolean) => void
+    onResetFilters: () => void
 }
 
 export const Search = (props: Props) => {
@@ -82,6 +87,7 @@ export const Search = (props: Props) => {
         selectedOrganisations,
         isExperimentalReposHidden,
         onIsExperimentalReposHidden,
+        onResetFilters,
         ...rest} = props
     assert<Equals<typeof rest, {}>>()
 
@@ -96,8 +102,6 @@ export const Search = (props: Props) => {
             linkProps: routes.explore().link
         },
     ]
-
-    {/*Todo : className={cx(fr.cx("fr-select"), classes.multiSelect)} */}
 
     return (
         <div className={cx(className, classes.root)}>
@@ -116,7 +120,7 @@ export const Search = (props: Props) => {
                     }
                     iconPosition="right"
                     onClick={() => setIsFilterOpen(!isFilterOpen)}
-                    aria-expanded="false"
+                    aria-expanded="true"
                     aria-controls="accordion-filters"
                 >
                     {t("filters")}
@@ -127,15 +131,21 @@ export const Search = (props: Props) => {
                     <MultiSelect
                         id="administrations"
                         label={t("administrations label")}
-                        options={administrationsOptions}
+                        options={administrationsOptions.map(administration => ({
+                            label: administration,
+                            value: administration,
+                        }))}
                         selectedValues={selectedAdministrations}
                         onChange={onAdministrationsChange}
                         className={classes.filterSelectGroup}
                     />
                     <MultiSelect
-                        id="Catégories"
+                        id="categories"
                         label={t("categories label")}
-                        options={categoriesOptions}
+                        options={categoriesOptions.map( category => ({
+                            label: category,
+                            value: category,
+                        }))}
                         selectedValues={selectedCategories}
                         onChange={onCategoriesChange}
                         className={classes.filterSelectGroup}
@@ -143,18 +153,44 @@ export const Search = (props: Props) => {
                     <div className={classes.filterSelectGroup}>
                         <label>{t("dependencies label")}</label>
                         <AutocompleteInputMultiple
-                            id={"Dépendances"}
-                            options={dependenciesOptions}
+                            id={"dependencies"}
+                            options={dependenciesOptions.map(dependency => ({
+                                label: dependency,
+                                value: dependency
+                            }))}
                             selectedValues={selectedDependencies}
                             onChange={onDependenciesChange}
                         />
                     </div>
                     <MultiSelect
-                        id="Fonctions"
+                        id="functions"
                         label={t("functions label")}
-                        options={functionsOptions}
+                        options={functionsOptions.map(option => ({
+                            value: option,
+                            label: (() => {
+                                switch (option) {
+                                    case "Algorithm":
+                                        return t("algorithm");
+                                    case "Library":
+                                        return t("library");
+                                    case "Source Code":
+                                        return t("source code");
+                                }
+                            })(),
+                        }))}
                         selectedValues={selectedFunctions}
-                        onChange={onFunctionsChange}
+                        onChange={options => onFunctionsChange(options as CatalogState.Function[])}
+                        className={classes.filterSelectGroup}
+                    />
+                    <MultiSelect
+                        id="languages"
+                        label={t("languages label")}
+                        options={languagesOptions.map(language => ({
+                            label: language,
+                            value: language,
+                        }))}
+                        selectedValues={selectedLanguages}
+                        onChange={onLanguagesChange}
                         className={classes.filterSelectGroup}
                     />
                     <div className={classes.filterSelectGroup}>
@@ -167,25 +203,23 @@ export const Search = (props: Props) => {
                         />
                     </div>
                     <MultiSelect
-                        id="Languages"
-                        label={t("languages label")}
-                        options={languagesOptions}
-                        selectedValues={selectedLanguages}
-                        onChange={onLanguagesChange}
-                        className={classes.filterSelectGroup}
-                    />
-                    <MultiSelect
-                        id="Licences"
+                        id="licences"
                         label={t("licences label")}
-                        options={licencesOptions}
+                        options={licencesOptions.map(licence => ({
+                            label: licence,
+                            value: licence,
+                        }))}
                         selectedValues={selectedLicences}
                         onChange={onLicencesChange}
                         className={classes.filterSelectGroup}
                     />
                     <MultiSelect
-                        id="Status du développement"
+                        id="devStatus"
                         label={t("dev status label")}
-                        options={devStatusOptions}
+                        options={devStatusOptions.map(status => ({
+                            label: status,
+                            value: status,
+                        }))}
                         selectedValues={selectedDevStatus}
                         onChange={onDevStatusChange}
                         className={classes.filterSelectGroup}
@@ -193,8 +227,11 @@ export const Search = (props: Props) => {
                     <div className={classes.filterSelectGroup}>
                         <label>{t("organisation label")}</label>
                         <AutocompleteInputMultiple
-                            id={"Organisation"}
-                            options={organisationsOptions}
+                            id={"organisation"}
+                            options={organisationsOptions.map(({ organisation, organisationId }) => ({
+                                label: organisation,
+                                value: organisationId,
+                            }))}
                             selectedValues={selectedOrganisations}
                             onChange={onOrganisationsChange}
                         />
@@ -206,6 +243,14 @@ export const Search = (props: Props) => {
                         inputTitle={t("experimental toggle switch label")}
                         className={classes.filterSelectGroup}
                     />
+                    <Button
+                        onClick={onResetFilters}
+                        priority={"secondary"}
+                        iconId="ri-restart-line"
+                        iconPosition="left"
+                    >
+                        {t("reset filters")}
+                    </Button>
                 </div>
             </div>
         </div>
@@ -236,10 +281,6 @@ const useStyles = makeStyles({name: {Search}})(theme => ({
     },
     filters: {
         "&&": {
-            overflowX: "visible",
-            ...fr.spacing("padding", {
-                rightLeft: "1v"
-            }),
             margin: 0
         }
     },
@@ -249,20 +290,28 @@ const useStyles = makeStyles({name: {Search}})(theme => ({
         columnGap: fr.spacing("4v"),
         rowGap: fr.spacing("4v"),
         marginTop: fr.spacing("3v"),
+        alignItems: "flex-start",
+        [fr.breakpoints.down("lg")]: {
+            gridTemplateColumns: `repeat(2, minmax(20%, 1fr))`
+        },
         [fr.breakpoints.down("md")]: {
-            gridTemplateColumns: `repeat(1, 1fr)`
+            gridTemplateColumns: `repeat(1, minmax(20%, 1fr))`
         }
     },
     filterSelectGroup: {
-        "&:not(:nth-of-type(4n))": {
-            borderRight: `1px ${theme.decisions.border.default.grey.default} solid`,
-            paddingRight: fr.spacing("4v")
+        height: "100%",
+        [fr.breakpoints.up("lg")]: {
+            "&:not(:nth-of-type(4n))": {
+                borderRight: `1px ${theme.decisions.border.default.grey.default} solid`,
+                paddingRight: fr.spacing("4v")
+            },
         },
-        [fr.breakpoints.down("md")]: {
-            "&:not(:last-of-type)": {
-                "border": "none"
-            }
-        }
+        [fr.breakpoints.down("lg") && fr.breakpoints.up("md")]: {
+            "&:not(:nth-of-type(2n))": {
+                borderRight: `1px ${theme.decisions.border.default.grey.default} solid`,
+                paddingRight: fr.spacing("4v")
+            },
+        },
     },
     multiSelect: {
         marginTop: fr.spacing("2v"),
@@ -290,4 +339,8 @@ export const {i18n} = declareComponentKeys<
     | "dev status label"
     | "organisation label"
     | "experimental toggle switch label"
+    | "algorithm"
+    | "library"
+    | "source code"
+    | "reset filters"
 >()({Search});

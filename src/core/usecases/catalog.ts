@@ -4,14 +4,14 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSelector } from "@reduxjs/toolkit";
 import type { Dependency, Organisation, Repository, RepositoryStatistics } from "core/ports/CodeGouvApi";
 import { createObjectThatThrowsIfAccessed } from "redux-clean-architecture";
-import { uniqBy } from "lodash"
 import { pipe } from "lodash/fp"
+import { compact, concat } from "lodash"
 import memoize from "memoizee";
 import { Fzf } from "fzf"
 import { assert, type Equals } from "tsafe";
 
-import {categories as mockCategories, repositories as mockRepositories, languages as mockLanguages} from "core/usecases/mock/catalog"
-import { between } from "../../ui/tools/num";
+import { categories as mockCategories } from "core/usecases/mock/catalog"
+import { between } from "ui/tools/num";
 
 export type State = {
 	repositories: State.RepositoryInternal[];
@@ -23,7 +23,6 @@ export type State = {
 	licences: State.Licence[];
 	dependencies: Dependency[]
 	organisations: Organisation[]
-	organisationNames: State.OrganisationName[]
 	sort: State.Sort
 	search: string
 	selectedAdministrations: State.Administration[]
@@ -34,8 +33,8 @@ export type State = {
 	selectedLanguages: State.Language[]
 	selectedLicences: State.Licence[]
 	selectedDevStatus: State.DevStatus[]
-	selectedOrganisations: State.OrganisationName[]
-	isExperimentalReposHidden: boolean
+	selectedOrganisations: State.Organisation[]
+	isExperimentalReposHidden: boolean,
 };
 
 export namespace State {
@@ -53,15 +52,16 @@ export namespace State {
 	export type Language = string
 	export type Licence = string
 	export type DevStatus = 'Concept' | 'Alpha' | 'Beta' | 'RC' | 'Stable'
-	export type OrganisationName = string
+	export type Organisation = string
 }
+
+const MAX_VITALITY = 100
 
 export const name = "catalog" as const;
 
 /**
  * Mocked data (see initialisation with mock in privateThunks > "initialize" method)
  * - categories
- * - repositories
  * - languages
  */
 
@@ -74,6 +74,20 @@ export type UpdateFilterParams<
 
 export namespace UpdateFilterParams {
 	export type Key = keyof Omit<State, "repositories" | "isLoading">;
+}
+
+export const defaultFiltersValues = {
+	search: '',
+	selectedAdministrations: [],
+	selectedCategories: [],
+	selectedDependencies: [],
+	selectedFunctions: [],
+	selectedVitality: 0,
+	selectedLanguages: [],
+	selectedLicences: [],
+	selectedDevStatus: [],
+	selectedOrganisations: [],
+	isExperimentalReposHidden: true
 }
 
 export const { reducer, actions } = createSlice({
@@ -93,7 +107,6 @@ export const { reducer, actions } = createSlice({
 				dependencies: Dependency[];
 				categories: State.Category[];
 				organisations: Organisation[];
-				organisationNames: State.OrganisationName[]
 			}>) => {
 			const {
 				repositories,
@@ -104,10 +117,9 @@ export const { reducer, actions } = createSlice({
 				dependencies,
 				categories,
 				organisations,
-				organisationNames,
 			} = payload;
 
-			const sort: State.Sort = "name_asc";
+			const sort: State.Sort = "last_update_asc";
 
 			return {
 				repositories,
@@ -120,20 +132,9 @@ export const { reducer, actions } = createSlice({
 				dependencies,
 				categories,
 				organisations,
-				organisationNames,
 				sort,
-				search: "",
-				selectedAdministrations: [],
-				selectedCategories: [],
-				selectedDependencies: [],
-				selectedFunctions: [],
-				selectedVitality: 0,
-				selectedLanguages: [],
-				selectedLicences: [],
-				selectedDevStatus: [],
-				selectedOrganisations: [],
-				isExperimentalReposHidden: false
-			};
+				...defaultFiltersValues,
+			}
 
 		},
 		addRepositoryStarted: state => {
@@ -159,6 +160,19 @@ export const { reducer, actions } = createSlice({
 
 			state.sort = sort
 		},
+		filtersReset: (state) => {
+			state.search = defaultFiltersValues.search
+			state.selectedVitality = defaultFiltersValues.selectedVitality
+			state.selectedDependencies = defaultFiltersValues.selectedDependencies
+			state.selectedOrganisations = defaultFiltersValues.selectedOrganisations
+			state.selectedAdministrations = defaultFiltersValues.selectedAdministrations
+			state.selectedLanguages = defaultFiltersValues.selectedLanguages
+			state.selectedLicences = defaultFiltersValues.selectedLicences
+			state.selectedDevStatus = defaultFiltersValues.selectedDevStatus
+			state.selectedFunctions = defaultFiltersValues.selectedFunctions
+			state.selectedCategories = defaultFiltersValues.selectedCategories
+			state.isExperimentalReposHidden = defaultFiltersValues.isExperimentalReposHidden
+		},
 	},
 });
 
@@ -169,17 +183,14 @@ export const privateThunks = {
 
 				const [dispatch, , { codeGouvApi }] = args;
 
-				const repositories = await mockRepositories;
-				/*const repositories = await codeGouvApi.getRepositories();*/
+				const repositories = await codeGouvApi.getRepositories();
 				const repositoryStatistics = await codeGouvApi.getRepositoryStatistics();
-				/*const languages = await codeGouvApi.getLanguages();*/
-				const languages = await mockLanguages;
-				const administrations = await codeGouvApi.getAdministrations();
-				const licences = await codeGouvApi.getLicences()
+				const languages = compact(await codeGouvApi.getLanguages())
+				const administrations = compact(await codeGouvApi.getAdministrations())
+				const licences = compact(await codeGouvApi.getLicences())
 				const dependencies = await codeGouvApi.getDependencies();
 				const categories = await mockCategories
 				const organisations = await codeGouvApi.getOrganisations()
-				const organisationNames = await codeGouvApi.getOrganisationNames()
 
 				dispatch(actions.initialized({
 					repositories,
@@ -190,22 +201,11 @@ export const privateThunks = {
 					dependencies,
 					categories,
 					organisations,
-					organisationNames
 				}));
 			},
 };
 
 export const thunks = {
-	/*addRepository:
-		(params: { url: string; }): ThunkAction =>
-			async (...args) => {
-
-				const { url } = params;
-
-				const [dispatch, , { codeGouvApi }] = args;
-
-				dispatch(actions.addRepositoryStarted());
-			},*/
 	updateFilter:
 		<K extends UpdateFilterParams.Key>(
 			params: UpdateFilterParams<K>
@@ -222,7 +222,58 @@ export const thunks = {
 				const [dispatch] = args;
 				dispatch(actions.sortUpdated(params));
 			},
+	resetFilters:
+		(): ThunkAction<void> =>
+			(...args) => {
+				const [dispatch] = args;
+				dispatch(actions.filtersReset());
+			},
 };
+
+const filterByAdministration = (repos: Repository[], organisations: Organisation[], selectedAdministrations: string[]): Repository[] => {
+	/*
+    * Administrations are linked to software by organisation
+    * We must find organisations linked to selected administrations to filter repositories
+    */
+	const selectedOrganisationsByAdministration = organisations
+		.filter(organisation => {
+				return organisation.administrations.some(administration => selectedAdministrations.includes(administration))
+			}
+		).map(organisation => organisation.id)
+
+	return repos.filter(repo => selectedOrganisationsByAdministration.some(organisation => repo.organisation_id.includes(organisation)))
+}
+
+export const repositoryOrganisation = (repo: Repository, organisations: Organisation[]) => {
+	return organisations.find(organisation => repo.organisation_id === organisation.id)
+}
+
+const filterByDependencies = (repos: Repository[], dependencies: Dependency[], selectedDependenciesNames: string[]): Repository[] => {
+	const selectedDependencies = dependencies.filter(dependency => selectedDependenciesNames.includes(dependency.name))
+
+	return repos.filter(repo => selectedDependencies.some(dependency => dependency.repository_urls.includes(repo.url)))
+}
+
+const filterByVitality = (repos: Repository[], selectedVitality: number): Repository[] => {
+	return repos.filter(repo => between(repo.vitality, selectedVitality, MAX_VITALITY))
+}
+
+const sortRepos = (repos: Repository[], sort: State.Sort) => {
+	switch (sort) {
+		case "name_asc":
+		default:
+			return [...repos].sort((repoA, repoB) => repoA.name.localeCompare(repoB.name))
+
+		case "name_desc":
+			return [...repos].sort((repoA, repoB) => repoB.name.localeCompare(repoA.name))
+
+		case "last_update_asc":
+			return [...repos].sort((repoA, repoB) => repoB.last_updated - repoA.last_updated)
+
+		case "last_update_desc":
+			return [...repos].sort((repoA, repoB) => repoA.last_updated - repoB.last_updated)
+	}
+}
 
 export const selectors = (() => {
 	const sliceState = (rootState: RootState) => {
@@ -238,7 +289,6 @@ export const selectors = (() => {
 	const categories = createSelector(sliceState, state => state.categories);
 	const languages = createSelector(sliceState, state => state.languages);
 	const licences = createSelector(sliceState, state => state.licences);
-	const devStatus = createSelector(sliceState, state => uniqBy(state.repositories, "status").map(repo => repo.status))
 	const sort = createSelector(sliceState, state => state.sort);
 	const search = createSelector(sliceState, state => state.search)
 	const selectedAdministrations = createSelector(sliceState, state => state.selectedAdministrations)
@@ -257,7 +307,7 @@ export const selectors = (() => {
 	const { filterBySearch } = (() => {
 		const getFzf = memoize(
 			(repos: State.RepositoryInternal[]) =>
-				new Fzf(repos, { "selector": ({ name }) => name }),
+				new Fzf(repos, { "selector": ({ name }) => name, fuzzy: false}),
 			{ "max": 1 }
 		);
 
@@ -284,48 +334,6 @@ export const selectors = (() => {
 
 		return { filterBySearch };
 	})();
-
-	const filterByAdministration = (repos: Repository[], organisations: Organisation[], selectedAdministrations: string[]): Repository[] => {
-
-		/*
-		* Administrations are linked to software by organisation
-		* We must find organisations linked to selected administrations to filter repositories
-		*/
-		const selectedOrganisationsByAdministration = organisations
-			.filter(organisation => {
-					return organisation.administrations.some(administration => selectedAdministrations.includes(administration))
-				}
-			).map(organisation => organisation.name)
-
-		return repos.filter(repo => selectedOrganisationsByAdministration.some(organisation => repo.organisation_name.includes(organisation)))
-	}
-
-	const filterByDependencies = (repos: Repository[], dependencies: Dependency[], selectedDependenciesNames: string[]): Repository[] => {
-		const selectedDependencies = dependencies.filter(dependency => selectedDependenciesNames.includes(dependency.name))
-
-		return repos.filter(repo => selectedDependencies.some(dependency => dependency.repository_urls.includes(repo.url)))
-	}
-
-	const filterByVitality = (repos: Repository[], selectedVitality: number): Repository[] => {
-		return repos.filter(repo => between(repo.vitality, selectedVitality, 100))
-	}
-
-	const sortRepos = (repos: Repository[], sort: State.Sort) => {
-		switch (sort) {
-			case "name_asc":
-			default:
-				return [...repos].sort((repoA, repoB) => repoA.name.localeCompare(repoB.name))
-
-			case "name_desc":
-				return repos.sort((repoA, repoB) => repoB.name.localeCompare(repoA.name))
-
-			case "last_update_asc":
-				return repos.sort((repoA, repoB) => repoB.last_updated - repoA.last_updated)
-
-			case "last_update_desc":
-				return repos.sort((repoA, repoB) => repoA.last_updated - repoB.last_updated)
-		}
-	}
 
 	const filteredRepositories = createSelector(
 		internalRepositories,
@@ -359,22 +367,22 @@ export const selectors = (() => {
 			isExperimentalReposHidden,
 			organisations,
 			dependencies,
-		) => (
-			pipe(
+		) => {
+			return pipe(
+				(repos: Repository[]) => search.length ? filterBySearch({repos, search}) : repos,
 				(repos: Repository[]) => isExperimentalReposHidden ? repos.filter(repo => !repo.is_experimental) : repos,
-				(repos: Repository[]) => search ? filterBySearch({ repos, search }) : repos,
 				(repos: Repository[]) => selectedAdministrations.length ? filterByAdministration(repos, organisations, selectedAdministrations) : repos,
-				(repos: Repository[]) => selectedCategories.length ? repos.filter(repo => selectedCategories.some(selectedCategory => repo.topics.includes(selectedCategory))) : repos,
-				(repos: Repository[]) => selectedDependencies.length ? filterByDependencies(repos, dependencies, selectedDependencies) : repos,
-				(repos: Repository[]) => selectedFunctions.length ? repos.filter(repo => selectedFunctions.some(selectedFunction => repo.type.includes(selectedFunction))) : repos,
-				(repos: Repository[]) => selectedVitality ? filterByVitality(repos, selectedVitality) : repos,
-				(repos: Repository[]) => selectedLanguages.length ? repos.filter(repo => selectedLanguages.some(selectedLanguage => repo.language.includes(selectedLanguage))) : repos,
-				(repos: Repository[]) => selectedLicences.length ? repos.filter(repo => selectedLicences.some(selectedLicence => repo.license.includes(selectedLicence))) : repos,
-				(repos: Repository[]) => selectedDevStatus.length ? repos.filter(repo => selectedDevStatus.some(selectedStatus => repo.status.includes(selectedStatus))) : repos,
-				(repos: Repository[]) => selectedOrganisations.length ? repos.filter(repo => selectedOrganisations.some(selectedOrganisation => repo.organisation_name.includes(selectedOrganisation))) : repos,
-				(repos: Repository[]) => sortRepos(repos, sort),
+				(repos: Repository[]) => selectedCategories.length ?  repos.filter(repo => selectedCategories.some(selectedCategory => repo.topics.includes(selectedCategory))) : repos,
+				(repos: Repository[]) => selectedDependencies.length ? filterByDependencies(internalRepositories, dependencies, selectedDependencies) : repos,
+				(repos: Repository[]) => selectedFunctions.length ? repos.filter(repo => selectedFunctions.includes(repo.type)) : repos,
+				(repos: Repository[]) => filterByVitality(repos, selectedVitality),
+				(repos: Repository[]) => selectedLanguages.length ? repos.filter(repo => selectedLanguages.includes(repo.language)) : repos,
+				(repos: Repository[]) => selectedDevStatus.length ? repos.filter(repo => selectedDevStatus.includes(repo.status)) : repos,
+				(repos: Repository[]) => selectedLicences.length ? repos.filter(repo => selectedLicences.includes(repo.license)) : repos,
+				(repos: Repository[]) => selectedOrganisations.length ? repos.filter(repo => selectedOrganisations.includes(repo.organisation_id)) : repos,
+				(repos: Repository[]) => sortRepos(repos, sort)
 			)(internalRepositories) as Repository[]
-		)
+	}
 	);
 
 	const sortOptions =  createSelector(sliceState, _state => {
@@ -391,42 +399,62 @@ export const selectors = (() => {
 	});
 
 	const administrationsFilterOptions = createSelector(sliceState, state => {
-		return state.administrations;
+		return state.administrations
 	});
 
 	const categoriesFilterOptions = createSelector(sliceState, state => {
-		return state.categories;
+		return state.categories
 	});
 
 	const dependenciesFilterOptions = createSelector(sliceState, state => {
-		return state.dependencies.map(dependency => dependency.name);
+		return state.dependencies.map(dependency => dependency.name)
 	});
 
-	const functionFilterOptions = createSelector(
-		internalRepositories,
-		(
-			internalRepositories,
-		) => {
-			return uniqBy(internalRepositories, "type").map(repo => repo.type)
+	const functionsFilterOptions = createSelector(
+		sliceState, _state => {
+			return ["Source Code", "Library", "Algorithm"] satisfies State.Function[]
 		}
 	);
 
 	const languagesFilterOptions = createSelector(sliceState, state => {
-		return state.languages;
+		return state.languages
 	});
 
 	const licencesFilterOptions = createSelector(sliceState, state => {
-		return state.licences;
+		return state.licences
 	});
 
 	const devStatusFilterOptions = createSelector(sliceState, _state => {
-		const options: State.DevStatus[] = ["Beta", "RC", "Concept", "Alpha", "Stable"]
-
-		return options;
+		return ["Beta", "RC", "Concept", "Alpha", "Stable"] satisfies State.DevStatus[]
 	});
 
 	const organisationsFilterOptions = createSelector(sliceState, state => {
-		return state.organisationNames;
+		return state.organisations.map(organisation => (
+			{
+				organisation: organisation.name,
+				organisationId: organisation.id,
+			}
+		))
+	});
+
+	const filters = createSelector(sliceState, state => {
+
+		const selectedOrganisationsLabel =
+			compact(
+				state.selectedOrganisations
+					.map(selectedOrganisation => state.organisations.find(organisation => organisation.id === selectedOrganisation)))
+				.map(organisation => organisation.name)
+
+
+		return concat(
+			state.selectedAdministrations,
+			state.selectedCategories,
+			state.selectedDependencies,
+			state.selectedLanguages,
+			state.selectedLicences,
+			state.selectedDevStatus,
+			selectedOrganisationsLabel
+		)
 	});
 
 	return {
@@ -435,7 +463,6 @@ export const selectors = (() => {
 		languages,
 		administrations,
 		licences,
-		devStatus,
 		selectedFunctions,
 		organisations,
 		dependencies,
@@ -445,11 +472,12 @@ export const selectors = (() => {
 		administrationsFilterOptions,
 		categoriesFilterOptions,
 		dependenciesFilterOptions,
-		functionFilterOptions,
+		functionsFilterOptions,
 		languagesFilterOptions,
 		licencesFilterOptions,
 		devStatusFilterOptions,
 		organisationsFilterOptions,
-		filteredRepositories
+		filteredRepositories,
+		filters
 	};
 })();

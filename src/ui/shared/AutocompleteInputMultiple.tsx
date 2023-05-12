@@ -9,12 +9,19 @@ import Typography from '@mui/material/Typography';
 import { fr } from "@codegouvfr/react-dsfr";
 import {makeStyles} from "tss-react/dsfr";
 import { MultiSelect } from "./MultiSelect";
+import Checkbox from "@mui/material/Checkbox";
+import ListItemText from "@mui/material/ListItemText";
 
 const LISTBOX_PADDING = 8; // px
 
+type Option = {
+    value: string
+    label: string
+}
+
 type Props = {
     id: string
-    options: string[]
+    options: Option[]
     selectedValues: string[]
     onChange: (options: string[]) => void;
 }
@@ -29,7 +36,8 @@ function renderRow(props: ListChildComponentProps) {
 
     return (
         <Typography component="li" {...dataSet[0]} noWrap style={inlineStyle}>
-            {`${dataSet[1]}`}
+            <Checkbox checked={dataSet[0]["aria-selected"]} />
+            {`${dataSet[1].label}`}
         </Typography>
     );
 }
@@ -122,28 +130,28 @@ const StyledPopper = styled(Popper)({
 });
 
 export function AutocompleteInputMultiple(props: Props) {
-
     const { options, selectedValues, onChange} = props
-
     const {cx, classes} = useStyles();
+    const value = options.filter(option => selectedValues.includes(option.value))
 
     return (
         <Autocomplete
-            id="virtualize-demo"
+            id="virtualize-autocomplete"
             multiple
             disableCloseOnSelect
             disableListWrap
             limitTags={2}
-            getOptionLabel={(option) => option}
+            getOptionLabel={({ label }) => label}
             PopperComponent={StyledPopper}
             ListboxComponent={ListboxComponent}
             options={options}
-            value={selectedValues}
+            value={value}
             renderInput={(params) => <TextField {...params} variant={"standard"} />}
             renderOption={(props, option, state) =>
                 [props, option, state.index] as React.ReactNode
             }
-            onChange={(_event, values) => {
+            onChange={(_event, options) => {
+                const values = options.map(value => value.value)
                 onChange(values)
             }}
             className={cx(fr.cx("fr-select"), classes.multiSelect)}
@@ -159,7 +167,7 @@ export function AutocompleteInputMultiple(props: Props) {
                         )}
                         key={index}
                     >
-                        {option}
+                        {option.label}
                     </span>
                 ));
             }}

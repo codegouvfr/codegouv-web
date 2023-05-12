@@ -6,12 +6,19 @@ import {fr} from "@codegouvfr/react-dsfr";
 import SelectMui from "@mui/material/Select";
 import {InputBase} from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
+import Checkbox from '@mui/material/Checkbox';
+import ListItemText from '@mui/material/ListItemText';
+
+type Option = {
+    value: string
+    label: string
+}
 
 type Props = {
     className?: string
     id: string
     label?: string
-    options: string[]
+    options: Option[]
     selectedValues: string[]
     onChange: (options: string[]) => void;
 }
@@ -27,8 +34,14 @@ export const MultiSelect = (props: Props) => {
         className: classes.menu
     }
 
+    //To get label from value
+    const selectedLabel = (value: string) => {
+        const option = options.find(option => option.value === value)
+        return option?.label
+    }
+
     return (
-        <div className={cx(className, classes.root, fr.cx("fr-select-group"))}>
+        <div id={id} className={cx(className, classes.root, fr.cx("fr-select-group"))}>
             {label && <label htmlFor={`${label}-label`}>
                 { label }
             </label>}
@@ -46,14 +59,16 @@ export const MultiSelect = (props: Props) => {
                 )}
                 className={cx(fr.cx("fr-select"), classes.multiSelect)}
                 input={<InputBase />}
+                renderValue={(selectedValues) => selectedValues.map(value => selectedLabel(value)).join(', ')}
                 MenuProps={MenuProps}
             >
-                {options.map(option => (
+                {options.map(( { label, value } ) => (
                     <MenuItem
-                        key={option}
-                        value={option}
+                        key={label}
+                        value={value}
                     >
-                        {option}
+                        <Checkbox checked={selectedValues.indexOf(value) > -1} />
+                        <ListItemText primary={label} />
                     </MenuItem>
                 ))}
             </SelectMui>
@@ -65,16 +80,24 @@ const useStyles = makeStyles({name: {MultiSelect}})(() => ({
     root: {},
     multiSelect: {
         marginTop: fr.spacing("2v"),
-        paddingRight: 0,
-        "&&>.MuiInputBase-input": {
-            padding: 0
-        },
+        padding: 0,
         "&&>.MuiSvgIcon-root": {
             display: "none"
+        },
+        "div[role='button']": {
+            padding: fr.spacing("2v"),
+            outlineOffset: "2px",
+            outlineWidth: "2px",
+            outlineColor: "#0a76f6"
+        },
+
+        "&.Mui-focused": {
+            "&& div[role='button']": {
+                outlineStyle: "solid"
+            }
         }
     },
     menu: {
         maxHeight: "20rem",
-        width: "300px"
     }
 }));

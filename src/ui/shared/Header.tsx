@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import { memo, forwardRef } from "react";
 import { assert } from "tsafe/assert";
 import type { Equals } from "tsafe";
 import { declareComponentKeys } from "i18nifty";
@@ -14,7 +14,7 @@ export type Props = {
     className?: string;
 };
 
-export const Header = memo((props: Props) => {
+export const Header = memo(forwardRef<HTMLDivElement, Props>((props, ref)  => {
     const { className, ...rest } = props;
 
     assert<Equals<typeof rest, {}>>();
@@ -25,6 +25,7 @@ export const Header = memo((props: Props) => {
     return (
         <>
             <HeaderDS
+                ref={ref}
                 className={className}
                 brandTop={t("brand")}
                 serviceTitle={
@@ -107,7 +108,7 @@ export const Header = memo((props: Props) => {
             <Display />
         </>
     );
-});
+}));
 
 export const { i18n } = declareComponentKeys<
     | { K: "brand"; R: JSX.Element }

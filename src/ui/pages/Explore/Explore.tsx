@@ -33,6 +33,7 @@ export default function Explore (props: Props) {
 
     const { catalog } = useCoreFunctions()
     const { search } = useCoreState(selectors.catalog.search)
+    const { repositoryStatistics } = useCoreState(selectors.catalog.repositoryStatistics)
 
     const onSearchChange = useConstCallback<
         SearchProps["onSearchChange"]
@@ -62,7 +63,7 @@ export default function Explore (props: Props) {
                     ...route.params,
                     search
                 })
-                .replace()
+                .push()
         )
     }
 
@@ -84,19 +85,19 @@ export default function Explore (props: Props) {
     const catalogStats = [
         {
             label: t("stats forges"),
-            number: 42
+            number: repositoryStatistics.forge_count
         },
         {
             label: t("stats authorities"),
-            number: 50
+            number: repositoryStatistics.administration_count
         },
         {
             label: t("stats organisations"),
-            number: 1661
+            number: repositoryStatistics.organisation_count
         },
         {
             label: t("stats deposit"),
-            number: 15415
+            number: repositoryStatistics.repository_count
         }
     ]
 

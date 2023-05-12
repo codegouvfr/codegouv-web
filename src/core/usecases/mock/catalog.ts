@@ -10,7 +10,7 @@ export const repositories = new Promise<Repository[]>((resolve) => {
             latest_tag: "",
             license: "Apache License 2.0 (Apache-2.0)",
             name:"fiches-travail-data-0",
-            organisation_name: "SocialGouv",
+            organisation_id: "SocialGouv",
             sill_id: 0,
             star_count: 2,
             status: "Stable",
@@ -27,7 +27,7 @@ export const repositories = new Promise<Repository[]>((resolve) => {
             latest_tag: "",
             license: "Apache License 2.0 (Apache-2.0)",
             name:"fiches-travail-data-1",
-            organisation_name: "altair",
+            organisation_id: "altair",
             sill_id: 1,
             star_count: 2,
             status: "Beta",
@@ -44,7 +44,7 @@ export const repositories = new Promise<Repository[]>((resolve) => {
             latest_tag: "",
             license: "Apache License 2.0 (Apache-2.0)",
             name:"fiches-travail-data-2",
-            organisation_name: "H2M",
+            organisation_id: "H2M",
             sill_id: 2,
             star_count: 2,
             status: "Beta",
@@ -63,3 +63,21 @@ export const categories = new Promise<string[]>((resolve) => {
 export const languages = new Promise<string[]>((resolve) => {
     resolve(["HTML", "Javascript"]);
 });
+
+export const repository =         {
+    description: "Json formated data from from set of page of travail-emploi website",
+    is_experimental: false,
+    language: "HTML",
+    last_updated: 1681465412100,
+    latest_tag: "",
+    license: "Apache License 2.0 (Apache-2.0)",
+    name:"fiches-travail-data-0",
+    organisation_id: "SocialGouv",
+    sill_id: 0,
+    star_count: 2,
+    status: "Stable",
+    topics: [],
+    type: "Library",
+    url: "https://github.com/SocialGouv/fiches-travail-data",
+    vitality: 100,
+}
