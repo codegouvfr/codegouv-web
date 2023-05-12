@@ -424,7 +424,7 @@ export const selectors = (() => {
 		return state.licences
 	});
 
-	const devStatusFilterOptions = createSelector(sliceState, state => {
+	const devStatusFilterOptions = createSelector(sliceState, _state => {
 		return ["Beta", "RC", "Concept", "Alpha", "Stable"] satisfies State.DevStatus[]
 	});
 
