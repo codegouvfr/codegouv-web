@@ -76,7 +76,8 @@ export namespace UpdateFilterParams {
 	export type Key = keyof Omit<State, "repositories" | "isLoading">;
 }
 
-export const defaultSelectedFilters = {
+export const defaultFiltersValues = {
+	search: '',
 	selectedAdministrations: [],
 	selectedCategories: [],
 	selectedDependencies: [],
@@ -132,8 +133,7 @@ export const { reducer, actions } = createSlice({
 				categories,
 				organisations,
 				sort,
-				search: "",
-				...defaultSelectedFilters,
+				...defaultFiltersValues,
 			}
 
 		},
@@ -161,16 +161,17 @@ export const { reducer, actions } = createSlice({
 			state.sort = sort
 		},
 		filtersReset: (state) => {
-			state.selectedVitality = defaultSelectedFilters.selectedVitality
-			state.selectedDependencies = defaultSelectedFilters.selectedDependencies
-			state.selectedOrganisations = defaultSelectedFilters.selectedOrganisations
-			state.selectedAdministrations = defaultSelectedFilters.selectedAdministrations
-			state.selectedLanguages = defaultSelectedFilters.selectedLanguages
-			state.selectedLicences = defaultSelectedFilters.selectedLicences
-			state.selectedDevStatus = defaultSelectedFilters.selectedDevStatus
-			state.selectedFunctions = defaultSelectedFilters.selectedFunctions
-			state.selectedCategories = defaultSelectedFilters.selectedCategories
-			state.isExperimentalReposHidden = defaultSelectedFilters.isExperimentalReposHidden
+			state.search = defaultFiltersValues.search
+			state.selectedVitality = defaultFiltersValues.selectedVitality
+			state.selectedDependencies = defaultFiltersValues.selectedDependencies
+			state.selectedOrganisations = defaultFiltersValues.selectedOrganisations
+			state.selectedAdministrations = defaultFiltersValues.selectedAdministrations
+			state.selectedLanguages = defaultFiltersValues.selectedLanguages
+			state.selectedLicences = defaultFiltersValues.selectedLicences
+			state.selectedDevStatus = defaultFiltersValues.selectedDevStatus
+			state.selectedFunctions = defaultFiltersValues.selectedFunctions
+			state.selectedCategories = defaultFiltersValues.selectedCategories
+			state.isExperimentalReposHidden = defaultFiltersValues.isExperimentalReposHidden
 		},
 	},
 });

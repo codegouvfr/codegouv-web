@@ -17,7 +17,7 @@ import useDebounce from "ui/tools/cancelableDebounce";
 import SelectNext from "ui/shared/SelectNext";
 import type { State as CatalogState } from "core/usecases/catalog";
 import { VirtualizedCatalog } from "./VirtualizedCatalog";
-import { defaultSelectedFilters } from "core/usecases/catalog";
+import { defaultFiltersValues } from "core/usecases/catalog";
 
 type Props = {
 	className?: string;
@@ -328,6 +328,7 @@ export default function ExploreCatalog(props: Props) {
 	const onResetFilters = useConstCallback(() => {
 
 		const {
+			search,
 			isExperimentalReposHidden,
 			selectedDependencies,
 			selectedFunctions,
@@ -338,12 +339,13 @@ export default function ExploreCatalog(props: Props) {
 			selectedOrganisations,
 			selectedVitality,
 			selectedDevStatus
-		} = defaultSelectedFilters
+		} = defaultFiltersValues
 
 			return startTransition(() =>
 				routes
 					.exploreCatalog({
 						...route.params,
+						search: search,
 						categories: selectedCategories,
 						isExperimentalReposHidden: isExperimentalReposHidden,
 						vitality: selectedVitality,
