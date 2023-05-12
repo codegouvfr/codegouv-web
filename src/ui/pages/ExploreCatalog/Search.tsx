@@ -116,7 +116,7 @@ export const Search = (props: Props) => {
                 <Button
                     className={classes.filterButton}
                     iconId={
-                        isFilterOpen ? "ri-arrow-up-s-fill" : "ri-arrow-down-s-fill"
+                        isFilterOpen ? "ri-arrow-down-s-fill" : "ri-arrow-up-s-fill"
                     }
                     iconPosition="right"
                     onClick={() => setIsFilterOpen(!isFilterOpen)}
